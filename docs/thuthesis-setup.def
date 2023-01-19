@@ -1,0 +1,225 @@
+
+% info 类用于录入个人信息
+%   带*号的为对应英文字段
+\thusetup[info]{
+    title  = {清华大学学位论文 \LaTeX{} 模板\\使用示例文档},
+    title* = {An Introduction to \LaTeX{} Thesis Template of Tsinghua University},
+    %
+    % 学位
+    %   1. 学术型
+    %      - 中文
+    %        需注明所属的学科门类，例如：
+    %        哲学、经济学、法学、教育学、文学、历史学、理学、工学、农学、医学、
+    %        军事学、管理学、艺术学
+    %      - 英文
+    %        博士：Doctor of Philosophy
+    %        硕士：
+    %          哲学、文学、历史学、法学、教育学、艺术学门类，公共管理学科
+    %          填写“Master of Arts“，其它填写“Master of Science”
+    %   2. 专业型
+    %      直接填写专业学位的名称，例如：
+    %      教育博士、工程硕士等
+    %      Doctor of Education, Master of Engineering
+    %   3. 本科生不需要填写
+    %
+    degree-name  = {工学硕士},
+    degree-name* = {Master of Science},
+    %
+    % 培养单位
+    %   填写所属院系的全名
+    %
+    department = {计算机科学与技术系},
+    %
+    % 学科
+    %   1. 学术型学位
+    %      获得一级学科授权的学科填写一级学科名称，其他填写二级学科名称
+    %   2. 工程硕士
+    %      工程领域名称
+    %   3. 其他专业型学位
+    %      不填写此项
+    %   4. 本科生填写专业名称，第二学位论文需标注“（第二学位）”
+    %
+    discipline  = {计算机科学与技术},
+    discipline* = {Computer Science and Technology},
+    %
+    % 姓名
+    %
+    author  = {薛瑞尼},
+    author* = {Xue Ruini},
+    %
+    % 指导教师
+    %   中文姓名和职称之间以英文逗号“,”分开，下同
+    %
+    supervisor  = {郑纬民, 教授},
+    supervisor* = {Professor Zheng Weimin},
+    %
+    % 副指导教师
+    %
+    associate-supervisor  = {陈文光, 副教授},
+    associate-supervisor* = {Professor Chen Wenguang},
+    %
+    % 联合指导教师
+    %
+    co-supervisor  = {宇多田光, 助理教授},
+    co-supervisor* = {Professor Mou Moumou},
+    %
+    % 日期
+    %   使用 ISO 格式；默认为当前时间
+    %
+    date = {2019-07-10},
+    %
+    % 是否在中文封面后的空白页生成书脊（默认 false）
+    %
+    %include-spine = false,
+    %
+    % 密级和年限
+    %   秘密, 机密, 绝密
+    %
+    % secret-level = {秘密},
+    % secret-year  = {10},
+    %
+    % 博士后专有部分
+    %
+    % clc                = {分类号},
+    % udc                = {UDC},
+    % id                 = {编号},
+    % discipline-level-1 = {计算机科学与技术},  % 流动站（一级学科）名称
+    % discipline-level-2 = {系统结构},          % 专业（二级学科）名称
+    % start-date         = {2011-07-01},        % 研究工作起始时间
+    %
+    keywords = {我,就是,充数的,关键词},
+    % 中文关键词列表
+    % 使用英文半角逗号(,)分隔
+    %
+    keywords* = {Dummy,Keywords,Here,{It Is}},
+    % 英文关键词
+    % 使用英文半角逗号(,)分隔
+    %
+}
+
+% bib 类用于参考文献设置
+\thusetup[bib]{
+    % style = numeric|author-year,
+    % 参考文献样式
+    % 默认为顺序编码制（numeric）
+    % 可选著者-出版年制（author-year）
+    %
+    resource = {njuthesis-sample.bib},
+    % 参考文献数据源
+    % 需要带扩展名的完整文件名
+    % 可使用逗号分隔多个文件
+    % 此条等效于 \addbibresource 命令
+    %
+    % option = {
+        % doi    = false,
+        % isbn   = false,
+        % url    = false,
+        % eprint = false,
+        % 关闭部分无用文献信息
+        %
+        % refsection = chapter,
+        % 将参考文献表置于每章后
+        %
+        % gbnamefmt = lowercase
+        % 使用仅首字母大写的姓名
+    %   }
+    % 额外的 biblatex 宏包选项
+}
+
+% image 类用于载入外置的图片
+% \thusetup[image]{
+%     % path = {{./figure/}{./image/}},
+%     % 图片搜索路径
+%     %
+%     nju-emblem = {nju-emblem},
+%     % 校徽图片路径
+%     % 建议使用 PDF 格式的矢量图
+%     % 使用外置图片有助于减少编译时间
+%     % 空置时会自动使用 njuisual 宏包绘制
+%     %
+%     nju-name = {nju-name}
+%     % 校名图片路径
+%     % 说明同上
+% }
+
+% abstract 类用于设置摘要样式
+\thusetup[abstract]{
+    % toc-entry = false,
+    % 摘要是否显示在目录条目中
+    %
+    % title-style = strict|centered|natural
+    % 研究生摘要标题样式，详见手册
+}
+
+% 目录自身是否显示在目录条目中
+\thusetup{
+    % tableofcontents/toc-entry = false,
+    % 关闭本项相当于同时关闭三个选项
+    %
+    % listoffigures/toc-entry   = false,
+    % listoftables/toc-entry    = false
+}
+
+% 为目录中的章标题添加引导线
+% \thusetup[tableofcontents/dotline]{chapter}
+
+% math 类用于设置数学符号样式，功能详见手册
+\thusetup[math]{
+    % style              = TeX|ISO|GB,
+    % 整体风格，缺省值为国标（GB）
+    % 相当于自动设置以下若干项
+    %
+    % integral           = upright|slanted,
+    % integral-limits    = true|false,
+    % less-than-or-equal = slanted|horizontal,
+    % math-ellipsis      = centered|lower,
+    % partial            = upright|italic,
+    % real-part          = roman|fraktur,
+    % vector             = boldfont|arrow,
+    % uppercase-greek    = upright|italic
+}
+
+% theorem 类用于设置定理类环境样式，功能详见手册
+\thusetup[theorem]{
+    % define,
+    % 默认创建内置的七种定理环境
+    %
+    % style       = remark,
+    % header-font = \sffamily \bfseries,
+    % body-font   = \normalfont,
+    % qed-symbol  = \ensuremath { \male },
+    % counter     = section,
+    % type        = {...}
+    % 以上设置项在重新调用 theorem/define 后生效
+}
+
+% footnote 类用于设置脚注样式，功能详见手册
+\thusetup[footnote]{
+  % style = pifont|circled,
+  % 使用圈码编号
+  %
+  % hang = false,
+  % 不使用悬挂缩进
+}
+
+% 页眉页脚内容设置
+\thusetup{
+  % header/content = {
+  %     {OR}{\thepage},{OL}{\rightmark},
+  %     {EL}{\thepage},{ER}{\leftmark}
+  %   },
+  % 页眉设置，详见手册
+  % 奇数页页眉：左侧章名，右侧页码
+  % 偶数页页眉：左侧页码，右侧节名
+  %
+  % footer/content = {}
+}
+
+% 页眉页脚的字体样式
+% \thusetformat{header}{\small\kaishu}
+% \thusetformat{footer}{}
+
+% 一些灵活调整
+% \thusetname{notation}{术语表} % 更改符号表名称
+% \thusetname{tableofcontents}{目\qquad{}次} % 更改目录名称
+% \thusetlength{crulewd}{330pt} % 加长封面页下划线

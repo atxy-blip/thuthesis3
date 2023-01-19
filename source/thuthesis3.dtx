@@ -1,0 +1,4681 @@
+% \iffalse meta-comment
+% !TeX program  = XeLaTeX
+% !TeX encoding = UTF-8
+%
+%<*internal>
+\begingroup
+  \def\NameOfLaTeXe{LaTeX2e}
+\expandafter\endgroup\ifx\NameOfLaTeXe\fmtname\else
+\csname fi\endcsname
+%</internal>
+%
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+
+\preamble
+
+To produce the documentation run the original source files ending with
+`.dtx' through XeTeX.
+
+\endpreamble
+
+\generate{
+  \usedir{tex/latex/thuthesis3}
+    \file{\jobname.cls}               {\from{\jobname.dtx}{class}}
+    \file{\jobname-undergraduate.def} {\from{\jobname.dtx}{def-u}}
+    \file{\jobname-graduate.def}      {\from{\jobname.dtx}{def-g}}
+    \file{\jobname-postdoctoral.def}  {\from{\jobname.dtx}{def-p}}
+%<*internal>
+  \usedir{source/latex/thuthesis3}
+    \file{\jobname.ins}               {\from{\jobname.dtx}{install}}
+%</internal>
+}
+
+\endbatchfile
+%</install>
+%
+%<*internal>
+\fi
+%</internal>
+%
+%<class>\NeedsTeXFormat{LaTeX2e}
+%<*!(driver|install)>
+%<+!driver>\GetIdInfo $Id: thuthesis3.dtx 0.1.0 2023-01-06 00:00:00
+%<+!driver>  +0800 atxy <y-xiong22@mails.tsinghua.edu.cn>$
+%<class>  {LaTeX3 thesis template for Tsinghua University}
+%<class>\ProvidesExplClass{thuthesis3}
+%<def-u>  {Bachelor definition file for thuthesis3}
+%<def-u>\ProvidesExplFile{thuthesis3-undergraduate.def}
+%<def-g>  {Master and doctor definition file for thuthesis3}
+%<def-g>\ProvidesExplFile{thuthesis3-graduate.def}
+%<def-p>  {Postdoctoral definition file for thuthesis3}
+%<def-p>\ProvidesExplFile{thuthesis3-postdoctoral.def}
+%<!driver>  {\ExplFileDate}{\ExplFileVersion}{\ExplFileDescription}
+%</!(driver|install)>
+%
+%<*driver>
+\ProvidesFile{thuthesis3.dtx}
+\documentclass[fontset=fandol]{ctxdoc}
+\let\typ\texttt
+\let\exp\texttt
+\begin{document}
+  \DocInput{thuthesis3.dtx}
+  ^^A \PrintChanges
+  ^^A \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \begin{implementation}
+%
+% \section{代码实现}
+%
+% \subsection{准备}
+%
+%    \begin{macrocode}
+%<*class>
+%<@@=thu>
+%    \end{macrocode}
+%
+% 检查 \LaTeX3 编程环境。
+%    \begin{macrocode}
+\RequirePackage { xtemplate, l3keys2e }
+\msg_new:nnn { thuthesis3 } { l3-too-old }
+  {
+    Package~ "#1"~ is~ too~ old. \\
+    Please~ update~ an~ up-to-date~ version~ of~ the~
+    bundles~ "l3kernel"~ and~ "l3packages"~ using~
+    your~ TeX~ package~ manager~ or~ from~ CTAN.
+  }
+\clist_map_inline:nn { xtemplate, l3keys2e }
+  {
+    \@ifpackagelater {#1} { 2020/10/01 }
+      { } { \msg_error:nnn { thuthesis3 } { l3-too-old } {#1} }
+  }
+%    \end{macrocode}
+%
+% 目前 \cls{thuthesis3} 仅支持 \XeTeX 和 \LuaTeX。
+%    \begin{macrocode}
+\msg_new:nnn { thuthesis3 } { unsupported-engine }
+  {
+    The~ thuthesis3~ class~ requires~ either~
+    XeTeX~ or~ LuaTeX. \\
+    "#1"~ is~ not~ supported~ at~ present.~
+    You~ must~ change~ your~ typesetting~ engine~
+    to~ "xelatex"~ or~ "lualatex".
+  }
+\bool_lazy_or:nnF
+  { \sys_if_engine_xetex_p:  }
+  { \sys_if_engine_luatex_p: }
+  { \msg_fatal:nnx { thuthesis3 } { unsupported-engine } { \c_sys_engine_str } }
+%    \end{macrocode}
+%
+%
+% \subsection{定义变量}
+%
+% \begin{variable}{
+%   \l_@@_tmpa_box,\l_@@_tmpb_box,\l_@@_tmpc_box,\l_@@_tmp_clist,
+%   \l_@@_tmpa_dim,\l_@@_tmpb_dim,\l_@@_tmpa_int,\l_@@_tmpb_int,
+%   \l_@@_tmp_skip,\l_@@_tmpa_tl,\l_@@_tmpb_tl}
+% 临时变量。
+%    \begin{macrocode}
+\box_new:N   \l_@@_tmpa_box
+\box_new:N   \l_@@_tmpb_box
+\box_new:N   \l_@@_tmpc_box
+\clist_new:N \l_@@_tmp_clist
+\dim_new:N   \l_@@_tmpa_dim
+\dim_new:N   \l_@@_tmpb_dim
+\int_new:N   \l_@@_tmpa_int
+\int_new:N   \l_@@_tmpb_int
+\skip_new:N  \l_@@_tmp_skip
+\tl_new:N    \l_@@_tmpa_tl
+\tl_new:N    \l_@@_tmpb_tl
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_info_type_int}
+% 用于存储论文类型 \opt{type} 的变量。
+%    \begin{macrocode}
+\int_new:N \g_@@_info_type_int
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_info_dtype_int}
+% 用于存储学位类型 \opt{degree-type}的变量。
+%    \begin{macrocode}
+\int_new:N \g_@@_info_dtype_int
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_opt_twoside_bool}
+% 定义用于判断是否使用双面模式的变量，初始值为使用双面模式。
+%    \begin{macrocode}
+\bool_new:N      \g_@@_opt_twoside_bool
+\bool_set_true:N \g_@@_opt_twoside_bool
+%    \end{macrocode}
+% \end{variable}
+%
+%
+% \begin{variable}{
+%   \g_@@_font_latin_tl,
+%   \g_@@_font_cjk_tl,
+%   \g_@@_font_math_tl}
+% 存储所使用字体名称的全局变量。
+%    \begin{macrocode}
+\tl_new:N \g_@@_font_latin_tl
+\tl_new:N \g_@@_font_cjk_tl
+\tl_new:N \g_@@_font_math_tl
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_font_path_tl}
+% 存储字体路径的全局变量。
+%    \begin{macrocode}
+\tl_new:N \g_@@_font_path_tl
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_font_path_bool}
+% 是否使用独立的字体文件。
+%    \begin{macrocode}
+\bool_new:N \g_@@_font_path_bool
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_config_tl}
+% 保存配置文件名称。默认为空。
+%    \begin{macrocode}
+\tl_new:N \g_@@_config_tl
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_today_tl}
+% 编译当天日期，格式为 |yyyy-mm-dd|。
+%    \begin{macrocode}
+\tl_const:Nx \c_@@_today_tl
+  {
+    \int_to_arabic:n { \c_sys_year_int  } -
+    \int_to_arabic:n { \c_sys_month_int } -
+    \int_to_arabic:n { \c_sys_day_int   }
+  }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_name_type_clist,\c_@@_name_type_en_clist}
+% 论文类型与学位类型。
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_name_type_clist
+  { 学士, 硕士, 博士 }
+\clist_const:Nn \c_@@_name_type_en_clist
+  { Bachelor, Master, Doctor~of~Philosophy }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_name_month_en_clist}
+% 英文月份名称。
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_name_month_en_clist
+  {
+    January, February, March, April, May, June,
+    July, August, September, October, November, December
+  }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_name_anon_clist,\c_@@_name_anon_en_clist}
+% 盲审模式下不显示的个人信息键名。
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_name_anon_clist
+  {
+    author, chairman, email, student-id, reviewer,
+    supervisor-contact, supervisor, supervisor-ii
+  }
+\clist_const:Nn \c_@@_name_anon_en_clist
+  { author, supervisor, supervisor-ii }
+%    \end{macrocode}
+% \end{variable}
+%
+%
+% \subsection{内部函数}
+%
+% \begin{macro}{\@@_null:}
+% 等价于 \LaTeXe{} 中的 \tn{null}。
+%    \begin{macrocode}
+\cs_new:Nn \@@_null: { \hbox:n { } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_quad:,\@@_qquad:}
+% 等价于 \LaTeXe{} 中的 \tn{quad} 和 \tn{qquad}。
+%    \begin{macrocode}
+\cs_new:Nn \@@_quad:  { \skip_horizontal:n { 1 em } }
+\cs_new:Nn \@@_qquad: { \skip_horizontal:n { 2 em } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_vskip:,\@@_hskip:}
+% 生成一个较小的 skip。
+%    \begin{macrocode}
+\cs_new:Nn \@@_vskip: { \skip_vertical:N   \c_@@_vsep_dim }
+\cs_new:Nn \@@_hskip: { \skip_horizontal:N \c_@@_hsep_dim }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_vskip:N}
+% 类似于 \LaTeXe 中的 \tn{vspace*}
+% \footnote{\url{https://tex.stackexchange.com/a/30065/251992}}，
+% 从上一个页面元素底部开始生成 |skip|。
+%    \begin{macrocode}
+\cs_set_protected:Npn \@@_vskip:N #1
+  {
+    \tex_hrule:D \@height \c_zero_dim \scan_stop:
+    \tex_penalty:D \@M
+    \skip_vertical:N #1
+    \skip_vertical:N \c_zero_dim
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_name_zh:nn,\@@_define_name_en:nn}
+% 用来定义默认名称的辅助函数。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_name_zh:nn #1#2
+  { \tl_const:cn { c_@@_name_ #1    _tl } { #2 } }
+\cs_new_protected:Npn \@@_define_name_en:nn #1#2
+  { \tl_const:cn { c_@@_name_ #1 _en_tl } { #2 } }
+%    \end{macrocode}
+% 同时定义中文和英文名称。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_names:nnn #1#2#3
+  {
+    \tl_const:cn { c_@@_name_ #1    _tl } { #2 }
+    \tl_const:cn { c_@@_name_ #1 _en_tl } { #3 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_fmt:nn}
+% 用来定义默认样式的辅助函数。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_fmt:nn #1#2
+  { \tl_const:cn { c_@@_fmt_ #1 _tl } { #2 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_dim:nn,\@@_define_skip:nn}
+% 用来定义默认间距的辅助函数。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_dim:nn  #1#2
+  { \dim_const:cn  { c_@@_ #1 _dim  } { #2 } }
+\cs_new_protected:Npn \@@_define_skip:nn #1#2
+  { \skip_const:cn { c_@@_ #1 _skip } { #2 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_name:n,\@@_info:n,\@@_fmt:n}
+% 根据变量名调用名称、内容或格式信息。
+%    \begin{macrocode}
+\cs_new:Npn \@@_name:n #1 { \tl_use:c { c_@@_name_ #1 _tl } }
+\cs_new:Npn \@@_info:n #1 { \tl_use:c { g_@@_info_ #1 _tl } }
+\cs_new:Npn \@@_fmt:n  #1 { \tl_use:c { c_@@_fmt_  #1 _tl } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_dim:n,\@@_skip:n}
+% 根据变量名调用尺寸信息。
+%    \begin{macrocode}
+\cs_new:Npn \@@_dim:n  #1 { \dim_use:c  { c_@@_ #1 _dim  } }
+\cs_new:Npn \@@_skip:n #1 { \skip_use:c { c_@@_ #1 _skip } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_name:nn}
+% 根据变量名调用名称信息，可调整字符格式
+%    \begin{macrocode}
+\cs_new:Npn \@@_name:nn #1#2
+  { \group_begin: \@@_fmt:n {#1} \@@_name:n {#2} \group_end: }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\normalsize}
+% 正文小四号（12bp）字，行距为固定值 20 bp。
+% 其他字号的行距按照相同的比例设置。
+%
+% 注意重定义 \cs{normalsize} 应在 \pkg{unicode-math} 的 \cs{setmathfont} 前。
+%
+% 表达式行的行距为单倍行距，段前空 6 磅，段后空 6 磅。
+%
+% \cs{small} 等其他命令通常用于表格等环境中，这部分要求单倍行距，与正文的字号-行距比例不同，
+% 所以保留默认的 1.2 倍字号的行距，作为单倍行距在英文（1.15 倍字号）和中文（1.3倍字号）
+% 两种情况的折衷。
+%    \begin{macrocode}
+\RenewDocumentCommand \normalsize { }
+  {
+    \@setfontsize \normalsize { 12 bp } { 20 bp }
+    \abovedisplayskip 6bp
+    \abovedisplayshortskip 6bp
+    \belowdisplayshortskip 6bp
+    \belowdisplayskip \abovedisplayskip
+  }
+\normalsize
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_fontsize:nnn}
+% 用于设置字号的辅助函数。\pkg{ctex} 默认使用的行距是 1.2，我们在这里重新计算
+% \tn{baselineskip}，抛弃 \cs{l__ctex_font_size_tl} 中的第二个值。
+%    \begin{macrocode}
+\cs_new:Npn \@@_fontsize:nnn #1#2#3
+  { \fontsize { #1 } { \fp_to_decimal:n { #3 * #1 } } \selectfont }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_zihao:nn,\@@_zihao:n}
+% 设置字号，类似于 \cs{ctex_zihao:n}。
+% \begin{arguments}
+%   \item 行距倍数
+%   \item 字号值，同 \tn{zihao}
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new:Npn \@@_zihao:nn #1#2
+  {
+    \prop_get:NnNTF \c__ctex_font_size_prop { #2 } \l__ctex_font_size_tl
+      { \exp_after:wN \@@_fontsize:nnn \l__ctex_font_size_tl { #1 } }
+      { \msg_error:nnn { ctex } { fontsize } { #2 } }
+  }
+%    \end{macrocode}
+% 默认行距倍数为 1.3。
+%    \begin{macrocode}
+\cs_new:Npn \@@_zihao:n { \@@_zihao:nn { 1.3 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\cs_new:Npo}
+% \begin{macro}{\@@_set_ccglue:N}
+% 调整间距。由于涉及载入 \cls{ctexbook} 后才能生效的 \pkg{xeCJK} 或 \pkg{luatexja}
+% 的内部命令，我们只展开一次完成引擎判断，而不用 \exp{x} 型全部展开。
+%    \begin{macrocode}
+\cs_generate_variant:Nn \cs_new:Npn { Npo }
+\cs_new:Npo \@@_set_ccglue:N #1
+  {
+    \sys_if_engine_xetex:TF
+      { \skip_set:Nn \l__ctex_ccglue_skip { #1 } }
+      { \ltjsetparameter { kanjiskip = { #1 } } }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_to_wd:nn}
+% 水平盒子。
+%    \begin{macrocode}
+\cs_new:Npn \@@_box_to_wd:nn
+  { \mode_leave_vertical: \hbox_to_wd:nn }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_ss:nn,\@@_box_ss:nv}
+% 分散对齐的水平盒子，实现方法是在每个字符间插入 \tn{hss}。
+% 在内容宽度不足时拉伸间距，在内容宽度超出时压缩间距。
+%    \begin{macrocode}
+\cs_new:Npn \@@_box_ss:nn #1#2
+  {
+    \group_begin:
+      \@@_set_ccglue:N \c_@@_ss_skip
+      \@@_box_to_wd:nn { #1 } { #2 }
+    \group_end:
+  }
+\cs_generate_variant:Nn \@@_box_ss:nn { nv }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_st:nn}
+% 分散对齐的水平盒子，额外添加了用来收缩的 glue，
+% 通过二阶无穷大的 fill 来使超宽时右侧优先溢出。
+%    \begin{macrocode}
+\cs_new:Npn \@@_box_st:nn #1#2
+  { \@@_box_ss:nn { #1 } { #2 \skip_horizontal:N \c_@@_sh_skip } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_center:nn}
+% 居中对齐的水平盒子。
+%    \begin{macrocode}
+\cs_new:Npn \@@_box_center:nn #1#2
+  { \@@_box_to_wd:nn { #1 } { \tex_hss:D #2 \tex_hss:D } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_left:Nn}
+% 左对齐的水平盒子。
+%    \begin{macrocode}
+\cs_new:Npn \@@_box_left:nn #1#2
+  { \@@_box_to_wd:nn { #1 } { #2 \tex_hss:D } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_uline:n}
+% 指定宽度的下划线。
+% \begin{arguments}
+%   \item 宽度，|dim| 型变量
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new:Npn \@@_uline:n #1
+  {
+    \mode_leave_vertical:
+    \rule [ \c_@@_ruledp_dim ] { #1 } { \c_@@_ruleht_dim }
+    \skip_horizontal:n { -#1 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_ulined:nn,\@@_box_ulined:nv}
+% 带有下划线的水平盒子。
+% \begin{arguments}
+%   \item 宽度，|dim| 型变量
+%   \item 内容，可带有格式
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new:Npn \@@_box_ulined:nn #1#2
+  { \@@_uline:n { #1 } \@@_box_center:nn { #1 } { #2 } }
+\cs_generate_variant:Nn \@@_box_ulined:nn { nv }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_get_width:Nn,\@@_get_width:NV,\@@_get_width:Nv}
+% ^^A 来自 fduthesis
+% 获取文本宽度。
+% \begin{arguments}
+%   \item 存储宽度的 |dim| 型变量
+%   \item 文本
+% \end{arguments}
+% 将内容放入 \tn{hbox} 后读取其宽度，存入 |dim| 型变量。
+%    \begin{macrocode}
+\cs_new:Npn \@@_get_width:Nn #1#2
+  {
+    \hbox_set:Nn \l_@@_tmpa_box { #2 }
+    \dim_set:Nn #1 { \box_wd:N \l_@@_tmpa_box }
+  }
+\cs_generate_variant:Nn \@@_get_width:Nn { NV }
+\cs_generate_variant:Nn \@@_get_width:Nn { Nv }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_get_max_width:Nn,\@@_get_max_info_width:NN}
+% ^^A 来自 fduthesis，调整了实现方法
+% 获取多个文本中的最大宽度，并存入 |dim| 型变量。
+% 本模板中此函数仅用于处理 |info| 类型文本变量、
+% \begin{arguments}
+%   \item |dim| 型变量
+%   \item 文本 |clist|
+% \end{arguments}
+% 当 \cs{l_@@_tmp_clist} 非空时，弹出最后一个元素赋给 \cs{l_@@_tmpa_tl}，
+% 获取其长度后与 |#1| 进行比较，二者中较大的那一个将成为 |#1| 的新值。
+% 不断循环，直至 \cs{l_@@_tmp_clist} 为空。
+%    \begin{macrocode}
+\cs_new:Npn \@@_get_max_width:NNn #1#2#3
+  {
+    \clist_map_inline:Nn #2
+      {
+        \@@_get_width:Nv \l_@@_tmp_skip { #3 }
+        \dim_gset:Nn #1 { \dim_max:nn { #1 } { \l_@@_tmp_skip } }
+      }
+  }
+\cs_new:Npn \@@_get_max_info_width:NN #1#2
+  { \@@_get_max_width:NNn #1 #2 { g_@@_info_ ##1 _tl } }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_datea:n,\@@_dateb:n}
+% 从 ISO 格式的日期字符串生成中英文日期文本。
+% 对于每种类型的模板，实际上只有两种日期格式。我们利用 DocStrip 进行分别定义。
+% \begin{description}
+%   \item[本科生] 2023年1月1日
+%   \item[研究生] 二〇二三年一月、January, 2023
+%   \item[博士后] 2023年1月1日、2023年1月
+% \end{description}
+%    \begin{macrocode}
+%</class>
+%<*(def-u|def-g|def-p)>
+\cs_new:Npn \@@_datea:n #1
+  {
+%<def-u|def-p>    \@@_date_ymd_zh:www #1 \q_stop
+%<def-g>    \@@_date_ym_zh:www  #1 \q_stop
+  }
+\cs_new:Npn \@@_dateb:n #1
+  {
+%<def-g>    \@@_date_ym_en:www  #1 \q_stop
+%<def-p>    \@@_date_ym_zh:www  #1 \q_stop
+  }
+%    \end{macrocode}
+% 为了将 \typ{tokenlist} 型变量直接传入 \exp{www} 型参数，需要提前进行展开。
+%    \begin{macrocode}
+\cs_generate_variant:Nn \@@_datea:n { V }
+\cs_generate_variant:Nn \@@_dateb:n { V }
+%</(def-u|def-g|def-p)>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_zhdigits:nn}
+% 输出数字加年月日。
+%    \begin{macrocode}
+%<*(def-g|def-p)>
+\cs_new:Npn \@@_zhdigits:nn #1#2
+  {
+%<def-g>    \zhnum_digits_null:n
+      { \int_to_arabic:n { #1 } } \zhnum_output:n { #2 }
+  }
+%</(def-g|def-p)>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_date_ym_zh:www,\@@_date_ymd_zh:www,\@@_date_ym_en:www}
+% 将形如 |yyyy-mm-dd| 的 ISO 日期格式字符串转化为日期表示。
+% 该格式符合国际标准 ISO 8601 以及国内标准 GB/T 7408--2005
+% 《数据元和交换格式 信息交换 日期和时间表示法》。
+% \begin{arguments}
+%   \item 年份
+%   \item 月份
+%   \item 日期
+% \end{arguments}
+% 中文日期字样通过封装 \pkg{zhnumber} 的内部函数实现，默认使用阿拉伯数字表示，
+% 可以通过该宏包提供的 |\zhnumsetup{time=Chinese}| 来使用中文数字；
+% 英文日期字样用于研究生英文封面，格式为 \meta{月份缩写}~\meta{日},~\meta{年}。
+% 其中，变量类型 |w| 表明参数符合特定语法格式，其参数必须经过完全展开。
+%    \begin{macrocode}
+%<*class>
+\cs_new:Npn \@@_date_ym_zh:www #1-#2-#3 \q_stop
+  {
+    \@@_zhdigits:nn { #1 } { year  }
+    \@@_zhdigits:nn { #2 } { month }
+  }
+\cs_new:Npn \@@_date_ymd_zh:www #1-#2-#3 \q_stop
+  { \__zhnum_date_aux:nnn { #1 } { #2 } { #3 } }
+\cs_new:Npn \@@_date_ym_en:www #1-#2-#3 \q_stop
+  { \clist_item:Nn \c_@@_name_month_en_clist { #2 } , ~#1  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_at_begin_document:n}
+% 封装 \LaTeX{} 的钩子管理机制，等效于 \tn{AtBeginDocument}。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_at_begin_document:n #1
+  { \hook_gput_next_code:nn { begin document } { #1 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cs_clear:N}
+% 清空命令。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cs_clear:N #1
+  { \cs_set_eq:NN #1 \prg_do_nothing: }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_msg:nn}
+% 简化提示信息的创建。
+%    \begin{macrocode}
+\cs_new:Npn \@@_msg:nn { \msg_new:nnn { thuthesis3 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{封面相关}
+%
+% \begin{macro}{\@@_name_gset_eq:nn}
+%    \begin{macrocode}
+\cs_set_protected:Npn \@@_name_gset_eq:nn #1#2
+  { \tl_gset_eq:cc { c_@@_name_ #1 _tl } { c_@@_name_ #2 _tl } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_switch_name:}
+% 研究生封面上切换名称常量。
+%    \begin{macrocode}
+\cs_set_protected:Npn \@@_switch_name:
+  {
+%    \end{macrocode}
+% 学术型学位封面为“研究生”，专业型学位封面为“申请人”。
+%    \begin{macrocode}
+    \int_compare:nF { \g_@@_info_dtype_int = 1 }
+      { \@@_name_gset_eq:nn { author } { author a } }
+%    \end{macrocode}
+% 专业型学位硕士封面没有 \opt{info/discip} 项。
+%    \begin{macrocode}
+    \int_compare:nT { \g_@@_info_dtype_int = 2 }
+      { \tl_gclear:N \g_@@_info_discip_tl }
+%    \end{macrocode}
+% 博士封面为“申请人”，硕士封面为“研究生”。
+%    \begin{macrocode}
+    \int_compare:nTF { \g_@@_info_type_int = 1 }
+      { \@@_name_gset_eq:nn { supv c } { supv d } }
+      {
+%    \end{macrocode}
+% 学术型硕士封面为“学科”，工程硕士封面为“工程领域”。
+%    \begin{macrocode}
+        \int_compare:nT { \g_@@_info_dtype_int = 3 }
+          { \@@_name_gset_eq:nn { discip } { discip a } }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_format_name:}
+%    \begin{macrocode}
+\cs_set_protected:Npn \@@_format_name:NNn #1#2#3
+  {
+    \tl_set_eq:NN #2 #1
+    \tl_set:Nx #1 { \@@_box_st:nn { #3 } { #2 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_format_author:}
+%    \begin{macrocode}
+\cs_set_protected:Npn \@@_format_author:
+  {
+    \@@_format_name:NNn \g_@@_info_author_tl \l_@@_tmpa_tl
+      { \c_@@_cnamewda_dim }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_format_supv:}
+%    \begin{macrocode}
+\cs_set_protected:Npn \@@_format_supv:
+  { \clist_map_inline:nn { a, b, c } { \@@_format_supv_aux:n { ##1 } } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_format_supv_aux:n}
+% 辅助函数。
+%    \begin{macrocode}
+\cs_set:Npn \@@_format_supv_aux:n #1
+  {
+    \clist_set_eq:Nc \l_@@_tmp_clist { g_@@_info_supv #1 _clist }
+    \clist_if_empty:NTF \l_@@_tmp_clist
+      { \tl_gclear_new:c { g_@@_info_supv #1 _tl } }
+      {
+        \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpa_tl
+        \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpb_tl
+        \tl_gset:cx { g_@@_info_supv #1 _tl }
+          {
+            \@@_box_st:nn { \c_@@_cnamewda_dim } { \l_@@_tmpa_tl }
+            \skip_horizontal:N \c_@@_cnamewdb_dim
+            \@@_box_st:nn { \c_@@_cnamewdc_dim } { \l_@@_tmpb_tl }
+          }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_info:}
+% 封面信息栏。
+% \begin{arguments}
+%   \item 条目
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_info:
+  { \@@_cover_info_aux:NN \c_@@_name_coveritem_clist \l_@@_tmp_clist }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_info:}
+% 更新封面信息栏的条目列表。
+% \begin{arguments}
+%   \item 原有的条目列表
+%   \item 更新的条目列表
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_info_aux:NN #1#2
+  {
+    \@@_format_author:
+    \@@_format_supv:
+    \clist_clear:N #2
+    \clist_map_inline:Nn #1
+      {
+        \tl_if_empty:cF { g_@@_info_ ##1 _tl }
+          { \clist_put_right:Nn #2 { ##1 } }
+      }
+    \@@_cover_info_aux:N #2
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_info_aux:N}
+% 绘制封面信息栏的辅助函数。
+% \begin{arguments}
+%   \item 条目列表
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_info_aux:N #1
+  {
+    \clist_if_in:NnF #1 { supvc }
+      { \dim_gset_eq:NN \c_@@_clabelwd_dim \c_@@_clabelwda_dim }
+    \@@_get_max_info_width:NN \l_@@_tmpb_dim #1
+    \dim_set_eq:NN \tex_baselineskip:D \c_@@_clineskip_dim
+    \clist_map_inline:Nn #1
+      {
+        \@@_box_ss:nn   { \c_@@_clabelwd_dim } { \@@_name:n { ##1 }  }
+        \@@_box_left:nn { \c_@@_ccolonwd_dim } { \c_@@_name_colon_tl }
+        \@@_box_left:nn { \l_@@_tmpb_dim     } { \@@_info:n { ##1 }  }
+        \tex_par:D
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{摘要相关}
+%
+% \begin{macro}{\@@_abs_bookmark:nn,\@@_abs_bookmark:Vn}
+% 生成摘要的目录条目。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_abs_bookmark:nn #1#2
+  {
+    \phantomsection
+    \@@_bookmark:Nnn \g_@@_abs_showentry_bool {#1} {#2}
+    \@@_chapter_header:n { #1 }
+  }
+\cs_generate_variant:Nn \@@_abs_bookmark:nn { Vn }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{页面对象}
+%
+% 本模板使用 \pkg{xtemplate} 提供的面向对象方法简化封面和摘要的绘制过程。
+%
+% 以下分别从页面元素（element）和页面整体（page）的层次进行了抽象。
+% 当我们把页面部件考虑为一个对象时，它天然地只具备有限数量的属性：
+% 内容、格式、边距、对齐方式等。而具体的页面是这些对象的实例的集合，
+% 附加边距、行距等属性，创建页面只需传入一个列表调用各个 Instance
+% 即可。通过 \pkg{xtemplate} 提供的功能，我们可以根据这些属性创建模板
+% （template），进而能大量构建具有\emph{相似行为}的实例（instance）。
+% 这种做法能充分分离内容和样式，极大优化代码的可读性。
+%
+% 声明对象类型。此类对象不需要参数。
+%    \begin{macrocode}
+\DeclareObjectType { thu } { \c_zero_int }
+%    \end{macrocode}
+%
+% \subsubsection{元素模板}
+%
+%    \begin{macrocode}
+%<@@=thuelem>
+%    \end{macrocode}
+%
+% \begin{macro}{\@@_align:}
+% 声明元素模板接口。
+% 元素是一个页面的基本组成单位，包括文段、图片等等。
+% 一个抽象的元素应当具备以下属性：
+% \begin{description}
+%   \item[\opt{content}] 内容，即剥离样式的元素本身
+%   \item[\opt{format}] 格式，例如字号、字体
+%   \item[\opt{bottom-skip}] 下间距，即与下一个元素的距离
+%   \item[\opt{align}] 对齐方式，包括左对齐、右对齐、居中、正常段落
+% \end{description}
+%    \begin{macrocode}
+\DeclareTemplateInterface { thu } { element } { \c_zero_int }
+  {
+    content     : tokenlist = \c_empty_tl,
+    format      : tokenlist = \c_empty_tl,
+    bottom-skip : skip      = \c_zero_skip,
+    align       : choice { l, r, c, n } = c
+  }
+%    \end{macrocode}
+%
+% 声明元素模板代码。涉及的变量将被自动创建。
+%    \begin{macrocode}
+\DeclareTemplateCode { thu } { element } { \c_zero_int }
+  {
+    content     = \l_@@_content_tl,
+    format      = \l_@@_format_tl,
+    bottom-skip = \l_@@_bottom_skip,
+    align =
+      {
+        l = { \cs_set_eq:NN \@@_align: \raggedright },
+        r = { \cs_set_eq:NN \@@_align: \raggedleft  },
+        c = { \cs_set_eq:NN \@@_align: \centering   },
+        n = { \cs_set:Nn    \@@_align: { }          }
+      }
+  }
+  {
+    \AssignTemplateKeys
+    \group_begin:
+      \@@_align:
+      \l_@@_format_tl \l_@@_content_tl \tex_par:D
+    \group_end:
+    \__thu_vskip:N \l_@@_bottom_skip
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{页面模板}
+%
+%    \begin{macrocode}
+%<@@=thupage>
+%    \end{macrocode}
+%
+% \begin{macro}{\exp_args:NVV}
+%    \begin{macrocode}
+\exp_args_generate:n { NVV }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_bookmark:nn}
+% 声明页面模板接口。
+% 页面是元素的集合。一个抽象的页面应当具备以下属性：
+% \begin{description}
+%   \item[\opt{element}] 包含的元素，这里使用的是名称列表
+%   \item[\opt{prefix}] 元素名称前缀
+%   \item[\opt{geometry}] 页面尺寸
+%   \item[\opt{format}] 格式，例如行距
+%   \item[\opt{top-skip}] 上间距，即与页面顶部的距离
+%   \item[\opt{bottom-skip}] 下间距，即与页面底部的距离
+%   \item[\opt{bm-text}] PDF 书签名称
+%   \item[\opt{bm-name}] PDF 书签锚点名
+%   \item[\opt{bookmark}] 添加书签的类型，分别为目录条目、仅 PDF 书签、不显示。
+% \end{description}
+%    \begin{macrocode}
+\DeclareTemplateInterface { thu } { page } { \c_zero_int }
+  {
+    element     : commalist = \c_empty_clist,
+    prefix      : tokenlist = { },
+    format      : tokenlist = { },
+    geometry    : tokenlist = { },
+    bm-text     : tokenlist = { },
+    bm-name     : tokenlist = { },
+    bookmark    : choice { toc, pdf, none } = none,
+    top-skip    : skip      = \c_zero_skip,
+    bottom-skip : skip      = \c_zero_skip
+  }
+%    \end{macrocode}
+%
+% 声明页面模板代码。
+%    \begin{macrocode}
+\DeclareTemplateCode { thu } { page } { \c_zero_int }
+  {
+    element     = \l_@@_element_clist,
+    prefix      = \l_@@_prefix_tl,
+    format      = \l_@@_format_tl,
+    geometry    = \l_@@_geometry_tl,
+    bm-text     = \l_@@_bm_text_tl,
+    bm-name     = \l_@@_bm_name_tl,
+    bookmark    =
+      {
+        toc  = { \cs_set_eq:NN \@@_bookmark:nn \__thu_bookmark_toc:nn },
+        pdf  = { \cs_set_eq:NN \@@_bookmark:nn \__thu_bookmark_pdf:nn },
+        none = { \cs_set:Nn    \@@_bookmark:nn { } }
+      },
+    top-skip    = \l_@@_top_skip,
+    bottom-skip = \l_@@_bottom_skip
+  }
+  {
+    \AssignTemplateKeys
+    \clearpage
+    \tl_if_empty:NF \l_@@_geometry_tl
+      { \exp_args:NV \newgeometry \l_@@_geometry_tl }
+    \thispagestyle { empty }
+%    \end{macrocode}
+% 由于起始位置没有内容，\tn{vspace*} 会使第一个元素的位置与上边距有一定距离。
+%    \begin{macrocode}
+    \__thu_vskip:N \l_@@_top_skip
+    \exp_args:NVV \@@_bookmark:nn
+      \l_@@_bm_text_tl \l_@@_bm_name_tl
+    \group_begin:
+      \l_@@_format_tl
+      \clist_map_inline:Nn \l_@@_element_clist
+        { \UseInstance { thu } { \l_@@_prefix_tl ##1 } }
+    \group_end:
+    \restoregeometry
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{外部接口}
+%
+% \begin{macro}{\@@_declare_element:nn,\@@_declare_page:nn}
+% 封装 \pkg{xtemplate} 提供的函数，简化创建实例的过程。
+% \begin{arguments}
+%   \item 实例名称
+%   \item 参数列表
+% \end{arguments}
+%    \begin{macrocode}
+%<@@=thu>
+\cs_new:Npn \@@_declare_element:nn #1#2
+  { \DeclareInstance { thu } {#1} { element } {#2} }
+\cs_new:Npn \@@_declare_page:nn    #1#2
+  { \DeclareInstance { thu } {#1} { page    } {#2} }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{提示信息}
+%
+% 本节集中定义模板中的错误信息。
+%    \begin{macrocode}
+\@@_msg:nn { abs-title-too-long }
+  {
+    Your~ title~ seems~ too~ long~ to~ fit~ in~ two~ lines.\\
+    I~ have~ drawn~ additional~ lines~ to~ contain~ it,~
+    which~ will~ probably~ make~ your~ abstract~ page~
+    look~ slightly~ different~ from~ the~ standard.~
+    You~ can~ use~ the~ "abstract/title-style"~ key~
+    to~ disable~ this~ message.
+  }
+\@@_msg:nn { empty-theorem-type }
+  {
+    Empty~ theorem~ list~ to~ define.\\
+    The~ key~ "theorem/type"~ should~ not~ be~ left~ empty.
+  }
+\@@_msg:nn { load-config  }
+  { I~ am~ loading~ config~ file~ "#1". }
+\@@_msg:nn { missing-image }
+  {
+    You~ have~ not~ selected~ local~ files~
+    for~ emblem~ and~ name~ images.\\
+    It~ seems~ that~ you~ haven't~ fill~ in~ both~
+    "image/thu-emblem"~ and~ "image/thu-name",~ therefore
+    I~ am~ using~ the~ package~ "thuvisual"~ instead,~
+    which~ may~ slow~ down~ the~ compilation.
+  }
+\@@_msg:nn { missing-ntheorem }
+  {
+    "ntheorem"~ package~ not~ detected.\\
+    The~ functionality~ of~ built-in~ theorem~ settings~
+    requires~ loading~ the~ class~ with~ "ntheorem"~ option~
+    set~ to~ "true".
+  }
+\@@_msg:nn { missing-title }
+  {
+    Thesis~ title~ should~ not~ be~ left~ blank.\\
+    Please~ check~ whether~ you~ have~ fill~ in~
+    both Chinese~ and~ English~ titles.
+  }
+\@@_msg:nn { no-small-caps }
+  {
+    I~ am~ using~ TeX~ Gyre~ Termes~ as~ default~ Roman~ font.\\
+    This~ is~ because~ the~ "Times~ New~ Roman"~ font~ in~ your~
+    system~ does~ not~ embed~ glyphs~ for~ small~ capitals.~
+    You~ can~ ignore~ this~ warning~ if~ you~ do~ not~ need~
+    \string\textsc.~ For~ more~ information,~
+    please~ refer~ to~ section~ 3.2.6~ of~ the~ documentation.
+  }
+\@@_msg:nn { package-too-old }
+  {
+    Package~ "#1"~ is~ too~ old.\\
+    The~ "thuthesis3"~ class only~ supports~ "#1"~ with~
+    a~ version~ higher~ than~ v#2.~
+    Please~ update~ an~ up-to-date~ version~ of~ it~
+    using~ your~ TeX~ package~ manager~ or~ from~ CTAN.
+  }
+\@@_msg:nn { package-conflict }
+  {
+    The~ "#2"~ package~ is~ incompatible~ with~ "#1".\\
+    I~ have~ loaded~ "#1"~ by~ default.~ Maybe~ You~ should~
+    refer~ to~ section~ 4~ of~ the~ documentation.
+  }
+%    \end{macrocode}
+%
+%
+% \subsection{模板选项}
+%
+%    \begin{macrocode}
+\keys_define:nn { thu }
+  {
+%    \end{macrocode}
+%
+% \begin{macro}{degree}
+% 学位，默认为博士。
+%    \begin{macrocode}
+    degree             .choices:nn = { doctor, master, bachelor, postdoc }
+      { \int_gset_eq:NN \g_@@_info_type_int \l_keys_choice_int },
+    degree             .initial:n  = doctor,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{degree-type}
+% 研究生的学位类型，默认为学术学位。
+%    \begin{macrocode}
+    degree-type         .choices:nn = { academic, professional, engineer }
+    { \int_gset_eq:NN \g_@@_info_dtype_int \l_keys_choice_int },
+    degree-type             .initial:n  = academic,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{thesis-type}
+% 文档类型，默认为学位论文。
+%    \begin{macrocode}
+    thesis-type              .choice:,
+    thesis-type / thesis       .code:n  =
+      { \bool_set_false:N \g_@@_opt_proposal_bool },
+    thesis-type / proposal .code:n  =
+      { \bool_set_true:N  \g_@@_opt_proposal_bool },
+    thesis-type             .initial:n  = thesis,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{language}
+% 局部语言。
+%    \begin{macrocode}
+    language              .choice:,
+    language / chinese     .code:n  =
+      { \bool_set_true:N  \g_@@_opt_chinese_bool },
+    language / english      .code:n  =
+      { \bool_set_false:N \g_@@_opt_chinese_bool },
+    language             .initial:n  = chinese,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{main-language}
+% 主要语言。
+%    \begin{macrocode}
+    main-language              .choice:,
+    main-language / chinese     .code:n  =
+      { \bool_set_true:N  \g_@@_opt_chinese_bool },
+    main-language / english      .code:n  =
+      { \bool_set_false:N \g_@@_opt_chinese_bool },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{originality}
+% 原创性声明。
+%    \begin{macrocode}
+    originality         .tl_set:N  = \g_@@_path_originality_tl,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{copyright}
+% 使用授权书。
+%    \begin{macrocode}
+    copyright           .tl_set:N  = \g_@@_path_copyright_tl,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{output}
+% 输出模式。
+%    \begin{macrocode}
+    output             .choices:nn = { print, electronic }
+      { \tl_gset_eq:NN \g_@@_info_output_tl \l_keys_choice_tl },
+    output             .initial:n  = print,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{draft,\g_@@_opt_draft_bool}
+% 是否开启草稿模式（默认关闭）。
+%    \begin{macrocode}
+    draft            .bool_gset:N  = \g_@@_opt_draft_bool,
+    draft              .initial:n  = false,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{oneside,twoside}
+% 单双面模式（默认为双面）。
+%    \begin{macrocode}
+    oneside    .value_forbidden:n  = true,
+    twoside    .value_forbidden:n  = true,
+    oneside  .bool_gset_inverse:N  = \g_@@_opt_twoside_bool,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{anonymous}
+% \begin{macro}{\g_@@_opt_anon_bool}
+% 盲审模式。
+%    \begin{macrocode}
+    anonymous         .bool_set:N  = \g_@@_opt_anon_bool,
+    anonymous          .initial:n  = false,
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{latin-font,cjk-font}
+% 中英文字体选项。
+%    \begin{macrocode}
+    fontset         .choices:nn =
+      { windows, mac, fandol, ubuntu, none }
+      { \tl_set_eq:NN \g_@@_font_latin_tl \l_keys_choice_tl },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math-font}
+% 数学字体选项。
+% 由 \pkg{unicode-math} 指定 \XeTeX 和 \LuaTeX 下使用的数学字体。
+%    \begin{macrocode}
+    math-font          .choices:nn =
+      {
+        asana, cambria, fira, garamond, lm, libertinus, newcm,
+        stix, bonum, dejavu, pagella, schola, termes, xits, none
+      }
+      { \tl_set_eq:NN \g_@@_font_math_tl  \l_keys_choice_tl },
+    math-font          .initial:n  = xits,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{font-path}
+% 独立字体文件的路径。
+%    \begin{macrocode}
+    font-path             .code:n  =
+      {
+        \bool_set_true:N \g_@@_font_path_bool
+        \tl_set_eq:NN \g_@@_font_path_tl \l_keys_value_tl
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{config,\g_@@_config_clist}
+% 配置文件路径。
+%    \begin{macrocode}
+    config           .clist_set:N  = \g_@@_config_clist
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\g_@@_name_optional_pkg_clist}
+%    \begin{macrocode}
+\clist_new:N \g_@@_name_optional_pkg_clist
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_pkg_keys:nnn}
+% \begin{arguments}
+%   \item 宏包名
+%   \item 简写名称，一般为宏包使用的名空间
+%   \item 是否默认载入
+% \end{arguments}
+% 定义是否载入宏包的的文档类选项，以及相应的载入命令。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_pkg_keys:nnn #1#2#3
+  {
+    \keys_define:nn { thu }
+      {
+        #1 .bool_gset:c = { g_@@_opt_load_ #2 _bool },
+        #1   .initial:n = #3
+      }
+    \cs_new_protected:cpn { @@_loadpkg_ #2 : }
+      {
+        \bool_if:cT { g_@@_opt_load_ #2 _bool }
+          { \RequirePackage { #1 } }
+      }
+    \clist_put_right:Nn \g_@@_name_optional_pkg_clist {#1}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%   biblatex,
+%   cleveref,
+%   enumitem,
+%   footmisc,
+%   ntheorem,
+%   unicode-math,
+%   \g_@@_opt_load_blx_bool,
+%   \g_@@_opt_load_cref_bool,
+%   \g_@@_opt_load_nthm_bool,
+%   \g_@@_opt_load_enit_bool,
+%   \g_@@_opt_load_fm_bool,
+%   \g_@@_opt_load_um_bool,
+%   \@@_loadpkg_blx:,
+%   \@@_loadpkg_cref:,
+%   \@@_loadpkg_enit:,
+%   \@@_loadpkg_fm:,
+%   \@@_loadpkg_nthm:,
+%   \@@_loadpkg_um:}
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+    { biblatex       } { blx   } { true  },
+    { cleveref       } { cref  } { true  },
+    { ntheorem       } { nthm  } { true  },
+    { enumitem       } { enit  } { true  },
+    { footmisc       } { fm    } { true  },
+    { unicode-math   } { um    } { true  }
+  }
+  { \@@_define_pkg_keys:nnn #1 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{minimal}
+% 最小化模式，不载入进行功能拓展的额外宏包。
+%    \begin{macrocode}
+\keys_define:nn { thu }
+  {
+    minimal .value_forbidden:n = true,
+    minimal            .code:n =
+      {
+        \clist_map_inline:Nn \g_@@_name_optional_pkg_clist
+          { \keys_set:nn { thu } { ##1 = false } }
+        \keys_set:nn { thu } { math-font = none }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 获取输入的文档类选项。
+%    \begin{macrocode}
+\ProcessKeysOptions { thu }
+%    \end{macrocode}
+%
+% 处理单双面模式选项。
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_opt_twoside_bool
+  { \tl_const:Nn \c_@@_name_pagemode_tl { twoside } }
+  { \tl_const:Nn \c_@@_name_pagemode_tl { oneside } }
+%    \end{macrocode}
+%
+%
+% \subsection{用户接口}
+%
+% \begin{macro}{abstract, bib, image, footer, footnote, header,
+%   info, label-sep, listoffigures, listoftables,
+%   math, style, theorem, tableofcontents}
+% 定义模块名的元（meta）键值对。
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+    abstract, bib, image, footer, footnote, header,
+    info, label-sep, listoffigures, listoftables,
+    math, style, theorem, tableofcontents
+  }
+  { \keys_define:nn { thu } { #1 .meta:nn = { thu / #1 } {##1} } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_keys_set:nn}
+% 在开启盲审模式时，屏蔽被编入 \opt{anonymous} 分组的键值对输入。
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_opt_anon_bool
+  {
+    \cs_new:Npn \@@_keys_set:nn #1#2
+      { \keys_set_filter:nnn {#1} { anonymous } {#2} }
+  }
+  { \cs_new_eq:NN \@@_keys_set:nn \keys_set:nn }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\thusetup}
+% 定义设置接口。
+% \begin{arguments}
+%   \item 可选的键路径
+%   \item 设置项
+% \end{arguments}
+% \cls{thuthesis3} 的键值对设置一共三层：最外层为指示名空间的
+% \opt{thu}，第二层为上方设定的模块名称，最内层为具体设置项。
+% 在路径留空时，本接口仅使用最外层名空间，向下兼容旧版设置；
+% 在路径填入模块名时，第二个参数为键值对类型，可以减少一层缩进；
+% 在路径填入完整设置项时，第二个参数为具体的值。
+%    \begin{macrocode}
+\NewDocumentCommand \thusetup { o m }
+  {
+    \tl_if_novalue:nTF { #1 }
+      { \@@_keys_set:nn { thu } { #2 } }
+      {
+        \tl_if_in:nnTF { #1 } { / }
+          { \@@_keys_set:nn { thu } { #1 = {#2} } }
+          { \@@_keys_set:nn { thu  /  #1 } {#2}   }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \tn{thusetup} 仅能在导言区使用。
+%    \begin{macrocode}
+\@onlypreamble \thusetup
+%    \end{macrocode}
+%
+% \begin{macro}{\thusetformat}
+% 定义修改默认样式的接口。
+%    \begin{macrocode}
+\NewDocumentCommand \thusetformat { m m }
+  { \tl_gset:cn { c_@@_fmt_ #1 _tl } { #2 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\thusetlength,\thusetlength*}
+% 定义修改长度值的接口。可选星号表示修改弹性长度。
+%    \begin{macrocode}
+\NewDocumentCommand \thusetlength { s m m }
+  {
+    \bool_if:nTF { #1 }
+      { \skip_gset:cn { c_@@_ #2 _skip } { #3 } }
+      { \dim_gset:cn  { c_@@_ #2 _dim  } { #3 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\thusetname,\thusetname*,\thusettext,\thusettext*}
+% 定义修改固定文本的接口。
+%    \begin{macrocode}
+\NewDocumentCommand \thusetname { s m o m }
+  { \@@_set_tokenlist:nnnnn {#1} {#2} {#3} {#4} { name } }
+\NewDocumentCommand \thusettext { s m o m }
+  { \@@_set_tokenlist:nnnnn {#1} {#2} {#3} {#4} { text } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_set_tokenlist:nnnnn}
+% 用于修改名称、文字常量的辅助函数。
+% \begin{arguments}
+%   \item 是否含有可选星号，传入 |bool| 型变量
+%   \item 被修改变量名称
+%   \item 可选的变体，用字母标记
+%   \item 修改后的内容
+%   \item 类别，name 或者 text
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_set_tokenlist:nnnnn #1#2#3#4#5
+  {
+    \bool_if:nTF { #1 }
+      { \tl_set_eq:NN \l_@@_tmpb_tl \c_@@_name_suffix_en_tl }
+      { \tl_clear:N   \l_@@_tmpb_tl }
+    \tl_gset:cn { c_@@_ #5 _ #2 #3 \l_@@_tmpb_tl _tl } {#4}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{外部宏包}
+%
+% \subsubsection{默认选项}
+%
+% 将选项传入 \cls{ctexbook} 文档类。
+%    \begin{macrocode}
+\exp_args:Nx \PassOptionsToClass
+  {
+    a4paper,
+    UTF8,
+%    \end{macrocode}
+% 手动进行文档的汉化，以兼容中英文模式。
+%    \begin{macrocode}
+    scheme = plain,
+%    \end{macrocode}
+% 传入单双面模式选项。
+%    \begin{macrocode}
+    \c_@@_name_pagemode_tl,
+%    \end{macrocode}
+% 开启草稿模式后传入 |draft| 选项。
+%    \begin{macrocode}
+    \bool_if:NT \g_@@_opt_draft_bool { draft, }
+%    \end{macrocode}
+% 默认不载入任何字体，供本模板自行设置。
+%    \begin{macrocode}
+    fontset    = none,
+%    \end{macrocode}
+% 正文字号设置。
+%    \begin{macrocode}
+    zihao      = -4
+  }
+  { ctexbook }
+%    \end{macrocode}
+%
+% 传入各宏包选项。
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+%    \end{macrocode}
+% 隐藏 |does not contain script "CJK"| 警告。
+%    \begin{macrocode}
+    { quiet   } { xeCJK    },
+    { no-math } { fontspec },
+    { perpage } { footmisc },
+    { capitalise, nameinlink, noabbrev } { cleveref }
+  }
+  { \PassOptionsToPackage #1 }
+%    \end{macrocode}
+%
+% \subsubsection{载入文档类}
+%
+% 使用\pkg{ctexbook}作为基础文档类。
+%    \begin{macrocode}
+\LoadClass { ctexbook } [ 2018/04/01 ]
+%    \end{macrocode}
+%
+% \subsubsection{载入宏包}
+%
+%    \begin{macrocode}
+\@@_loadpkg_enit:
+\@@_loadpkg_fm:
+%    \end{macrocode}
+% 为保证 \pkg{cleveref} 在 \pkg{unicode-math}
+% 缺失的情况下也能正常工作，载入了 \pkg{amsmath}。
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_opt_load_um_bool
+  { \RequirePackage { unicode-math } }
+  { \RequirePackage { amsmath      } }
+%    \end{macrocode}
+%
+% 载入各种宏包。
+%    \begin{macrocode}
+\RequirePackage
+  {
+    geometry,
+    fancyhdr,
+    setspace,
+%    \end{macrocode}
+% 图片与表格。
+%    \begin{macrocode}
+    booktabs,
+    caption,
+    graphicx,
+%    \end{macrocode}
+% 按以下顺序加载两个关于引用的包。
+% \pkg{hyperref} 覆写了大量命令，因此需要在其他包最后载入。
+% 仅有 \pkg{cleveref} 需要在 \pkg{hyperref} 后载入，否则会报错。
+%    \begin{macrocode}
+    hyperref
+  }
+\@@_loadpkg_cref:
+%    \end{macrocode}
+%
+% \pkg{ntheorem} 依赖 \pkg{amsthm} 和 \pkg{thmmarks} 实现 QED 符号等功能。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_load_nthm_bool
+  {
+    \PassOptionsToPackage { amsmath, thmmarks, noconfig } { ntheorem }
+    \RequirePackage { ntheorem }
+  }
+%    \end{macrocode}
+%
+% 在双面模式下，使用 \pkg{emptypage} 清除空白页的页眉、页脚和页码。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_twoside_bool { \RequirePackage { emptypage } }
+%    \end{macrocode}
+%
+% \begin{macro}{\thuline}
+% 针对编译引擎，使用不同的宏包构建可以对中文正常换行的下划线命令。
+%    \begin{macrocode}
+\sys_if_engine_xetex:T
+  {
+    \RequirePackage { xeCJKfntef }
+    \NewDocumentCommand \thuline { m } { \CJKunderline{#1} }
+  }
+%    \end{macrocode}
+% \pkg{lua-ul} 中需要在结尾使用 \tn{null} 保护尾部空白。
+%    \begin{macrocode}
+\sys_if_engine_luatex:T
+  {
+    \RequirePackage { lua-ul }
+    \NewDocumentCommand \thuline { m } { \underLine{#1} \@@_null: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 使用 \pkg{pdfpages} 插入扫描件。
+%    \begin{macrocode}
+\bool_lazy_and:nnF
+  { \tl_if_empty_p:N \g_@@_path_copyright_tl   }
+  { \tl_if_empty_p:N \g_@@_path_originality_tl }
+  { \RequirePackage { pdfpages } }
+%    \end{macrocode}
+%
+% \subsubsection{检查宏包}
+%
+% \begin{macro}{\@@_if_pkg_loaded:nTF}
+% 等效于 \tn{IfPackageLoadedTF}。
+%    \begin{macrocode}
+% \prg_new_conditional:Npnn \@@_if_pkg_loaded:n #1 { T }
+%  { \@ifpackageloaded {#1} { \prg_return_true: } { \prg_return_false: } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_check_pkg_version:nnn}
+% 检查宏包版本是否过时。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_check_pkg_version:nnn #1#2#3
+  {
+    \@ifpackagelater {#1} {#2}
+      { } { \msg_error:nnnn { thuthesis3 } { package-too-old } {#1} {#3} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 检查绘制下划线所需的 \pkg{luatexja} 包版本。该宏包在 2021-09-18 的更新
+% 解决了下划线中断问题，然而在 2021-10-24 的更新才提供了正确的内嵌日期。
+%    \begin{macrocode}
+\sys_if_engine_luatex:T
+  { \@@_check_pkg_version:nnn { luatexja } { 2021/10/24 } { 20211024.0 } }
+%    \end{macrocode}
+%
+% \begin{macro}{\@@_check_pkg_conflict:nn}
+% 检查用户载入的宏包是否会与预置宏包发生冲突。
+% \begin{arguments}
+%   \item 模板载入的宏包
+%   \item 产生冲突的宏包
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_check_pkg_conflict:nn #1#2
+  {
+    \ctex_at_begin_package:nn { #2 }
+      { \msg_warning:nnnn { thuthesis3 } { package-conflict } {#1} {#2} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 检查数学宏包冲突。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_load_um_bool
+  {
+    \clist_map_inline:nn
+      {
+        amscd, amsfonts, amssymb, bbm, bm, eucal,
+        eufrak, mathrsfs, newtxmath, upgreek
+      }
+      { \@@_check_pkg_conflict:nn { unicode-math } { #1 } }
+  }
+%    \end{macrocode}
+%
+% \subsection{配置文件}
+%
+% \cls{thuthesis3} 包含三套区别较大的模板配置，分别适用于\emph{本科生}、
+% \emph{研究生}和\emph{博士后}。出于定义的简洁起见，本模板将其不同之处
+% 拆分为单独的参数配置文件，编译过程中将会根据导言区设置的类型选项，载
+% 入对应默认配置。注意，尽管在手册中封面、摘要、常量等的代码实现位于靠
+% 后部分，拆分后实际上是在此处载入运行的，务必要注意处理的逻辑顺序。
+%    \begin{macrocode}
+\exp_args:Nx \file_input:n
+  {
+    thuthesis3-
+    \int_case:nn { \g_@@_info_type_int }
+      {
+        { 1 } { graduate      }
+        { 2 } { graduate      }
+        { 3 } { undergraduate }
+        { 4 } { postdoctoral  }
+      }
+    .def
+  }
+%    \end{macrocode}
+%
+% 载入用户设置，可用于对模板做额外修改。
+%    \begin{macrocode}
+\clist_map_inline:Nn \g_@@_config_clist
+  {
+    \msg_info:nnn { thuthesis3 } { load-config } { #1 }
+    \file_input:n { #1 }
+  }
+%    \end{macrocode}
+%
+% 处理语言后缀。
+%    \begin{macrocode}
+\bool_if:NF \g_@@_opt_chinese_bool
+  { \@@_name_gset_eq: { suffix } { suffix_en } }
+%    \end{macrocode}
+%
+%
+% \subsection{个人信息}
+%
+%    \begin{macrocode}
+\keys_define:nn { thu / info }
+  {
+%    \end{macrocode}
+%
+% \begin{macro}{info/title,info/title*}
+% 题目。中文题目可使用 |\\| 手动断行。以下标注星号（|*|）的皆为对应的英文字段。
+%    \begin{macrocode}
+    title               .tl_set:N = \g_@@_info_title_tl           ,
+    title              .initial:n = { 空 }                        ,
+    title*              .tl_set:N = \g_@@_info_title_en_tl        ,
+    title*             .initial:n = { Empty }                     ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/keywords,info/keywords*}
+% 关键词列表。
+%    \begin{macrocode}
+    keywords         .clist_set:N = \g_@@_info_keywords_clist     ,
+    keywords*        .clist_set:N = \g_@@_info_keywords_en_clist  ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/author,info/author*}
+% 年级、学号、姓名。
+%    \begin{macrocode}
+    author              .tl_set:N = \g_@@_info_author_tl          ,
+    author*             .tl_set:N = \g_@@_info_author_en_tl       ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/student-id,info/author,info/author*}
+% 学号。
+%    \begin{macrocode}
+    student-id          .tl_set:N = \g_@@_info_stuid_tl           ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/department,info/department*}
+% 院系、专业、方向。
+%    \begin{macrocode}
+    department          .tl_set:N = \g_@@_info_dept_tl            ,
+    department*         .tl_set:N = \g_@@_info_dept_en_tl         ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/degree-name,info/degree-name*}
+% 。
+%    \begin{macrocode}
+    degree-name         .tl_set:N = \g_@@_info_degree_tl          ,
+    degree-name*        .tl_set:N = \g_@@_info_degree_en_tl       ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/discipline,info/discipline*}
+% 专业方向。
+%    \begin{macrocode}
+    discipline           .tl_set:N = \g_@@_info_discip_tl         ,
+    discipline*          .tl_set:N = \g_@@_info_discip_en_tl      ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/supervisor,info/supervisor*}
+% 导师信息。中文导师全称使用 |clist| 存储，便于进行分割。
+%    \begin{macrocode}
+    supervisor          .clist_set:N = \g_@@_info_supva_clist     ,
+    supervisor*            .tl_set:N = \g_@@_info_supva_en_tl     ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/associate-supervisor,info/associate-supervisor*}
+% 导师信息。
+%    \begin{macrocode}
+    associate-supervisor .clist_set:N = \g_@@_info_supvb_clist    ,
+    associate-supervisor*   .tl_set:N = \g_@@_info_supvb_en_tl    ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/co-supervisor,info/co-supervisor*}
+% 导师信息。
+%    \begin{macrocode}
+    co-supervisor       .clist_set:N = \g_@@_info_supvc_clist     ,
+    co-supervisor*         .tl_set:N = \g_@@_info_supvc_en_tl     ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/date}
+% 提交日期，初始值为编译当天日期。
+%    \begin{macrocode}
+    date         .tl_set:N = \g_@@_info_date_tl                   ,
+    date        .initial:V = \c_@@_today_tl                       ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/start-date,info/end-date}
+% 博士后课题开始日期和结束日期。
+%    \begin{macrocode}
+    start-date         .tl_set:N = \g_@@_info_startdate_tl        ,
+    start-date        .initial:V = \c_@@_today_tl                 ,
+    end-date           .tl_set:N = \g_@@_info_enddate_tl          ,
+    end-date          .initial:V = \c_@@_today_tl                 ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/secret-level,info/secret-level}
+% 。
+%    \begin{macrocode}
+    secret-level        .tl_set:N = \g_@@_info_secretlv_tl        ,
+    secret-year         .tl_set:N = \g_@@_info_secretyr_tl        ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{info/clc,info/udc,info/id,
+%  info/discipline-level-1,info/discipline-level-2}
+% 博士后封面相关信息，包括中国图书资料分类法》的类号、《国际十进制分类法
+% UDC》的类号、论文编号、一级学科名称、二级学科名称。
+%    \begin{macrocode}
+    clc                 .tl_set:N = \g_@@_info_clc_tl             ,
+    udc                 .tl_set:N = \g_@@_info_udc_tl             ,
+    id                  .tl_set:N = \g_@@_info_id_tl              ,
+    discipline-level-1  .tl_set:N = \g_@@_info_discipa_tl         ,
+    discipline-level-2  .tl_set:N = \g_@@_info_discipb_tl
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 将指定信息项归入 \opt{anonymous} 组，以在盲审模式下选择性屏蔽。
+%    \begin{macrocode}
+\clist_map_inline:Nn \c_@@_name_anon_clist
+  { \keys_define:nn { thu / info } { #1   .groups:n = { anonymous } } }
+\clist_map_inline:Nn \c_@@_name_anon_en_clist
+  { \keys_define:nn { thu / info } { #1 * .groups:n = { anonymous } } }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+%
+% 设置学位信息。该设置需要放在 \tn{ProcessKeysOptions} 命令后进行。
+%
+% \begin{variable}{\g_@@_info_type_tl}
+% 文档类型字样。
+%    \begin{macrocode}
+%<*def-g>
+\tl_new:N  \g_@@_info_type_tl
+\tl_set:Nx \g_@@_info_type_tl
+  { \clist_item:Nn \c_@@_name_type_clist { \g_@@_info_type_int } }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_info_type_en_tl}
+% 英文的学位字样。
+%    \begin{macrocode}
+\tl_new:N  \g_@@_info_type_en_tl
+\tl_set:Nx \g_@@_info_type_en_tl
+  { \clist_item:Nn \c_@@_name_type_en_clist { \g_@@_info_type_int } }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_info_degree_tl}
+% 学位类型字样。
+%    \begin{macrocode}
+%</def-g>
+%    \end{macrocode}
+% \end{variable}
+%
+% 盲审模式下抹去学校名称。
+%    \begin{macrocode}
+%<*class>
+\bool_if:NT \g_@@_opt_anon_bool
+  {
+    \tl_gclear:N \c_@@_name_thu_tl
+    \tl_gclear:N \c_@@_name_thu_en_tl
+  }
+%    \end{macrocode}
+%
+%
+% \subsection{字体设置}
+%
+% \pkg{fontspec} 包含于 \pkg{ctex} 宏集，无需另行载入。
+%
+% \subsubsection{操作系统检测}
+%
+% 调用 \pkg{ctex} 提供的操作系统检测。
+%    \begin{macrocode}
+\ctex_detect_platform:
+%    \end{macrocode}
+% 判断用户是否自定义了中英文字体。如果其中任意一种未被定义，
+% 则使用系统预装字体覆盖字体选项。
+% Windows 或 macOS 外的系统被判断为 Linux，一律使用自由字体。
+%    \begin{macrocode}
+\tl_if_empty:NT \g_@@_font_latin_tl
+  { \tl_gset_eq:NN \g_@@_font_latin_tl \g__ctex_fontset_tl }
+\tl_if_empty:NT \g_@@_font_cjk_tl
+  { \tl_gset_eq:NN \g_@@_font_cjk_tl   \g__ctex_fontset_tl }
+%    \end{macrocode}
+%
+%
+% \subsubsection{定义英文字库}
+%
+% 接下来逐个定义所需要使用的字库。
+%
+% \begin{macro}{\@@_loadfont_latin:n,
+%   \@@_loadfont_latin_win:,\@@_loadfont_latin_mac:}
+% Windows 与 macOS 西文字体的区别主要在于默认等宽字体。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_latin:n #1
+  {
+    \__fontspec_main_setmainfont:nn { } { Times~New~Roman }
+    \__fontspec_main_setsansfont:nn { } { Arial           }
+    \__fontspec_main_setmonofont:nn { Scale = MatchLowercase } { #1 }
+  }
+\cs_new_protected:Npn \@@_loadfont_latin_win:
+  { \@@_loadfont_latin:n { Courier~New } }
+\cs_new_protected:Npn \@@_loadfont_latin_mac:
+  {
+    \@@_loadfont_latin:n { Menlo }
+%    \end{macrocode}
+% 检测 Times New Roman 是否具有小型大写字母（small caps）字型。
+% 这是 macOS 预装的字体版本较旧导致的。
+%    \begin{macrocode}
+    \fontspec_if_small_caps:F
+  {
+        \msg_warning:nn { thuthesis3 } { no-small-caps }
+        \__fontspec_main_setmainfont:nn
+          { \c_@@_name_gyrefeature_clist } { texgyretermes }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_latin_gyre:}
+% 开源的 \TeX Gyre 西文字体。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_latin_gyre:
+  {
+    \__fontspec_main_setmainfont:nn
+      { \c_@@_name_gyrefeature_clist } { texgyretermes }
+    \__fontspec_main_setsansfont:nn
+      { \c_@@_name_gyrefeature_clist } { texgyreheros  }
+    \__fontspec_main_setmonofont:nn
+      {
+        \c_@@_name_gyrefeature_clist,
+        Scale     = MatchLowercase,
+        Ligatures = CommonOff
+      }
+      { texgyrecursor }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{variable}{\c_@@_name_gyrefeature_clist}
+% 用于 \pkg{fontspec} 的 \TeX Gyre 字体特性列表。
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_name_gyrefeature_clist
+      {
+        Extension      = .otf,
+        UprightFont    = *-regular,
+        BoldFont       = *-bold,
+        ItalicFont     = *-italic,
+        BoldItalicFont = *-bolditalic
+      }
+%    \end{macrocode}
+% \end{variable}
+%
+%
+% \subsubsection{定义中文字库}
+%
+% \begin{macro}{\@@_hide_no_script_msg:}
+% 隐藏 |does not contain script "CJK"| 警告。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_hide_no_script_msg:
+  { \msg_redirect_name:nnn { fontspec } { no-script } { info } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_cjk_win:}
+% Windows 中文字体。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_cjk_win:
+  {
+    \setCJKmainfont { SimSun   }
+      [ \c_@@_name_fakebold_tl, ItalicFont = KaiTi ]
+    \setCJKsansfont { SimHei   } [ \c_@@_name_fakebold_tl ]
+    \setCJKmonofont { FangSong } [ \c_@@_name_fakebold_tl ]
+    \setCJKfamilyfont { zhsong } { SimSun   } [ \c_@@_name_fakebold_tl ]
+    \setCJKfamilyfont { zhhei  } { SimHei   } [ \c_@@_name_fakebold_tl ]
+    \setCJKfamilyfont { zhfs   } { FangSong } [ \c_@@_name_fakebold_tl ]
+    \setCJKfamilyfont { zhkai  } { KaiTi    } [ \c_@@_name_fakebold_tl ]
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_loadfont_cjk_mac:}
+% macOS 字体。
+% ^^A TODO: 修复 macOS 字体支持，实现开箱即用。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_cjk_mac:
+  {
+    \@@_hide_no_script_msg:
+    \setCJKmainfont { Songti~SC~Light }
+      [
+        BoldFont       = Songti~SC~Bold,
+        ItalicFont     = Kaiti~SC,
+        BoldItalicFont = Kaiti~SC~Bold
+      ]
+    \setCJKsansfont { Heiti~SC~Light  } [ BoldFont = Heiti~SC~Medium ]
+    \setCJKmonofont { STFangsong      }
+    \setCJKfamilyfont { zhsong } { Songti~SC~Light } [ BoldFont = Songti~SC~Bold ]
+    \setCJKfamilyfont { zhhei  } { Heiti~SC~Light  } [ BoldFont = Heiti~SC~Medium ]
+    \setCJKfamilyfont { zhfs   } { STFangsong      }
+    \setCJKfamilyfont { zhkai  } { Kaiti~SC        } [ BoldFont = Kaiti~SC~Bold ]
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_cjk_fandol:}
+% Fandol 字体
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_cjk_fandol:
+  {
+    \@@_hide_no_script_msg:
+    \setCJKmainfont { FandolSong-Regular }
+      [
+        Extension  = .otf,
+        BoldFont   = FandolSong-Bold,
+        ItalicFont = FandolKai-Regular
+      ]
+    \setCJKsansfont { FandolHei-Regular  }
+      [
+        Extension = .otf,
+        BoldFont  = FandolHei-Bold
+      ]
+    \setCJKmonofont { FandolFang-Regular }
+      [ Extension = .otf ]
+    \setCJKfamilyfont { zhsong } { FandolSong-Regular }
+      [
+        Extension = .otf,
+        BoldFont  = FandolSong-Bold
+      ]
+    \setCJKfamilyfont { zhhei  } { FandolHei-Regular  }
+      [
+        Extension = .otf,
+        BoldFont  = FandolHei-Bold
+      ]
+    \setCJKfamilyfont { zhfs   } { FandolFang-Regular }
+      [ Extension = .otf ]
+    \setCJKfamilyfont { zhkai  } { FandolKai-Regular  }
+      [ Extension = .otf, \c_@@_name_fakebold_tl ]
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_loadfont_cjk_founder:}
+% 方正字库（简繁扩展）
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_cjk_founder:
+  {
+%    \end{macrocode}
+% 调整方正字体括号位置。
+% \footnote{\XeTeX 的调整方法来自 \url{https://www.zhihu.com/question/46241367/answer/101660183}。}
+%    \begin{macrocode}
+    \sys_if_engine_xetex:T
+      { \xeCJKEditPunctStyle {quanjiao} { optimize-kerning = true } }
+    \sys_if_engine_luatex:T
+      { \defaultCJKfontfeatures { JFM = { zh_CN/{quanjiao,fzpr} } } }
+    \setCJKmainfont { FZShuSong-Z01  }
+      [ BoldFont = FZXiaoBiaoSong-B05, ItalicFont = FZKai-Z03 ]
+    \setCJKsansfont { FZXiHeiI-Z08   } [ BoldFont = FZHei-B01 ]
+    \setCJKmonofont { FZFangSong-Z02 }
+    \setCJKfamilyfont { zhsong } { FZShuSong-Z01  }
+      [ BoldFont = FZXiaoBiaoSong-B05 ]
+    \setCJKfamilyfont { zhhei  } { FZHei-B01      }
+      [ \c_@@_name_fakebold_tl ]
+    \setCJKfamilyfont { zhkai  } { FZKai-Z03      }
+      [ \c_@@_name_fakebold_tl ]
+    \setCJKfamilyfont { zhfs   } { FZFangSong-Z02 }
+    \defaultCJKfontfeatures { }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_cjk_noto:}
+% Noto 思源字体。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_cjk_noto:
+  {
+    \setCJKmainfont [ \c_@@_name_notofeature_clist ]
+      { NotoSerifCJKsc }
+    \setCJKsansfont [ \c_@@_name_notofeature_clist ]
+      { NotoSansCJKsc  }
+    \setCJKmonofont { Noto~Sans~Mono~CJK~SC }
+    \setCJKfamilyfont { zhsong } { Noto~Serif~CJK~SC }
+    \setCJKfamilyfont { zhhei  } { Noto~Sans~CJK~SC  }
+    \setCJKfamilyfont { zhfs   } { FZFangSong-Z02    }
+    \setCJKfamilyfont { zhkai  } { FZKai-Z03         }
+      [AutoFakeBold=2.17]
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_cjk_source:}
+% Source Han 思源字体。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont_cjk_source:
+  {
+    \setCJKmainfont [ \c_@@_name_notofeature_clist ]
+      { SourceHanSerifSC }
+    \setCJKsansfont [ \c_@@_name_notofeature_clist ]
+      { SourceHanSansSC  }
+    \setCJKmonofont { FZFangSong-Z02 }
+    \setCJKfamilyfont { zhsong } { Source~Han~Serif~SC }
+    \setCJKfamilyfont { zhhei  } { Source~Han~Sans~SC  }
+    \setCJKfamilyfont { zhfs   } { FZFangSong-Z02      }
+    \setCJKfamilyfont { zhkai  } { FZKai-Z03           }
+      [ \c_@@_name_fakebold_tl ]
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{variable}{\c_@@_name_fakebold_tl}
+%    \begin{macrocode}
+\tl_const:Nn \c_@@_name_fakebold_tl { AutoFakeBold = 2.17 }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_name_notofeature_clist}
+% 用于 \pkg{fontspec} 的思源字体特性列表。
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_name_notofeature_clist
+  {
+    Extension          = .otf,
+    UprightFont        = *-Regular,
+    BoldFont           = *-Bold,
+    ItalicFont         = *-Regular,
+    BoldItalicFont     = *-Bold,
+    ItalicFeatures     = FakeSlant,
+    BoldItalicFeatures = FakeSlant
+  }
+%    \end{macrocode}
+% \end{variable}
+%
+%
+% \subsubsection{定义数学字库}
+%
+% \begin{macro}{\@@_define_math_font:nn}
+% 批量定义数学字体配置。
+%    \begin{macrocode}
+\cs_new:Npn \@@_define_math_font:nn #1#2
+  {
+    \cs_new:cpn { @@_loadfont_math_ #1 : }
+      { \__um_setmathfont:nn { } { #2 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%   \@@_loadfont_math_asana:,
+%   \@@_loadfont_math_fira:,
+%   \@@_loadfont_math_garamond:,
+%   \@@_loadfont_math_lm:,
+%   \@@_loadfont_math_libertinus:,
+%   \@@_loadfont_math_stix:,
+%   \@@_loadfont_math_bonum:,
+%   \@@_loadfont_math_dejavu:,
+%   \@@_loadfont_math_pagella:,
+%   \@@_loadfont_math_schola:,
+%   \@@_loadfont_math_termes:}
+% 批量定义若干数学字体的载入命令。
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+    { asana      } { Asana-Math.otf             },
+    { fira       } { FiraMath-Regular.otf       },
+    { garamond   } { Garamond-Math.otf          },
+    { lm         } { latinmodern-math.otf       },
+    { libertinus } { LibertinusMath-Regular.otf },
+    { stix       } { STIXMath-Regular.otf       },
+    { bonum      } { texgyrebonum-math.otf      },
+    { dejavu     } { texgyredejavu-math.otf     },
+    { pagella    } { texgyrepagella-math.otf    },
+    { schola     } { texgyreschola-math.otf     },
+    { termes     } { texgyretermes-math.otf     }
+  }
+  { \@@_define_math_font:nn #1 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_math_cambria:}
+% Cambria Math 字体配置。
+%    \begin{macrocode}
+\cs_new:Npn \@@_loadfont_math_cambria:
+  {
+    \bool_if:NTF \g_@@_font_path_bool
+      {
+        \__um_setmathfont:nn
+          { Path = \g_@@_font_path_tl/, FontIndex = 1 }
+          { cambria.ttc }
+      }
+      { \__um_setmathfont:nn { } { Cambria~Math } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_math_xits:}
+% XITS Math 字体。
+%    \begin{macrocode}
+\cs_new:Npn \@@_loadfont_math_xits:
+  {
+    \bool_if:NTF \g_@@_opt_math_int_bool
+      { \tl_set:Nn  \l_@@_tmpa_tl { 8 } }
+      { \tl_clear:N \l_@@_tmpa_tl       }
+    \__um_setmathfont:nn
+      {
+        Extension    = .otf,
+        StylisticSet = \l_@@_tmpa_tl,
+        BoldFont     = XITSMath-Bold
+      }
+      { XITSMath-Regular }
+    \__um_setmathfont:nn
+      {
+        Extension    = .otf,
+        StylisticSet = 1,
+        range        = {cal,bfcal}
+      }
+      { XITSMath-Regular }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_math_newcm:}
+% New Computer Modern Math 字体。
+%    \begin{macrocode}
+\cs_new:Npn \@@_loadfont_math_newcm:
+  {
+    \bool_if:NTF \g_@@_opt_math_int_bool
+      { \tl_set:Nn  \l_@@_tmpa_tl { 2 } }
+      { \tl_clear:N \l_@@_tmpa_tl       }
+    \__um_setmathfont:nn
+      {
+        Extension      = .otf,
+        StylisticSet   = \l_@@_tmpa_tl
+      }
+      { NewCMMath-Book }
+    \__um_setmathfont:nn
+      {
+        Extension      = .otf,
+        StylisticSet   = 1,
+        range          = {scr,bfscr}
+      }
+      { NewCMMath-Book }
+    \__fontspec_main_setmathrm:nn
+      {
+        Extension      = .otf,
+        UprightFont    = *-Book,
+        BoldFont       = *-Bold,
+        ItalicFont     = *-BookItalic,
+        BoldItalicFont = *-BoldItalic
+      }
+      { NewCM10 }
+    \__fontspec_main_setmathsf:nn
+      {
+        Extension      = .otf,
+        UprightFont    = *-Book,
+        BoldFont       = *-Bold,
+        ItalicFont     = *-BookOblique,
+        BoldItalicFont = *-BoldOblique
+      }
+      { NewCMSans10 }
+    \__fontspec_main_setmathtt:nn
+      {
+        Extension      = .otf,
+        UprightFont    = *-Book,
+        ItalicFont     = *-BookItalic,
+        BoldFont       = *-Bold,
+        BoldItalicFont = *-BoldOblique
+      }
+      { NewCMMono10 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_math_none:}
+% 不进行数学字体配置。
+%    \begin{macrocode}
+\@@_cs_clear:N \@@_loadfont_math_none:
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsubsection{载入指定字库}
+%
+% \begin{macro}{\@@_loadfont_latin_windows:
+%   \@@_loadfont_latin_fandol:,\@@_loadfont_cjk_windows:}
+% 为兼容 \pkg{ctex} 做出的名称改变。
+%    \begin{macrocode}
+\cs_new_eq:NN \@@_loadfont_latin_windows: \@@_loadfont_latin_win:
+\cs_new_eq:NN \@@_loadfont_latin_fandol:  \@@_loadfont_latin_gyre:
+\cs_new_eq:NN \@@_loadfont_cjk_windows:   \@@_loadfont_cjk_win:
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont:}
+% 载入字体命令。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_loadfont:
+  {
+    \use:c { @@_loadfont_latin_ \g_@@_font_latin_tl : }
+    \use:c { @@_loadfont_cjk_   \g_@@_font_cjk_tl   : }
+%    \end{macrocode}
+% 自行定义 \pkg{ctex} 中的四类字体命令。
+%    \begin{macrocode}
+    \NewDocumentCommand \songti   { } { \CJKfamily { zhsong } }
+    \NewDocumentCommand \heiti    { } { \CJKfamily { zhhei  } }
+    \NewDocumentCommand \fangsong { } { \CJKfamily { zhfs   } }
+    \NewDocumentCommand \kaishu   { } { \CJKfamily { zhkai  } }
+%    \end{macrocode}
+% \begin{macro}{\bigger}
+% 重定义字号命令。
+%    \begin{macrocode}
+    \NewDocumentCommand \bigger   { } { \ctex_zihao:n { 4   } }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% 载入设置的字体。^^A 为了吸收导言区的设置，放在其后载入。
+%    \begin{macrocode}
+% \BeforeBeginEnvironment { document } { \@@_loadfont: }
+\@@_loadfont:
+%    \end{macrocode}
+%
+%
+% \subsection{页面布局}
+%
+% \subsubsection{页面设置}
+% \label{sec:layout}
+%
+% 载入 \ref{subsubsec:constant-geometry} 的设置。
+%    \begin{macrocode}
+\exp_args:Nv \geometry { c_@@_geo_ \g_@@_info_output_tl _tl }
+%    \end{macrocode}
+%
+% 草稿模式下显示页面文字范围边界以及页眉、页脚线。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_draft_bool { \geometry { showframe } }
+%    \end{macrocode}
+%
+%
+% \subsubsection{页眉页脚}
+%
+% 提供设置页眉页脚的用户接口。在 \tn{fancyhead} 的可选参数中，
+% \opt{E} 和 \opt{O} 分别表示在偶数页（even）和奇数页（odd），
+% 而 \opt{L}、\opt{R} 和 \opt{C} 则分别表示左（left）、右
+% （right）和中间（center）。按照通常的排版规则，在双面模式下，
+% 偶数页的中间页眉文字在左，奇数页则在右。单面模式下，左右页眉都要显示。
+%    \begin{macrocode}
+\keys_define:nn { thu / header }
+  {
+%    \end{macrocode}
+%
+% \begin{macro}{header/content,header/content*}
+% 页眉内容，分别对应双面模式和单面模式。
+% 为了便于指定复杂的页眉样式，这里用 |clist| 存储位置和内容信息。
+%    \begin{macrocode}
+    content  .clist_gset:N = \g_@@_header_twoside_clist,
+    content* .clist_gset:N = \g_@@_header_oneside_clist,
+    content     .initial:n =
+      { { EL } { \leftmark  }, { OR } { \rightmark } },
+    content*    .initial:n =
+      { {  L } { \leftmark  }, {  R } { \rightmark } }
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+  }
+\keys_define:nn { thu / footer }
+  {
+%    \end{macrocode}
+% \begin{macro}{footer/content,footer/content*}
+% 页脚内容，同页眉。
+%    \begin{macrocode}
+    content  .clist_gset:N = \g_@@_footer_twoside_clist,
+    content* .clist_gset:N = \g_@@_footer_oneside_clist,
+    content     .initial:n = { { C } { \thepage } },
+    content*    .initial:n = { { C } { \thepage } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\g_@@_header_clist,\g_@@_footer_clist}
+% 存储页眉页脚内容。
+%    \begin{macrocode}
+\clist_new:N \g_@@_header_clist
+\clist_new:N \g_@@_footer_clist
+%    \end{macrocode}
+% \end{macro}
+%
+% 在导言区末尾确定页眉页脚内容。
+%    \begin{macrocode}
+\ctex_at_end_preamble:n
+  {
+    \clist_set_eq:Nc \g_@@_header_clist
+      { g_@@_header_ \c_@@_name_pagemode_tl _clist }
+    \clist_set_eq:Nc \g_@@_footer_clist
+      { g_@@_footer_ \c_@@_name_pagemode_tl _clist }
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{\@@_header:nn,\@@_footer:nn}
+% 对 \pkg{fancyhdr} 的命令进行包装，便于设置页眉页脚。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_header:nn #1#2
+  { \fancyhead [#1] { \c_@@_fmt_header_tl \nouppercase {#2} } }
+\cs_new_protected:Npn \@@_footer:nn #1#2
+  { \fancyfoot [#1] { \c_@@_fmt_footer_tl \nouppercase {#2} } }
+%    \end{macrocode}
+% \end{macro}
+%
+% 重定义 \pkg{fancyhdr} 的 \opt{plain} 样式，即本科生正文和部分特殊页面使用的
+% 页眉页脚样式。页眉无内容；页脚为居中的页码，使用五号新罗马体数字。
+% 标记页眉页脚横线宽度的变量并不属于 |dim| 类型，但是采取了该类型的格式。
+%    \begin{macrocode}
+\fancypagestyle { plain }
+  {
+    \fancyhf { }
+    \clist_map_inline:Nn \g_@@_footer_clist { \@@_footer:nn ##1 }
+    \tl_set:Nn \headrulewidth { \c_zero_dim }
+    \tl_set:Nn \footrulewidth { \c_zero_dim }
+  }
+%    \end{macrocode}
+%
+% 以 \opt{plain} 样式为基础的 \opt{headings} 样式，用于研究生模板。
+%    \begin{macrocode}
+\fancypagestyle { headings }
+  {
+    \fancyhf { }
+    \clist_if_empty:NTF \g_@@_header_clist
+      {
+        \tl_set:Nn \headrulewidth { \c_zero_dim }
+      }
+      {
+        \tl_set:Nn \headrulewidth { 0.4 pt }
+        \dim_set:Nn \headheight { 20 pt }
+        \clist_map_inline:Nn \g_@@_header_clist
+          { \@@_header:nn ##1 }
+      }
+    \clist_map_inline:Nn \g_@@_footer_clist { \@@_footer:nn ##1 }
+    \tl_set:Nn \footrulewidth { \c_zero_dim }
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{\frontmatter}
+% 重定义 \tn{frontmatter}，设置前言区默认的页码样式。
+%    \begin{macrocode}
+\RenewDocumentCommand \frontmatter { }
+  {
+    \cleardoublepage
+    \@mainmatterfalse
+    \pagenumbering { Roman }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\mainmatter}
+% 重定义 \tn{mainmatter}，在论文主体部分载入页面样式设置，
+% 使用阿拉伯数字重新进行页码编号。
+%    \begin{macrocode}
+\RenewDocumentCommand \mainmatter { }
+  {
+    \cleardoublepage
+    \@mainmattertrue
+    \pagenumbering { arabic }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 在文档起始位置设置默认页面样式。
+%    \begin{macrocode}
+\AtBeginEnvironment { document }
+  {
+    \exp_args:NV \pagestyle \c_@@_fmt_pagestyle_tl
+    \pagenumbering { Roman }
+  }
+%    \end{macrocode}
+%
+%
+% \subsection{章节标题格式}
+%
+% \begin{macro}{\@@_bookmark_toc:n,\@@_bookmark_toc:V}
+% 为无编号章添加目录条目，需手动指定格式为四号、不加粗、黑体。
+%    \begin{macrocode}
+\cs_new:Npn \@@_bookmark_toc:n #1
+  { \addcontentsline { toc } { chapter } { \c_@@_fmt_chapterintoc_tl #1 } }
+\cs_generate_variant:Nn \@@_bookmark_toc:n { V }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_bookmark_toc:nn}
+% 为了保持形式一致，进行封装。
+%    \begin{macrocode}
+\cs_new:Npn \@@_bookmark_toc:nn #1#2
+  { \phantomsection \_@@_bookmark_toc:n {#1} }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_bookmark_pdf_nosec:nn,\@@_bookmark_pdf:nn}
+% 封装 \pkg{hyperref} 的 PDF 书签命令。
+%    \begin{macrocode}
+\cs_new:Npn \@@_bookmark_pdf_nosec:nn #1#2
+  { \pdfbookmark [0] { #1 } { #2 } }
+\cs_new:Npn \@@_bookmark_pdf:nn #1#2
+  { \phantomsection \@@_bookmark_pdf_nosec:nn {#1} {#2} }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_bookmark:Nnn}
+% 书签。
+%    \begin{macrocode}
+\cs_new:Npn \@@_bookmark:Nnn #1#2#3
+  {
+    \bool_if:NTF #1
+      { \_@@_bookmark_toc:n        { #2 }        }
+      { \_@@_bookmark_pdf_nosec:nn { #2 } { #3 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_chapter:Nnn,\@@_chapter:cnn,\@@_chapter:n,\@@_chapter:V}
+% 含有目录和 PDF 标签的无编号章。
+%    \begin{macrocode}
+\cs_new:Npn \@@_chapter:Nnn #1#2#3
+  {
+    \chapter *           { #2 }
+    \@@_bookmark:Nnn #1  { #2 } { #3 }
+    \@@_chapter_header:n { #2 }
+  }
+\cs_new:Npn \@@_chapter:n #1
+  { \@@_chapter:Nnn \c_true_bool {#1} { } }
+\cs_generate_variant:Nn \@@_chapter:Nnn { cnn }
+\cs_generate_variant:Nn \@@_chapter:n   { V   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_chapter_header:n}
+% 单页模式下，目录、摘要、符号表等特殊页面的页眉中间为相应标题，左右为空。这里通
+% 过居中的 \tn{leftmark} 实现。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_chapter_header:n #1
+  {
+    \bool_if:NTF \g_@@_opt_twoside_bool
+      { \markboth { #1 } { #1 } }
+      { \markboth { \hfill #1 \hfill } { } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\thuchapter}
+% 封装无编号章环境，供用户在正文中使用。
+%    \begin{macrocode}
+\NewDocumentCommand \thuchapter { m } { \@@_chapter:n { #1 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% 全文首行缩进 2 字符，标点符号用全角。
+%    \begin{macrocode}
+\keys_set:nn { ctex } { punct = quanjiao }
+\bool_if:NTF \g_@@_opt_chinese_bool
+  { \keys_set:nn { ctex } { autoindent = 2 } }
+  { \keys_set:nn { ctex } { autoindent = \c_@@_indent_en_dim } }
+%    \end{macrocode}
+%
+%
+% 各级标题格式设置。
+% |\keys_set:nn{ctex}| 实际相当于 \tn{ctexset}。
+%    \begin{macrocode}
+\keys_set:nn { ctex / chapter }
+  {
+    nameformat   = {},
+    numberformat = {},
+    titleformat  = {},
+    fixskip      = true,
+    lofskip      = 0pt,
+    lotskip      = 0pt,
+  }
+\clist_map_inline:nn
+  { chapter, section, subsection, subsubsection, paragraph, subparagraph }
+  { \keys_set:nn { ctex } { #1 / afterindent = true } }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\keys_set:nn { ctex }
+  {
+    chapter        / beforeskip = \c_@@_chapterbefore_dim,
+    chapter        / afterskip  = \c_@@_chapterafter_dim,
+    chapter        / format     = \c_@@_fmt_chapter_tl,
+    section        / format     = \c_@@_fmt_section_tl,
+    subsection     / format     = \c_@@_fmt_subsection_tl,
+    subsubsection  / format     = \c_@@_fmt_subsubsection_tl,
+    paragraph      / format     = \c_@@_fmt_paragraph_tl,
+    subparagraph   / format     = \c_@@_fmt_subparagraph_tl,
+%    \end{macrocode}
+%
+%
+% \subsection{目录格式}
+%
+% 设置目录标题默认名称。
+%    \begin{macrocode}
+    contentsname   = \c_@@_name_tableofcontents_tl,
+    listfigurename = \c_@@_name_listoffigures_tl,
+    listtablename  = \c_@@_name_listoftables_tl,
+%    \end{macrocode}
+% 设置目录中章标题的样式。
+%    \begin{macrocode}
+    chapter / tocline = \c_@@_fmt_chapterintoc_tl \CTEXnumberline {#1} #2
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{\@@_make_toc:nn,\@@_make_toc:Vn}
+% 通过 group 内修改标题设置，将目录页标题格式单独设置为三号粗宋体。
+% 目录自身不出现在目录中时需特别处理。参考
+% \url{https://tex.stackexchange.com/a/1821}。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_make_toc:nn #1#2
+  {
+    \group_begin:
+      \keys_set:nn { ctex }
+        { chapter/format = \c_@@_fmt_toctitle_tl }
+      \@@_chapter:cnn { g_@@_ #2 _showentry_bool } {#1} {#2}
+    \group_end:
+    \@starttoc { #2 }
+  }
+\cs_generate_variant:Nn \@@_make_toc:nn { vn }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_toc_cmd:nnn}
+% 重定义目录命令，修改标题格式并插入书签。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_toc_cmd:nnn #1#2#3
+  {
+    \keys_define:nn { thu / #1 }
+      {
+        toc-entry  .bool_set:c = { g_@@_ #3 _showentry_bool },
+        toc-entry   .initial:n = true
+      }
+    \exp_args:Nc \RenewDocumentCommand { #1 } { }
+      { \@@_make_toc:vn { #2 name } { #3 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%   \tableofcontents,\listoffigures,\listoftables,
+%   tableofcontents/toc-entry,
+%   listoffigures/toc-entry,
+%   listoftables/toc-entry,
+%   \g_@@_toc_showentry_bool,
+%   \g_@@_lof_showentry_bool,
+%   \g_@@_lot_showentry_bool}
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+    { tableofcontents } { contents   } { toc },
+    { listoffigures   } { listfigure } { lof },
+    { listoftables    } { listtable  } { lot }
+  }
+  { \@@_define_toc_cmd:nnn #1 }
+%    \end{macrocode}
+% \end{macro}
+%
+% 如果不显示主目录的条目，则插图目录和表格目录一并不显示。
+%    \begin{macrocode}
+\ctex_at_end_preamble:n
+  {
+    \bool_if:NF \g_@@_toc_showentry_bool
+      {
+        \bool_set_false:N \g_@@_lof_showentry_bool
+        \bool_set_false:N \g_@@_lot_showentry_bool
+      }
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{tableofcontents/dotline}
+% 修改 \cls{book} 文档类中的命令以添加引导线。
+%    \begin{macrocode}
+\keys_define:nn { thu / tableofcontents }
+  {
+    dotline         .choice:,
+    dotline / chapter .code:n =
+      {
+        \cs_set_protected_nopar:Npn \l@chapter
+          {
+            \skip_vertical:N 1.0 em \@plus \p@ \scan_stop:
+            \@dottedtocline { \z@ } { \z@ } { 1.5 em }
+          }
+      },
+    dotline / section .code:n = { }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{参考文献}
+%
+% \begin{variable}{\g_@@_blx_option_clist}
+% 存储传入 \pkg{biblatex} 的选项列表。
+%    \begin{macrocode}
+\clist_new:N \g_@@_blx_option_clist
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_blx_resource_clist}
+% 存储参考文献数据源列表。
+%    \begin{macrocode}
+\clist_new:N \g_@@_blx_resource_clist
+%    \end{macrocode}
+% \end{variable}
+%
+%    \begin{macrocode}
+\keys_define:nn { thu / bib }
+  {
+%    \end{macrocode}
+%
+% \begin{macro}{bib/style}
+% 参考文献样式。国家标准为顺序编码制 \opt{numeric} 和著者-出版年制
+% \opt{author-year}，分别对应 \pkg{biblatex} 的 \opt{gb7714-2015}
+% 和 \opt{gb7714-2015ay} 样式。其余样式一律视作 \opt{unknown}。用户
+% 选取的样式会被加入选项列表中，以待传进 \pkg{biblatex} 宏包。
+%    \begin{macrocode}
+    style             .choice:,
+    style / numeric     .code:n =
+      {
+        \clist_gput_right:Nn \g_@@_blx_option_clist
+          { style = gb7714-2015      }
+      },
+    style / author-year .code:n =
+      {
+        \clist_gput_right:Nn \g_@@_blx_option_clist
+          { style = gb7714-2015ay    }
+      },
+    style / unknown     .code:n =
+      { \clist_gput_right:Nn \g_@@_blx_option_clist { style = #1 } },
+    style            .initial:n = numeric,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{bib/option}
+% 待传入 \pkg{biblatex} 的额外宏包选项，以列表形式储存。
+% 更为常见的参考文献样式设置已由 \opt{bib/style} 提供，
+% 两者中后传入的设置会覆盖已有的设定。本设置项等效于在导言区使用
+% |\PassoptionsToPackage{|\meta{key}|=|\meta{value}|}{biblatex}| 命令。
+%    \begin{macrocode}
+    option              .code:n =
+      {
+            \clist_gput_right:NV \g_@@_blx_option_clist
+              \l_keys_value_tl
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{bib/resource}
+% 参考文献数据源，以列表形式储存。
+%    \begin{macrocode}
+    resource            .code:n =
+      { \clist_gput_right:NV \g_@@_blx_resource_clist \l_keys_value_tl },
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\addbibresource}
+% 为了吸收用户在导言区设置的选项，\pkg{biblatex} 宏包被设置在导言区末尾才会载
+% 入。此处单独定义了可以在导言区使用的 \tn{addbibresource} 命令，用于兼容传统的
+% 添加参考文献数据源的方法。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_load_blx_bool
+  {
+    \NewDocumentCommand \addbibresource { m }
+      { \clist_gput_right:Nn \g_@@_blx_resource_clist { #1 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_blx_pre_setup:}
+% 载入 \pkg{biblatex} 宏包前，必须禁用自行定义的 \tn{addbibresource}
+% 命令，并传入用户设置的选项。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_blx_pre_setup:
+  {
+    \cs_undefine:N \addbibresource
+    \clist_gput_right:Nn \g_@@_blx_option_clist { backend = biber }
+    \exp_args:NV \PassOptionsToPackage \g_@@_blx_option_clist { biblatex }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_blx_post_setup:}
+% \pkg{biblatex} 宏包载入后的设置。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_blx_post_setup:
+  {
+%    \end{macrocode}
+% 修改参考文献的头部样式，自动添加目录条目。默认为 |chapter| 级别。
+% 如果需要在每章后附上一个参考文献表，即对 \pkg{biblatex} 传入了
+%  |refsection = chapter| 选项，则默认为 |section| 级别。
+%    \begin{macrocode}
+    \defbibheading { thubibintoc } [ \bibname ] { \@@_chapter:n { ##1 } }
+    \tl_if_eq:NnTF \blx@refsecreset@level { 2 }
+      { \DeclarePrintbibliographyDefaults { heading = subbibintoc } }
+      { \DeclarePrintbibliographyDefaults { heading = thubibintoc } }
+%    \end{macrocode}
+% 传入参考文献源文件，此时可正常使用 \tn{addbibresource} 命令。
+%    \begin{macrocode}
+    \clist_map_inline:Nn \g_@@_blx_resource_clist
+      { \addbibresource { ##1 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 使用 \pkg{etoolbox} 提供的 \tn{BeforeBeginEnvironment}，在 \env{document} 环境
+% 开始的钩子前载入 \pkg{biblatex} 并进行相关设置。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_load_blx_bool
+  {
+    \BeforeBeginEnvironment { document }
+      {
+        \@@_blx_pre_setup:
+        \RequirePackage { biblatex }
+        \@@_blx_post_setup:
+      }
+  }
+%    \end{macrocode}
+%
+%
+% \subsection{引用}
+%
+% 在导言区末尾进行 \pkg{hyperref} 设置。
+%    \begin{macrocode}
+\ctex_at_end_preamble:n
+  {
+%    \end{macrocode}
+% 忽略 PDF 字符串中的特定命令，从而抑制 \pkg{hyperref} 警告。
+%    \begin{macrocode}
+    \pdfstringdefDisableCommands
+      {
+        \clist_map_inline:nn
+          { \\, \quad, \qquad, \bigger }
+          { \@@_cs_clear:N #1 }
+      }
+    \hypersetup
+      {
+        bookmarksnumbered = true,
+        psdextra          = true,
+        unicode           = true,
+        hidelinks,
+%    \end{macrocode}
+% 填写 PDF 元信息。
+%    \begin{macrocode}
+        pdftitle    = \g_@@_info_title_tl,
+        pdfauthor   = \g_@@_info_author_tl,
+        pdfkeywords = \g_@@_info_keywords_clist,
+        pdfcreator  = \c_@@_name_pdfcreator_tl
+      }
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{\@@_cref_name:n}
+% 用于修改 \pkg{cleveref} 的标签名称的辅助函数。
+% \begin{arguments}
+%   \item 标签名
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cref_name:n #1
+  { \crefname {#1} { \@@_name:n {#1} } { \@@_name:n {#1} } }
+%    \end{macrocode}
+% \end{macro}
+%
+% 修改 \pkg{cleveref} 的标签格式。默认在名称后面添加空格，删除公式编号的括号。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_load_cref_bool
+  {
+    \crefdefaultlabelformat { #2#1#3\, }
+    \crefformat { equation      } { 公式~#2#1#3~   }
+    \crefformat { chapter       } { 第#2#1#3章     }
+    \crefformat { section       } { 第~#2#1#3~节   }
+    \crefformat { subsection    } { 第~#2#1#3~小节 }
+    \crefformat { subsubsection } { 第~#2#1#3~小节 }
+%    \end{macrocode}
+% 修改 \pkg{cleveref} 的标签名称。
+%    \begin{macrocode}
+    \clist_map_inline:nn { figure, table, appendix, proof }
+      { \@@_cref_name:n { #1 } }
+  }
+%    \end{macrocode}
+%
+%
+% \subsection{脚注}
+% ^^A 借鉴 fduthesis
+%
+% \begin{variable}{\g_@@_fn_ctext_option_clist}
+% 存储传入 \pkg{circledtext} 宏包的选项列表。
+% 由于当前版本放在编号位置的带圈数字无法正确缩放，这里手动指定了字体大小。
+%    \begin{macrocode}
+\clist_set:Nn \g_@@_fn_ctext_option_clist { charf = \scriptsize }
+%    \end{macrocode}
+% \end{variable}
+%
+%    \begin{macrocode}
+\keys_define:nn { thu / footnote }
+  {
+%    \end{macrocode}
+% \begin{macro}{footnote/style}
+% 脚注编号的样式。
+%    \begin{macrocode}
+    style .choices:nn = { plain, pifont, circled, circled* }
+      {
+        \int_case:nnF { \l_keys_choice_int }
+          {
+%    \end{macrocode}
+% \opt{pifont} 类型，用作对旧发行版的兼容选项。
+%    \begin{macrocode}
+            { 2 }
+              {
+                \RequirePackage { pifont }
+                \cs_set_eq:NN \@@_fn_number:N \@@_fn_number_pifont:N
+              }
+%    \end{macrocode}
+% \opt{circled} 类型，带星号的版本为阴文，需引入 \pkg{circledtext} 宏包。
+%    \begin{macrocode}
+            { 3 }
+              {
+                \RequirePackage { circledtext }
+                \cs_set:Npn \@@_fn_number:N
+                  { \@@_fn_number_circled:NV \c_false_bool }
+              }
+            { 4 }
+              {
+                \RequirePackage { circledtext }
+                \cs_set:Npn \@@_fn_number:N
+                  { \@@_fn_number_circled:NV \c_true_bool }
+              }
+          }
+%    \end{macrocode}
+% \opt{plain} 或未知类型直接使用计数器的值。
+%    \begin{macrocode}
+          { \cs_set_eq:NN \@@_fn_number:N \int_use:N }
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{footnote/circledtext-option}
+% \pkg{circledtext} 宏包选项。
+%    \begin{macrocode}
+    circledtext-option .code:n =
+      { \clist_gput_right:Nn \g_@@_fn_ctext_option_clist {#1} },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{footnote/hang}
+% 是否悬挂缩进。
+%    \begin{macrocode}
+    hang             .choice:,
+    hang / true        .code:n =
+      {
+        \cs_set:Npn \@@_fn_hang:
+          {
+            \int_set:Nn \tex_hangafter:D { 1 }
+            \dim_set_eq:NN \tex_hangindent:D \c_@@_fnhang_dim
+          }
+      },
+    hang / false       .code:n = { \@@_cs_clear:N \@@_fn_hang: },
+    hang            .initial:n = true
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_fn_number_pifont:N}
+% \opt{pifont} 选项提供的带圈数字。
+%    \begin{macrocode}
+\cs_new:Npn \@@_fn_number_pifont:N #1 { \ding { \int_eval:n { 171 + #1 } } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_fn_number_circled:Nn,\@@_fn_number_circled:NV}
+% \opt{circled} 选项提供的带圈数字。
+%    \begin{macrocode}
+\cs_generate_variant:Nn \__circledtext_handle:nn { Vn }
+\cs_new_protected:Npn \@@_fn_number_circled:Nn #1#2
+  {
+    \group_begin:
+      \bool_set_eq:NN \l__circledtext_negative_bool #1
+      \__circledtext_handle:Vn \g_@@_fn_ctext_option_clist { #2 }
+    \group_end:
+  }
+\cs_generate_variant:Nn \@@_fn_number_circled:Nn { NV }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_fn_number:N}
+% 脚注编号。默认使用计数器 |footnote| 的值。
+%    \begin{macrocode}
+\cs_new_eq:NN \@@_fn_number:N \int_use:N
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\thefootnote}
+% 重定义脚注编号。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_load_fm_bool
+  {
+    \cs_set:Npn \thefootnote { \@@_fn_number:N \c@footnote }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{整体样式}
+%
+% \begin{macro}[int]{\@makefntext}
+% 重定义内部脚注文字命令，使脚注编号不使用上标，宽度为 \qty{1.5}{em}
+% \footnote{\url{http://tex.stackexchange.com/q/19844},
+% \url{https://www.zhihu.com/question/53030087}}，
+% 并自行实现悬挂缩进。注意这个操作会使 \pkg{footmisc} 宏包内建的 \opt{hang} 选项失效。
+%    \begin{macrocode}
+    \cs_set:Npn \@makefntext #1
+      {
+        \mode_leave_vertical:
+        \hbox_to_wd:nn { \c_@@_fnhang_dim } { \@thefnmark \tex_hfil:D }
+        \tex_penalty:D \@M
+        \@@_fn_hang:
+        #1
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{图片表格}
+%
+% \begin{macro}{image/path}
+% 外置图片路径，等效于 \tn{graphicspath}。
+%    \begin{macrocode}
+\keys_define:nn { thu / image } { path .code:n = { \graphicspath {#1} } }
+%    \end{macrocode}
+% \end{macro}
+%
+% 设置默认图片扩展名，允许在不键入扩展名时自动进行补全。
+%    \begin{macrocode}
+\DeclareGraphicsExtensions { .pdf, .eps, .jpg, .png }
+%    \end{macrocode}
+%
+% 表格默认居中，字号设置为五号。^^A  https://www.zhihu.com/question/366803177/answer/977853129
+%    \begin{macrocode}
+\BeforeBeginEnvironment { tabular } { \centering \@@_zihao:n {5} }
+\ctex_at_end_package:nn { tabularray }
+  {
+%    \end{macrocode}
+% 等效于 \tn{UseTblrLibrary}、\tn{SetTblrInner} 与 \tn{SetTblrOuter}。
+%    \begin{macrocode}
+    \__tblr_use_lib_booktabs:
+    \tl_set:Nn \l_@@_tmpb_tl
+      { , abovesep = 4 pt, stretch  = 0.8, cells = { font = \small } }
+    \tl_put_right:NV \l__tblr_default_tblr_inner_tl     \l_@@_tmpb_tl
+    \tl_put_right:NV \l__tblr_default_talltblr_inner_tl \l_@@_tmpb_tl
+    \tl_put_right:Nn \l__tblr_default_talltblr_outer_tl { , headsep = -4 pt }
+%    \end{macrocode}
+% 处理 \env{talltblr} 表注的限宽问题。
+% \footnote{\url{https://github.com/lvjr/tabularray/issues/255}}
+%    \begin{macrocode}
+    \DefTblrTemplate { caption-tag } { default }
+      { \c_@@_name_table_tl \hspace { 0.25em } \thetable }
+    \DefTblrTemplate { caption-sep } { default } { \quad }
+    \DefTblrTemplate { firsthead   } { caption }
+      {
+        \makebox [ \tablewidth ]
+          { \parbox { \columnwidth } { \UseTblrTemplate {caption} {normal} } }
+      }
+    \SetTblrTemplate { firsthead   } { caption }
+    \SetTblrStyle { caption } { font = \normalfont \bfseries \small }
+    \SetTblrStyle { note    } { font = \normalfont \footnotesize    }
+  }
+%    \end{macrocode}
+%
+% 图表标题样式。文字设置为五号宋体，标签设置为粗体，间隔一个全角空格。
+%    \begin{macrocode}
+\DeclareCaptionStyle{thucap}
+  {
+    font          = small,
+    font         += bf,
+    labelsep      = quad,
+    justification = centering
+  }
+\captionsetup [ figure ] { style = thucap }
+\captionsetup [ table  ] { style = thucap }
+%    \end{macrocode}
+%
+% \begin{macro}{\ctex_patch_cmd:Nnn}
+%    \begin{macrocode}
+\cs_generate_variant:Nn \ctex_patch_cmd:Nnn { cnv }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{label-sep/figure,label-sep/table,label-sep/equation}
+% 修改图片、表格、公式编号中的连接符。
+% \footnote{\url{https://tex.stackexchange.com/q/61756/}}
+%    \begin{macrocode}
+\clist_map_inline:nn { figure, table, equation }
+  {
+    \keys_define:nn { thu / label-sep }
+      {
+        #1  .tl_set:c = { g_@@_sep_ #1 _tl },
+%    \end{macrocode}
+% 根据本科生撰写规范的建议，默认连接符为短横线（en dash）。
+%    \begin{macrocode}
+        #1 .initial:n = { - }
+      }
+    \@@_at_begin_document:n
+      { \ctex_patch_cmd:cnv { the #1 } {.} { g_@@_sep_ #1 _tl } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{列表环境}
+%
+% 缩减列表环境的条目间距。
+%    \begin{macrocode}
+\bool_if:NT \g_@@_opt_load_enit_bool { \setlist { noitemsep } }
+%    \end{macrocode}
+%
+%
+% \subsection{定理环境}
+%
+% \begin{macro}{\c_@@_name_qed_tl}
+% 证毕符号使用 \tn{mdlgwhtsquare} 绘制，对应于 |U+25A1| 字符。
+% \footnote{\url{https://tex.stackexchange.com/q/567135/}}
+% 如果 \pkg{unicode-math} 未载入，则使用黑色方块代替。
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_opt_load_um_bool
+  { \tl_const:Nn \c_@@_name_qed_tl { \ensuremath { \mdlgwhtsquare    } } }
+  { \tl_const:Nn \c_@@_name_qed_tl { \ensuremath { \rule {1ex} {1ex} } } }
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\keys_define:nn { thu / theorem }
+  {
+%    \end{macrocode}
+% \begin{macro}{theorem/style,theorem/header-font,theorem/body-font,
+%   theorem/qed-symbol,theorem/counter}
+% 定义 |thu/theorem| 键值类。^^A 这是否也可以抽象到 xtemplate？
+% 目前这套选项只适用于模板预定义的若干种定理环境。
+%    \begin{macrocode}
+    style           .tl_set:N = \l_@@_thm_style_tl,
+    header-font     .tl_set:N = \l_@@_thm_header_font_tl,
+    body-font       .tl_set:N = \l_@@_thm_body_font_tl,
+    qed-symbol      .tl_set:N = \l_@@_thm_qed_symbol_tl,
+    counter         .tl_set:N = \l_@@_thm_counter_tl,
+%    \end{macrocode}
+% 定理环境的缺省值。
+%    \begin{macrocode}
+    style          .initial:n = plain,
+    header-font    .initial:n = \normalfont \bfseries,
+    body-font      .initial:n = \itshape,
+    qed-symbol     .initial:V = \c_@@_name_qed_tl,
+    counter        .initial:n = chapter,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{theorem/type}
+% 定义定理类环境。
+%    \begin{macrocode}
+    type        .clist_gset:N = \g_@@_thm_type_clist,
+    type           .initial:n =
+      {
+        { axiom      } { 公理 },
+        { corollary  } { 推论 },
+        { definition } { 定义 },
+        { example    } { 例   },
+        { lemma      } { 引理 },
+        { proof, *+  } { 证明 },
+        { theorem    } { 定理 }
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{theorem/define}
+% 创建定理类环境。
+%    \begin{macrocode}
+    define .value_forbidden:n = true,
+    define            .code:n =
+      {
+        \clist_if_empty:NT \g_@@_thm_type_clist
+          { \msg_error:nn { thuthesis3 } { empty-theorem-type } }
+        \clist_map_inline:Nn \g_@@_thm_type_clist
+          { \@@_thm_define:nn ##1 }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_thm_define:nn}
+% 配置定理环境。
+% \begin{arguments}
+%   \item 环境名与类型标识，|clist| 型变量
+%   \item 定理头名称
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_thm_define:nn #1#2
+  {
+    \bool_if:NF \g_@@_opt_load_nthm_bool
+      { \msg_error:nn { thuthesis3 } { missing-ntheorem } }
+    \exp_args:NV \theoremstyle      \l_@@_thm_style_tl
+    \exp_args:NV \theoremheaderfont \l_@@_thm_header_font_tl
+    \exp_args:NV \theorembodyfont   \l_@@_thm_body_font_tl
+%    \end{macrocode}
+% 拆分环境名与类型标识。这里是考虑到标识符不一定出现在环境名中，
+% 典型如 \env{proof} 环境默认无编号但也不含星号。
+%    \begin{macrocode}
+    \clist_set:Nn \l_@@_tmp_clist { #1 }
+    \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpa_tl
+    \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpb_tl
+%    \end{macrocode}
+% 判断是否需要证毕符号或编号。
+%    \begin{macrocode}
+    \tl_if_in:NnT  \l_@@_tmpb_tl { + }
+      { \exp_args:NV \theoremsymbol \l_@@_thm_qed_symbol_tl }
+    \tl_if_in:NnTF \l_@@_tmpb_tl { * }
+      { \@@_thm_new:VVn \l_@@_tmpa_tl \c_novalue_tl        {#2} }
+      { \@@_thm_new:VVn \l_@@_tmpa_tl \l_@@_thm_counter_tl {#2} }
+    \bool_if:NT \g_@@_opt_load_cref_bool
+      { \crefname { \l_@@_tmpa_tl } {#2} {#2} }
+%    \end{macrocode}
+% 清除保存的证毕符号。
+%    \begin{macrocode}
+    \theoremsymbol { }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_thm_new:nnn,\@@_thm_new:VVn}
+% 包装 \tn{newtheorem} 以便展开输入的变量。根据 \file{interface3.pdf}
+% 手册 5.3 节最后一段建议的展开顺序，这里将 |V| 型参数放在靠前的位置。
+% \begin{arguments}
+%   \item 环境名
+%   \item 计数器名
+%   \item 头名称
+% \end{arguments}
+% 根据环境结束命令是否存在可以判断该环境是否有定义，
+% 相应地可以利用局部定义切换定义和重定义环境的命令。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_thm_new:nnn #1#2#3
+  {
+    \group_begin:
+      \cs_if_exist:cT { end #1 }
+        { \cs_set_eq:NN \newtheorem \renewtheorem }
+      \tl_if_novalue:nTF {#2}
+        { \newtheorem * {#1} {#3}      }
+        { \newtheorem   {#1} {#3} [#2] }
+    \group_end:
+  }
+\cs_generate_variant:Nn \@@_thm_new:nnn { VVn }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{公式样式}
+%
+% \begin{variable}{
+%   \g_@@_opt_math_re_bool,
+%   \g_@@_opt_math_int_bool,
+%   \g_@@_opt_math_leq_bool,
+%   \g_@@_opt_math_vec_bool}
+% 用于以下若干选项的 |bool| 变量。
+%    \begin{macrocode}
+\bool_new:N \g_@@_opt_math_re_bool
+\bool_new:N \g_@@_opt_math_int_bool
+\bool_new:N \g_@@_opt_math_leq_bool
+\bool_new:N \g_@@_opt_math_vec_bool
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_name_integral_tl}
+% 保存 \pkg{unicode-math} 内置的所有积分号命令。
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_opt_load_um_bool
+  { \tl_set_eq:NN \c_@@_name_integral_tl \l__um_nolimits_tl }
+  { \tl_set_eq:NN \c_@@_name_integral_tl \c_empty_tl        }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{macro}{\@@_um_setup:n}
+% 封装 \tn{unimathsetup}。
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_opt_load_um_bool
+  { \cs_new:Npn \@@_um_setup:n #1 { \keys_set:nn { unicode-math } {#1} } }
+  { \cs_new:Npn \@@_um_setup:n #1 { } }
+%    \end{macrocode}
+% \end{macro}
+%
+% ^^A 选项名称来自 thuthesis
+%    \begin{macrocode}
+\keys_define:nn { thu / math }
+  {
+%    \end{macrocode}
+% \begin{macro}{math/integral}
+% 积分号样式，直立或倾斜。
+%    \begin{macrocode}
+    integral                      .choice:,
+    integral / upright              .code:n  =
+      { \bool_set_true:N  \g_@@_opt_math_int_bool },
+    integral / slanted              .code:n  =
+      { \bool_set_false:N \g_@@_opt_math_int_bool },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/integral-limits}
+% 积分号上下限的位置，在上下或在右侧。
+% 两个选项分别相当于 \tn{removenolimits} 和 \tn{addnolimits}。
+%    \begin{macrocode}
+    integral-limits               .choice:,
+    integral-limits / true          .code:n  =
+      { \tl_clear:N   \l__um_nolimits_tl },
+    integral-limits / false         .code:n  =
+      { \tl_set_eq:NN \l__um_nolimits_tl \c_@@_name_integral_tl },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/less-than-or-equal}
+% 小于等于号和大于等于号的横线样式，倾斜或水平。
+%    \begin{macrocode}
+    less-than-or-equal            .choice:,
+    less-than-or-equal / slanted    .code:n  =
+      { \bool_set_true:N  \g_@@_opt_math_leq_bool },
+    less-than-or-equal / horizontal .code:n  =
+      { \bool_set_false:N \g_@@_opt_math_leq_bool },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/math-ellipsis}
+% 省略号的样式，居中或底部。
+%    \begin{macrocode}
+    math-ellipsis                 .choice:,
+    math-ellipsis / centered        .code:n  =
+      {
+        \DeclareRobustCommand \mathellipsis
+          { \mathinner { \unicodecdots    } }
+      },
+    math-ellipsis / lower           .code:n  =
+      {
+        \DeclareRobustCommand \mathellipsis
+          { \mathinner { \unicodeellipsis } }
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/partial}
+% 偏微分号样式，正体或斜体。
+%    \begin{macrocode}
+    partial                      .choices:nn =
+      { upright, italic } { \@@_um_setup:n { partial = #1 } },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/real-part}
+% 实部和虚部符号的样式，罗马体或花体。
+%    \begin{macrocode}
+    real-part                     .choice:,
+    real-part / roman               .code:n  =
+      { \bool_set_true:N  \g_@@_opt_math_re_bool },
+    real-part / fraktur             .code:n  =
+      { \bool_set_false:N \g_@@_opt_math_re_bool },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/vector}
+% 向量符号样式，粗斜体或箭头。
+%    \begin{macrocode}
+    vector                        .choice:,
+    vector / boldfont               .code:n  =
+      { \bool_set_true:N  \g_@@_opt_math_vec_bool },
+    vector / arrow                  .code:n  =
+      { \bool_set_false:N \g_@@_opt_math_vec_bool },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/uppercase-greek}
+% 大写希腊字母的样式，正体或斜体。
+%    \begin{macrocode}
+    uppercase-greek               .choice:,
+    uppercase-greek / upright       .code:n  =
+      { \@@_um_setup:n { math-style = ISO } },
+    uppercase-greek / italic        .code:n  =
+      { \@@_um_setup:n { math-style = TeX } },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{math/style}
+% 整体样式。
+%    \begin{macrocode}
+    style                         .choice:,
+    style / TeX                     .code:n  =
+      {
+        \keys_set:nn { thu / math }
+          {
+            integral           = slanted,
+            integral-limits    = false,
+            less-than-or-equal = horizontal,
+            math-ellipsis      = centered,
+            partial            = italic,
+            real-part          = fraktur,
+            vector             = arrow,
+            uppercase-greek    = upright
+          }
+        \@@_um_setup:n { bold-style = TeX }
+      },
+    style / ISO                     .code:n  =
+      {
+        \keys_set:nn { thu / math }
+          {
+            integral           = upright,
+            integral-limits    = true,
+            less-than-or-equal = horizontal,
+            math-ellipsis      = lower,
+            partial            = upright,
+            real-part          = roman,
+            vector             = arrow,
+            uppercase-greek    = italic
+          }
+        \@@_um_setup:n { bold-style = ISO }
+      },
+    style / GB                      .code:n  =
+      {
+        \keys_set:nn { thu / math }
+          {
+            integral           = upright,
+            integral-limits    = false,
+            less-than-or-equal = slanted,
+            math-ellipsis      = centered,
+            partial            = upright,
+            real-part          = roman,
+            vector             = boldfont,
+            uppercase-greek    = italic
+          }
+        \@@_um_setup:n { bold-style = ISO }
+      },
+    style                        .initial:n  = GB
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% 在 |\begin{document}| 处载入字体以兼容 \pkg{mathtools}，
+% 并设置小于等于号和实部符号等的样式。
+%    \begin{macrocode}
+\@@_at_begin_document:n
+  {
+    \use:c { @@_loadfont_math_ \g_@@_font_math_tl : }
+    \bool_if:NT \g_@@_opt_math_leq_bool
+      {
+        \cs_set_eq:NN \le  \leqslant
+        \cs_set_eq:NN \ge  \geqslant
+        \cs_set_eq:NN \leq \leqslant
+        \cs_set_eq:NN \geq \geqslant
+      }
+    \bool_if:NT \g_@@_opt_math_re_bool
+      {
+        \cs_set:Npn \Re { \operatorname { Re } }
+        \cs_set:Npn \Im { \operatorname { Im } }
+      }
+    \bool_if:NT \g_@@_opt_math_vec_bool
+      { \cs_set_eq:NN \vec \symbf }
+  }
+%</class>
+%    \end{macrocode}
+%
+%
+% \subsection{封面}
+%
+% \subsubsection{绘制部件}
+%
+% \paragraph{本科生}
+%
+% \subparagraph{封面}
+%
+% \begin{macro}{u/cover/secret}
+% 本科生封面实例。
+%    \begin{macrocode}
+%<*def-u>
+\@@_declare_element:nn { u / cover / secret }
+  {
+    content     = \@@_null: \hfill 机密10年,
+    format      = \@@_zihao:n { -4 },
+    bottom-skip = 0 pt plus 1 fill
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{u/cover/name-img}
+% 本科生封面校名图片实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { u / cover / name-img }
+  {
+    content     = \exp_args:NV \includegraphics \c_@@_name_thunamefile_tl,
+    bottom-skip = 0.94 cm,
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{u/cover/thesis}
+% 本科生封面实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { u / cover / thesis }
+  {
+    content     = \@@_name:n { thesis },
+    format      = \sffamily \bfseries \@@_zihao:n { -0 } \ziju { 0.5 },
+    bottom-skip = 1.8 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{u/cover/title}
+% 本科生封面标题实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { u / cover / title }
+  {
+    content     = \hspace{1em}\makebox[54bp]{ \@@_zihao:nn { 1.2 } { -2 }题目：}
+    \parbox[t]{347bp}{ \@@_zihao:nn { 1.56 } { 1 } \@@_info:n { title } },
+    format      = \sffamily,
+    bottom-skip = 1.9 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{u/cover/info}
+% 本科生封面信息栏实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { u / cover / info }
+  {
+    content = \@@_cover_info:,
+    format  = \fangsong \@@_zihao:nn { 2.32 } { 3 },
+    bottom-skip = 1.4 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover/date}
+% 研究生封面日期实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { u / cover / date }
+  {
+    content = \@@_datea:V \g_@@_info_date_tl,
+    format  = \songti \@@_zihao:n { -4 },
+    bottom-skip = 0 pt plus 1 fill
+  }
+%</def-u>
+%    \end{macrocode}
+% \end{macro}
+%
+% \paragraph{研究生}
+%
+% \subparagraph{正面} 包括标题、学位、信息栏、日期。
+%
+% \begin{macro}{g/cover/title}
+% 研究生封面校名图片实例。
+%    \begin{macrocode}
+%<*def-g>
+\@@_declare_element:nn { g / cover / title }
+  {
+    content     = \g_@@_info_title_tl,
+    format      = \sffamily \@@_zihao:n { 1 },
+    bottom-skip = 70 pt
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover/degree}
+% 研究生封面标题实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover / degree }
+  {
+    content     = 申请学位,
+    format      = \songti \@@_zihao:n { -2 } \@@_set_ccglue:N \c_@@_bp_dim,
+    bottom-skip = 40 pt plus 1 fill
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover/info}
+% 研究生封面信息栏实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover / info }
+  {
+    content     = \@@_switch_name: \@@_cover_info:,
+    bottom-skip = 20 pt plus 1 fill,
+    format      = \normalfont \fangsong \@@_zihao:n { 3 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover/date}
+% 研究生封面日期实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover / date }
+  {
+    content = \@@_datea:V \g_@@_info_date_tl,
+    format  = \songti \@@_zihao:n { 3 } \@@_set_ccglue:N \c_@@_bp_dim
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subparagraph{英文封面} 包括标题、顶部、中部、校徽、底部。
+%
+% \begin{macro}{g/cover-en/title}
+% 研究生英文封面标题实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover-en / title }
+  {
+    content     = \g_@@_info_title_en_tl,
+    format      = \bfseries \sffamily \@@_zihao:n { 2 },
+    bottom-skip = 2 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover-en/author}
+% 研究生英文封面顶部信息实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover-en / author }
+  {
+    content      =
+      { by }
+      \skip_vertical:N \c_zero_skip
+      \textbf { \sffamily \g_@@_info_author_en_tl }
+      \skip_vertical:n { .5 cm }
+      { \g_@@_info_supva_en_tl }
+      \skip_vertical:N \c_zero_skip
+      { \g_@@_info_supvb_en_tl }
+      \skip_vertical:N \c_zero_skip
+      { \g_@@_info_supvc_en_tl },
+    format      = \@@_zihao:n { 4 },
+    bottom-skip = 0 pt plus 1.2 fil
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover-en/degree}
+% 研究生英文封面中部信息实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover-en / degree }
+  {
+    content     =
+      \c_@@_text_cover_en_tl \@@_vskip:
+      \group_begin: \scshape \g_@@_info_type_en_tl \group_end:
+      \@@_vskip: { in } \@@_vskip: \g_@@_info_discip_en_tl,
+    bottom-skip = 2 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover-en/date}
+% 研究生英文封面底部信息实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover-en / date }
+  {
+    content = \@@_dateb:V \g_@@_info_date_tl
+  }
+%</def-g>
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \paragraph{博士后}
+%
+% \begin{macro}{p/cover-a/top}
+% 博士后封面实例。
+%    \begin{macrocode}
+%<*def-p>
+\@@_declare_element:nn { p / cover-a / top }
+  {
+    content     = \@@_cover_top:nn { 3.1 em } { 3.7 cm },
+    format      = \@@_zihao:n { 4 },
+    bottom-skip = 3.15 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-a/report}
+% 博士后封面报告字样实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-a / report }
+  {
+    content     =
+      \ziju { 1.5 } \@@_name:n { thu } \par
+      \ziju {  .5 } \@@_name:n { report },
+    format      = \@@_zihao:n { -2 } \sffamily \bfseries,
+    bottom-skip = .2 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-a/title}
+% 博士后封面报告标题实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-a / title }
+  {
+    content     = \g_@@_info_title_tl,
+    format      = \@@_zihao:n { 4 },
+    bottom-skip = .4 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-a/author}
+% 博士后封面作者实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-a / author }
+  {
+    content     = \g_@@_info_author_tl,
+    format      = \@@_zihao:n { -4 },
+    bottom-skip = 1.4 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-a/info}
+% 博士后封面信息栏实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-a / info }
+  {
+    content     = \@@_cover_dates:n { 5.9 cm },
+    format      = \@@_zihao:nn { 1.58 } { -4 },
+    bottom-skip = .45 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-a/thu}
+% 博士后封面实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-a / thu }
+  {
+    content     = \@@_name:n { thubj },
+    format      = \@@_zihao:nn { 2 } { -4 } \ziju { 1 },
+    bottom-skip = .45 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-a/date}
+% 博士后封面日期实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-a / date }
+  {
+    content     = \@@_datea:V \g_@@_info_date_tl,
+    format      = \@@_zihao:nn { 2 } { -4 },
+    bottom-skip = .25 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_top:nn}
+% 封面顶部信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_top:nn #1#2
+  {
+    \@@_cover_top_aux:nnn { #1 } { #2 } { clc      } \tex_hfill:D
+    \@@_cover_top_aux:nnn { #1 } { #2 } { secretlv } \tex_par:D
+    \@@_cover_top_aux:nnn { #1 } { #2 } { udc      } \tex_hfill:D
+    \@@_cover_top_aux:nnn { #1 } { #2 } { id       } \tex_par:D
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_top_aux:nnn}
+% 单条封面顶部信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_top_aux:nnn #1#2#3
+  {
+    \@@_box_ss:nv     { #1 } { c_@@_name_ #3 _tl } \@@_hskip:
+    \@@_box_ulined:nv { #2 } { g_@@_info_ #3 _tl }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_dates:n}
+% 封面中部日期。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_dates:n #1
+  {
+    \c_@@_name_dates_tl \@@_hskip:
+    \@@_box_ulined:nn { #1 }
+      { \g_@@_info_startdate_tl -- \g_@@_info_enddate_tl }
+    \skip_vertical:n { .55 cm }
+    \c_@@_name_date_tl \@@_hskip:
+    \@@_box_ulined:nn { #1 } { \g_@@_info_date_tl } \tex_par:D
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_p_cover_info:NN}
+% 博士后封面信息栏。
+% \begin{arguments}
+%   \item 名称盒子宽度，|dim| 型变量
+%   \item 标签格式
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_p_cover_info:NN #1#2
+  {
+  }
+%</def-p>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subparagraph{出版授权书}
+%
+% \begin{macro}{copyright/title}
+% 出版授权书标题实例。
+%    \begin{macrocode}
+%<*(def-u|def-g)>
+\@@_declare_element:nn { copyright / title }
+  {
+    content     = \c_@@_name_copyright_tl,
+    format      = \sffamily \@@_zihao:n { -2 },
+    bottom-skip = \c_@@_chapterafter_dim
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{copyright/text}
+% 出版授权书文本实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { copyright / text }
+  {
+    content     = \c_@@_text_copyright_tl,
+    align       = n,
+    bottom-skip = 2 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{copyright/sign}
+% 出版授权书签名区实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { copyright / sign }
+  {
+    content     = \@@_g_copyright_sign:,
+    align       = r,
+    bottom-skip = 0 pt plus 1 fill
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{copyright/info}
+% 出版授权书信息表格实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { copyright / info }
+  {
+    content     = hhh,
+    format      = \@@_zihao:n { 5 } ,
+    align       = l,
+    bottom-skip = 2 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_copyright_sign:}
+% 签名区内容。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_copyright_sign:
+  {
+    \c_@@_name_blankdate_tl
+  }
+%</(def-u|def-g)>
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subparagraph{原创性声明}
+%
+% \begin{macro}{originality/title}
+% 原创性声明标题实例。
+%    \begin{macrocode}
+%<*(def-u|def-g|def-p)>
+\@@_declare_element:nn { originality / title }
+  {
+    content     = \c_@@_name_originality_tl,
+    format      = \c_@@_fmt_chapter_tl,
+    bottom-skip = \c_@@_chapterafter_dim
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{originality/text}
+% 原创性声明文本实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { originality / text }
+  {
+    content     = \c_@@_text_originality_tl,
+    align       = n,
+    bottom-skip = 2 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{originality/sign}
+% 原创性声明签名区实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { originality / sign }
+  {
+    content     = \@@_decl_sign:nn { origsign } { date },
+    bottom-skip = 0 pt plus 1 fill
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_decl_sign:nn}
+% 原创性声明签名区内容。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_decl_sign:nn #1#2
+  {
+    \@@_name:n {#1} \c_@@_name_colon_tl
+    \skip_horizontal:n { 160 pt } \@@_null: \@@_vskip:
+  }
+%</(def-u|def-g|def-p)>
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsubsection{绘制封面}
+%
+% 定义封面页面的具体配置参数。
+%
+% \begin{macro}{cover-u}
+% 默认本科生封面实例。
+%    \begin{macrocode}
+%<*def-u>
+\@@_declare_page:nn { cover-u }
+  {
+    element     = { secret, name-img, thesis, title, info, date },
+    prefix      = u / cover /,
+    bottom-skip = 0 pt plus 1 fill,
+    geometry    = { vmargin = 1 in, hmargin = 1.25 in }
+  }
+%</def-u>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{cover-g}
+% 默认研究生普通封面正面实例。
+%    \begin{macrocode}
+%<*def-g>
+\@@_declare_page:nn { cover-g }
+  {
+    element  = { title, degree, info, date },
+    prefix   = g / cover /,
+    top-skip = 0 pt,
+    geometry =
+      {
+        top     = 2cm,
+        bottom  = 6cm,
+        hmargin = 3.5cm
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{cover-g-en}
+% 默认研究生英文封面实例。
+%    \begin{macrocode}
+\@@_declare_page:nn { cover-g-en }
+  {
+    element  = { title, degree, author, date },
+    prefix   = g / cover-en /,
+    top-skip = 0 pt plus 1.2 fil,
+    geometry =
+      {
+        top     = 5.5cm,
+        bottom  = 5cm,
+        hmargin = 3.6cm
+      }
+  }
+%</def-g>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{cover-a-p}
+% 默认博士后封面实例。
+%    \begin{macrocode}
+%<*def-p>
+\@@_declare_page:nn { cover-a-p }
+  {
+    element     = { top, report, title, author, info, thu, date },
+    prefix      = p / cover-a /
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{cover-b-p}
+% 默认博士后封面实例。
+%    \begin{macrocode}
+\@@_declare_page:nn { cover-b-p }
+  {
+    element     = {  },
+    prefix      = p / cover-b /,
+    format      = \bfseries,
+    top-skip    = 100 pt
+  }
+%</def-p>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{copyright}
+% 默认出版授权书实例。
+%    \begin{macrocode}
+%<*(def-u|def-g|def-p)>
+\@@_declare_page:nn { copyright }
+  {
+    element     = { title, text, sign },
+    prefix      = copyright /,
+    top-skip    = \c_@@_chapterbefore_dim,
+    bottom-skip = 0.5 cm plus 1.5 fill,
+    bm-text     = \c_@@_name_copyright_tl,
+    bm-name     = copyright,
+    bookmark    = pdf
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{originality}
+% 默认原创性声明实例。
+%    \begin{macrocode}
+\@@_declare_page:nn { originality }
+  {
+    element     = { title, text, sign },
+    prefix      = originality /,
+    bm-text     = 声明页,
+    bm-name     = decl,
+    top-skip    = \c_@@_chapterbefore_dim,
+    bottom-skip = 0 pt
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_make_cover:}
+% 生成本科生或研究生的普通封面。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_make_cover:
+  {
+%<def-u>    \UseInstance { thu } { cover-u    }
+%<def-g>    \UseInstance { thu } { cover-g    } \cleardoublepage
+%<def-g>    \UseInstance { thu } { cover-g-en }
+%<def-p>    \UseInstance { thu } { cover-a-p  } \cleardoublepage
+%<def-p>    \UseInstance { thu } { cover-b-p  }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_make_decla:}
+% 位于封面后的声明页面。
+% 生成本科生的诚信承诺书或研究生的学位论文原创性声明。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_make_decla:
+  {
+%<*(def-u|def-g)>
+    \cleardoublepage
+    \UseInstance { thu } { copyright }
+    \cleardoublepage
+%</(def-u|def-g)>
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_make_declb:}
+% 位于封底的声明页面。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_make_declb:
+  {
+    \AtEndEnvironment { document }
+      {
+        \cleardoublepage
+        \UseInstance { thu } { originality }
+        \cleardoublepage
+      }
+  }
+%</(def-u|def-g|def-p)>
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsubsection{用户接口}
+%
+% \begin{macro}{\@@_new_img_cmd:nn}
+% 用于定义插入图片命令的辅助函数。
+%    \begin{macrocode}
+%<*class>
+\cs_new_protected:Npn \@@_new_img_cmd:nn #1#2
+  {
+    \exp_args:Nc \NewDocumentCommand { thu #1 } { o m m }
+      { \includegraphics [ width = ##2, height = ##3 ] { #2 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\keys_define:nn { thu / image }
+  {
+%    \end{macrocode}
+% \begin{macro}{image/thu-emblem,\thuemblem}
+% 校徽图片路径。
+%    \begin{macrocode}
+    %thu-emblem .code:n = { \@@_new_img_cmd:nn { emblem } {#1} },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{image/thu-name,\thuname}
+% 校名图片路径。
+%    \begin{macrocode}
+    %thu-name   .code:n = { \@@_new_img_cmd:nn { name   } {#1} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\maketitle}
+% 重定义 \tn{maketitle} 以生成封面。
+% 在草稿模式下，封面绘制将被禁用，有助于提升编译速度。
+%    \begin{macrocode}
+\RenewDocumentCommand \maketitle { }
+  {
+    \bool_if:NF \g_@@_opt_draft_bool
+      {
+        \pagenumbering { gobble }
+          { \@@_make_cover:    }
+      }
+%    \end{macrocode}
+% 生成封面后清除标题中的换行控制符，便于在摘要中输出。
+%    \begin{macrocode}
+    \tl_remove_all:Nn \g_@@_info_title_tl { \\ }
+%    \end{macrocode}
+% 如果在选择了 \opt{decl-page}，就生成本科生的诚信承诺书，
+% 或研究生的原创性声明和出版授权书。
+%    \begin{macrocode}
+    \bool_if:NF \g_@@_opt_draft_bool
+      {
+        \@@_make_decla:
+        \@@_make_declb:
+      }
+%    \end{macrocode}
+% 在标题页后使用大写罗马字母页码，恢复正常字体设置。
+%    \begin{macrocode}
+    \cleardoublepage
+    \exp_args:NV \pagestyle \c_@@_fmt_pagestyle_tl
+    \pagenumbering { Roman }
+  }
+%</class>
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{摘要页}
+%
+% \subsubsection{绘制部件}
+%
+% \begin{macro}{abstract/title}
+% 中文摘要标题实例。
+%    \begin{macrocode}
+%<*(def-u|def-g|def-p)>
+\@@_declare_element:nn { abstract / title }
+  {
+    content     = \c_@@_name_abstract_tl,
+%<def-u|def-g>    format      = \bfseries \sffamily \@@_zihao:n { -2 },
+%<def-p>    format      = \bfseries,
+    bottom-skip = 20 pt
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{abstract/en/title}
+% 英文摘要标题实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { abstract / en / title }
+  {
+    content     = \c_@@_name_abstract_en_tl,
+%<def-u|def-g>    format      = \bfseries \sffamily \@@_zihao:n { -2 },
+%<def-p>    format      = \bfseries,
+    bottom-skip = 20 pt
+  }
+%</(def-u|def-g|def-p)>
+%    \end{macrocode}
+% \end{macro}
+%
+% \paragraph{关键词列表}
+%
+% \begin{macro}{\@@_print_keywords:nn}
+% 生成中英文关键词列表。
+% \begin{arguments}
+%   \item 语言，空置为中文，|_en| 为英文
+%   \item 关键词分隔符
+% \end{arguments}
+%    \begin{macrocode}
+%<*class>
+\cs_new_protected:Npn \@@_print_keywords:nn #1#2
+  {
+    \tl_set:Nv \l_@@_tmpa_tl { c_@@_name_keywords #1 _tl }
+    \exp_args:NNv \tl_put_left:Nn
+      \l_@@_tmpa_tl { c_@@_fmt_abslabel #1 _tl }
+    \exp_args:NNv \tl_put_right:Nn
+      \l_@@_tmpa_tl { c_@@_name_colon #1 _tl }
+    \@@_get_width:NV \l_@@_tmpa_dim \l_@@_tmpa_tl
+%    \end{macrocode}
+% 关键词列表的悬挂缩进样式由 \tn{list} 环境产生。
+%    \begin{macrocode}
+    \list { \l_@@_tmpa_tl }
+      {
+        \labelwidth  \l_@@_tmpa_dim
+        \labelsep    \c_zero_dim
+        \leftmargin  \c_zero_dim
+        \rightmargin \c_zero_dim
+        \advance \leftmargin \l_@@_tmpa_dim
+%    \end{macrocode}
+% 使用粗体作为标签样式。
+%    \begin{macrocode}
+        \__thu_cs_clear:N \makelabel
+      }
+    \item \clist_use:cn { g_@@_info_keywords #1 _clist } { #2 }
+    \endlist
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsubsection{绘制摘要}
+%
+% \begin{macro}{\@@_make_abstract:,\@@_make_abstract_en:}
+% 绘制摘要页面。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_make_abstract:
+  {
+    \UseInstance { thu } { abstract / title }
+  }
+\cs_new_protected:Npn \@@_make_abstract_en:
+  {
+    \UseInstance { thu } { abstract / en / title }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsubsection{用户接口}
+%
+% \begin{macro}{\g_@@_abs_title_left_skip}
+% 研究生摘要标题左边距。
+%    \begin{macrocode}
+\skip_new:N \g_@@_abs_title_left_skip
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\keys_define:nn { thu / abstract }
+  {
+%    \end{macrocode}
+% \begin{macro}{abstract/toc-entry}
+% 是否将摘要添加到目录。
+%    \begin{macrocode}
+    toc-entry          .bool_set:N = \g_@@_abs_showentry_bool,
+    toc-entry           .initial:n = true,
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{environment}{abstract}
+% 中文摘要环境。
+%    \begin{macrocode}
+\NewDocumentEnvironment { abstract } { +b }
+  {
+    \cleardoublepage
+    \thispagestyle { plain }
+    \@@_abs_bookmark:Vn \c_@@_name_abstract_tl { abstract }
+    \@@_make_abstract:
+    \group_begin: \normalfont \@@_zihao:n { -4 } #1
+  }
+  { \@@_print_keywords:nn { } { ； } \group_end: }
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{abstract*}
+% 英文摘要环境。\pkg{xparse} 目前不支持合并带有星号的环境，因此需要单独定义。
+%    \begin{macrocode}
+\NewDocumentEnvironment { abstract* } { +b }
+  {
+    \cleardoublepage
+    \thispagestyle { plain }
+    \@@_abs_bookmark:Vn \c_@@_name_abstract_en_tl { abstract-en }
+    \@@_make_abstract_en:
+    \group_begin: \normalfont \@@_zihao:n { -4 } #1
+  }
+  { \@@_print_keywords:nn { _en } { ;~ } \group_end: }
+%    \end{macrocode}
+% \end{environment}
+%
+%
+% \subsection{前言致谢}
+%
+% \begin{environment}{preface}
+% \begin{environment}{acknowledgement}
+% 单独制作的前言致谢页。
+%    \begin{macrocode}
+\NewDocumentEnvironment { preface         } { +b }
+  { \@@_chapter:V \c_@@_name_preface_tl #1 }
+  { \cleardoublepage }
+\NewDocumentEnvironment { acknowledgement } { +b }
+  {
+    \bool_if:NTF \g_@@_opt_anon_bool
+      { \@@_bookmark_toc:V \c_@@_name_acknowledgementa_tl   }
+      { \@@_chapter:V      \c_@@_name_acknowledgement_tl #1 }
+  }
+  { \cleardoublepage }
+%    \end{macrocode}
+% \end{environment}
+% \end{environment}
+%
+%
+% \subsection{成果列表}
+%
+% \begin{macro}{\thupaperlist}
+% 成果列表。
+%    \begin{macrocode}
+\NewDocumentCommand \thupaperlist
+  { O { \c_@@_name_paperlist_tl } m }
+  {
+    \group_begin:
+%    \end{macrocode}
+% 修改姓名的显示方式，使被注解的姓名可被加粗下划线表示。
+%    \begin{macrocode}
+    \RenewDocumentCommand \mkbibnamegiven  { m }
+      { \ifitemannotation { thesisauthor }
+          { \thuline { \bf ##1 } } { ##1 } }
+    \RenewDocumentCommand \mkbibnamefamily { m }
+      { \ifitemannotation { thesisauthor }
+          { \thuline { \bf ##1 } } { ##1 } }
+%    \end{macrocode}
+% 修改年份的显示方式，默认进行加粗。
+%    \begin{macrocode}
+    \RenewDocumentCommand \mkbibdateshort { m m m }
+      { \textbf { \thefield { ##1 } } }
+%    \end{macrocode}
+% 在使用章末参考文献表时，\env{refsection} 在单独一章范围内生效，
+% 无需额外添加环境。 ^^A TODO: 待修改为更简洁的形式
+%    \begin{macrocode}
+    \tl_if_eq:NnTF \blx@refsecreset@level { 2 }
+      {
+        \nocite { #2 }
+        \printbibliography [ heading = subbibliography, title = #1 ]
+      }
+      {
+        \begin{refsection}
+          \nocite { #2 }
+          \printbibliography [ heading = subbibliography, title = #1 ]
+        \end{refsection}
+      }
+    \group_end:
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{符号表}
+%
+% \begin{macro}{\@@_notation_label:n}
+% 左对齐的标签格式，用于符号表。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_notation_label:n #1 { #1 \tex_hfil:D }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_make_notation:nn}
+% 生成符号表。由于符号表只有符号和说明两列，相比于 \env{longtable} 环境，
+% \env{description} 环境的语法更为简洁直观，且说明文字可以换行，因而此处使用
+% \LaTeXe 的列表环境进行封装，定义和语法参见 \file{source2e.pdf} 中的
+% File I \quad ltlists.dtx 一章。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_make_notation:nn #1#2
+  {
+    \dim_set:Nn \l_@@_tmpa_dim { \textwidth - #1 - #2 }
+    \list { }
+      {
+%    \end{macrocode}
+% \tn{list} 环境使用宽度固定的盒子制作标签，通过指定这个盒子的宽度
+% \tn{labelwidth} 即可确定左侧标签区域的宽度。
+%    \begin{macrocode}
+        \labelwidth #2
+        \labelsep   \c_zero_dim
+        \itemsep    \c_zero_dim
+        \parsep     \c_zero_dim
+%    \end{macrocode}
+% 右侧说明文字区域的宽度无法直接指定，而是靠计算左右边距 \tn{leftmargin} 和
+% \tn{rightmargin} 得到的。
+%    \begin{macrocode}
+        \leftmargin .5\l_@@_tmpa_dim
+        \rightmargin \leftmargin
+        \advance \leftmargin #2
+        \cs_set_eq:NN \makelabel \@@_notation_label:n
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{environment}{notation}
+% 符号表环境。
+% \begin{arguments}
+%   \item 说明区域宽度，初始值为 10 em。说明宽度的调整更为常见，所以放在前面。
+%   \item 符号区域宽度，初始值为 5 em
+% \end{arguments}
+%    \begin{macrocode}
+\NewDocumentEnvironment { notation } { O { 10 em } O { 5 em } }
+  {
+    \@@_chapter:V \c_@@_name_notation_tl
+    \@@_make_notation:nn { #1 } { #2 }
+  }
+  { \endlist \cleardoublepage }
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{notation*}
+% 带有星号的符号表不会插入目录。
+%    \begin{macrocode}
+\NewDocumentEnvironment { notation* } { O { 10 em } O { 5 em } }
+  {
+    \chapter * { \c_@@_name_notation_tl }
+    \@@_make_notation:nn { #1 } { #2 }
+  }
+  { \endlist \cleardoublepage }
+%</class>
+%    \end{macrocode}
+% \end{environment}
+%
+%
+% \subsection{配置常量}
+% \label{subsec:constant-config}
+%
+% 本节内容用于生成常量的默认定义，分为本科生和研究生模板两种。
+%
+% \subsubsection{名称}
+% \label{subsubsec:constant-name}
+%
+%
+% 由于同一名称在不同位置具有不同变体，本模板使用字母后缀名进行了区分，
+% 并在易混淆处添加了注释。
+%
+% 通用默认名称。注意空格是忽略掉的。
+%    \begin{macrocode}
+%<*(def-u|def-g|def-p)>
+\clist_map_inline:nn
+  {
+    { acknowledgement   } { 致 \qquad{} 谢                     },
+    { acknowledgement a } { 致谢（盲审阶段，暂时隐去）         },
+%<def-u|def-g>    { copyright         } { 关于学位论文使用授权的说明         },
+%<def-u>    { author            } { 姓名                               },
+%<def-g>    { author            } { 研究生                             },
+%<def-g>    { author          a } { 申请人                             },
+%<def-p>    { author            } { 博士后姓名                         },
+%<def-p>    { clc               } { 分类号                             },
+%<def-p>    {       date        } { 报告提交日期                       },
+%<def-p>    {       dates       } { 工作完成日期                       },
+%<def-p>    { end   date        } { 研究工作期满时间                   },
+%<def-p>    { start date        } { 研究工作起始时间                   },
+%<def-g>    { degree            } { 申请学位级别                       },
+%<def-u>    { dept              } { 系别                               },
+%<def-g>    { dept              } { 培养单位                           },
+%<def-u>    { discip            } { 专业                               },
+%<def-g>    { discip            } { 学科                               },
+%<def-g>    { discip          a } { 工程领域                           },
+%<def-p>    { discip          a } { 流动站       （一级学科）名称      },
+%<def-p>    { discip          b } { 专 \quad{} 业（二级学科）名称      },
+    { thu name file     } { tsinghua-name-bachelor.pdf         },
+%<def-p>    { id                } { 编号                               },
+    { listoffigures     } { 插图目录                           },
+    { listoftables      } { 表格目录                           },
+    { notation          } { 符号表                             },
+    { originality       } { 声 \qquad{} 明       },
+    { orig sign         } { 作者签名                           },
+    { paper list        } { 发表文章目录                       },
+    { pdf creator       } { LaTeX~ with~ thuthesis3~ class     },
+    { preface           } { 前 \qquad{} 言                     },
+%<def-p>    { report            } { 博士后研究工作报告                 },
+%<def-p>    { secret lv         } { 密级                               },
+%<def-u|def-g>    { stuid                } { 学号                            },
+%<def-u|def-g>    { supv            a } { 指导教师                           },
+%<def-u>    { supv            b } { 辅导教师                           },
+%<def-g>    { supv            b } { 副指导教师                         },
+%<def-u|def-g>    { supv            c } { 联合指导教师                       },
+%<def-g>    { supv            d } { 联合导师                           },
+    { tableofcontents   } { 目 \quad{} 录                      },
+%<def-u>    { thesis            } { 综合论文训练                       },
+%<def-p>    { thu bj            } { 清华大学 \quad （北京）            },
+%<def-p>    { thu hr            } { 清华大学人事处 （北京）            },
+%<def-u>    { title             } { 题目                               }
+%<def-p>    { udc               } { U \hfil D \hfil C                  }
+  }
+  { \@@_define_name_zh:nn #1 }
+%    \end{macrocode}
+%
+% 定义同时使用到中英文名称的常量。
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+    { abstract      } { 摘 \quad{} 要   } { ABSTRACT              },
+    { appendix      } { 附录            } { appendix              },
+    { blankdate     } { \qquad{}年 \quad{}月 \quad{}日   } {      },
+    { colon         } { ：              } { : \c_space_tl         },
+    { figure        } { 图              } { figure                },
+    { keywords      } { 关键词          } { KEYWORDS              },
+    { thu           } { 清华大学        } { Tsinghua~ University  },
+    { suffix        } {                 } { _en                   },
+    { table         } { 表              } { table                 }
+  }
+  { \@@_define_names:nnn #1 }
+%    \end{macrocode}
+%
+% \subsubsection{文本}
+% \label{subsubsec:constant-text}
+%
+% \begin{variable}{\c_@@_text_originality_tl}
+% 原创性声明。
+%    \begin{macrocode}
+\tl_const:Nn \c_@@_text_originality_tl
+  {
+    本人郑重声明：所呈交的学位论文，是本人在导师指导下，独立进行研
+    究工作所取得的成果。尽我所知，除文中已经注明引用的内容外，本学
+    位论文的研究成果不包含任何他人享有著作权的内容。对本论文所涉及
+    的研究工作做出贡献的其他个人和集体，均已在文中以明确方式标明。
+  }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_text_copyright_tl}
+% 学位论文出版授权书。
+%    \begin{macrocode}
+%<*(def-u|def-g)>
+\tl_const:Nn \c_@@_text_copyright_tl
+  {
+%<*def-u>
+    本人完全了解清华大学有关保留、使用学位论文的规定，即：
+    学校有权保留学位论文的复印件，允许该论文被查阅和借阅；
+    学校可以公布该论文的全部或部分内容，
+    可以采用影印、缩印或其他复制手段保存该论文。\par
+    \textbf{(涉密的学位论文在解密后应遵守此规定)}\par
+%</def-u>
+%<*def-g>
+    本人完全了解清华大学有关保留、使用学位论文的规定，即：\par
+    清华大学拥有在著作权法规定范围内学位论文的使用权，其中包括：
+    （1）\nobreak 已获学位的研究生必须按学校规定提交学位论文，
+    学校可以采用影印、缩印或其他复制手段保存研究生上交的学位论文；\allowbreak
+    （2）\nobreak 为教学和科研目的，学校可以将公开的学位论文作为资料在图书馆、资料室等场所供校内师生阅读，
+    或在校园网上供校内师生浏览部分内容；\par
+    本人保证遵守上述规定。\par
+%</def-g>
+  }
+%</(def-u|def-g)>
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_text_cover_en_tl}
+% 研究生的英文封面字样。
+%    \begin{macrocode}
+%<*def-g>
+\tl_const:Nn \c_@@_text_cover_en_tl
+  {
+    Dissertation~ submitted~ to \\
+    \textbf { \c_@@_name_thu_en_tl } \\
+    in~ partial~ fulfilment~ of~ the~ requirement~ \\
+    for~ the~ degree~ of
+  }
+%</def-g>
+%    \end{macrocode}
+% \end{variable}
+%
+% \subsubsection{长度}
+% \label{subsubsec:constant-length}
+%
+% 默认固定长度值。
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+%    \end{macrocode}
+% 封面信息栏的行距。此处的空格仅用来提升可读性，在生成变量名时会被删去。
+%    \begin{macrocode}
+%<def-u>    { c lineskip     } { 36    pt },
+%<def-g>    { c lineskip     } { 32    pt },
+%<def-p>    { c lineskip     } { 28    pt },
+%    \end{macrocode}
+% 封面信息栏标签的宽度。
+%    \begin{macrocode}
+%<def-u|def-g>    { c label wd     } { 88.33 pt },
+%<def-u|def-g>    { c label wd   a } { 64.24 pt },
+%<def-p>    { c label wd     } { 50    pt },
+%    \end{macrocode}
+% 封面信息栏人名的宽度。
+%    \begin{macrocode}
+%<def-u>    { c name  wd   a } { 48.18 pt },
+%<def-g>    { c name  wd   a } { 64.24 pt },
+%    \end{macrocode}
+% 封面信息栏人名和职称间隔的宽度。
+%    \begin{macrocode}
+%<def-u|def-g>    { c name  wd   b } { 16.06 pt },
+%    \end{macrocode}
+% 封面信息栏职称的宽度。
+%    \begin{macrocode}
+%<def-u>    { c name  wd   c } { 32.12 pt },
+%<def-g>    { c name  wd   c } { 48.18 pt },
+%    \end{macrocode}
+% 封面信息栏冒号的宽度。
+%    \begin{macrocode}
+%<def-u>    { c colon wd     } { 16.06 pt },
+%<def-g>    { c colon wd     } {   .82 cm },
+%    \end{macrocode}
+% 校名图片的宽度。
+%    \begin{macrocode}
+%<def-u>    { name    wd     } { 300   pt },
+%    \end{macrocode}
+% 下划线高度（厚度）。下划线绘制命令是通用的，因此没有作文件区分。
+%    \begin{macrocode}
+    { rule    ht     } { .4    pt },
+%    \end{macrocode}
+% 下划线深度（偏移量）。
+%    \begin{macrocode}
+    { rule    dp     } { -.7   ex },
+%    \end{macrocode}
+% 小幅空格。
+%    \begin{macrocode}
+    { h sep          } { 5     pt },
+    { v sep          } { 1     ex },
+%    \end{macrocode}
+% 章节标题前后间距。
+%    \begin{macrocode}
+    { chapter before } { 10    pt },
+    { chapter  after } { 60    pt },
+%    \end{macrocode}
+% 脚注编号宽度。
+%    \begin{macrocode}
+    { fn hang        } { 13.5  pt },
+    { bp             } { 1     bp },
+%    \end{macrocode}
+% 缩进宽度。
+%    \begin{macrocode}
+    { indent         } { 2     em },
+%<def-u>    { indent _en     } {  .8   cm },
+%<def-g|def-p>    { indent _en     } {  .74  bp },
+  }
+  { \@@_define_dim:nn #1 }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+%    \end{macrocode}
+% \tn{hss} 和 \tn{vss} 涉及的弹性间距数值, ss 为 stretch or shrink 的缩写。
+%    \begin{macrocode}
+    { ss } { 0 pt plus 1 fil minus 1 fil },
+%    \end{macrocode}
+% 允许进行收缩的弹性间距数值, sh 为 shrink 的缩写。
+%    \begin{macrocode}
+    { sh } { 0 pt minus 1 fill }
+  }
+  { \@@_define_skip:nn #1 }
+%    \end{macrocode}
+%
+% \subsubsection{样式}
+% \label{subsubsec:constant-format}
+%
+% 默认样式。
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+%<def-u>    { pagestyle     } { plain                             },
+%<def-g|def-p>    { pagestyle     } { headings                          },
+    { abslabel      } { \bfseries                         },
+    { abslabel_en   } {                                   },
+%<def-u>    { cover title   } { \bfseries                         },
+%<def-g>    { cover title   } {                                   },
+%<def-u>    { cover label   } { \kaishu                           },
+%<def-g>    { cover label   } { \bfseries                         },
+%<def-p>    { cover label   } {                                   },
+    { emblem color  } { black                             },
+    { name   color  } { black                             },
+    { section       } { \bigger \normalfont \sffamily     },
+    { chapter       } { \c_@@_fmt_section_tl \centering },
+    { chapterintoc  } { \c_@@_fmt_section_tl            },
+    { subsection    } { \c_@@_fmt_section_tl            },
+    { subsubsection } { \c_@@_fmt_section_tl            },
+    { paragraph     } { \c_@@_fmt_section_tl            },
+    { subparagraph  } { \c_@@_fmt_section_tl            },
+    { toc title     } { \centering \@@_zihao:n { 3 } \bfseries },
+    { header        } { \small \kaishu                    },
+    { footer        } { \small \rmfamily                  }
+  }
+  { \@@_define_fmt:nn #1 }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_name_coveritem_clist
+%<def-u>  { dept, discip, author, supva, supvb, supvc }
+%<def-g>  { dept, discip, author, stuid, supva, supvb, supvc }
+%<def-p>  { author, discipa, discipb }
+%    \end{macrocode}
+%
+% \subsubsection{页面设置}
+% \label{subsubsec:constant-geometry}
+%
+% 研究生《写作指南》：
+% 页边距：上下左右均为 3.0 厘米，装订线 0 厘米；
+% 页眉距边界：2.2 厘米，页脚距边界：2.2 厘米。
+%
+% 本科生《写作指南》：
+% 页边距：上：3.8 厘米，下：3.2 厘米，左右：3 厘米，装订线：左 0.2 厘米。
+% 本科生 Word 模板：
+% 无页眉，页脚距边界：1.75 厘米。
+%
+% \pkg{fancyhdr} 的页眉是沿底部对齐的，所以只需设置 \tn{headsep}，
+% \tn{headheight} 可以适当增加高度允许多行页眉。
+% 研究生：\tn{headsep} = $\qty{3}{cm} - \qty{2.2}{cm} - \qty{10.5}{bp} \times 1.3
+% \approx \qty{0.3}{cm}$。
+%
+% \begin{variable}{\c_@@_geo_print_tl}
+% 打印版的页边距。
+%    \begin{macrocode}
+\tl_const:Nn \c_@@_geo_print_tl
+  {
+%<*def-u>
+    top        = 3.8  cm,
+    bottom     = 3.2  cm,
+    left       = 3.2  cm,
+    right      = 3    cm,
+    headheight = 1.9  cm,
+    headsep    = 1.9  cm,
+    footskip   = 1.45 cm
+%</def-u>
+%<*(def-g|def-p)>
+    margin     = 3    cm,
+    headheight = 2.7  cm,
+    headsep    = 0.3  cm,
+    footskip   = 0.8  cm
+%</(def-g|def-p)>
+  }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_geo_electronic_tl}
+% 电子版的页边距。
+%    \begin{macrocode}
+%<*def-u>
+\tl_const:Nn \c_@@_geo_electronic_tl
+  {
+    top        = 3.8  cm,
+    bottom     = 3.2  cm,
+    hmargin    = 3    cm,
+    headheight = 1.9  cm,
+    headsep    = 1.9  cm,
+    footskip   = 1.45 cm
+  }
+%</def-u>
+%<*(def-g|def-p)>
+\tl_gset_eq:NN \c_@@_geo_electronic_tl \c_@@_geo_print_tl
+%</(def-g|def-p)>
+%    \end{macrocode}
+% \end{variable}
+%
+%    \begin{macrocode}
+%</(def-u|def-g|def-p)>
+%    \end{macrocode}
+%
+% \end{implementation}
+%

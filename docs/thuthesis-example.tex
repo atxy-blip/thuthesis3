@@ -1,0 +1,99 @@
+
+
+\documentclass[
+  % degree = bachelor,
+  % degree = master,
+  % degree = postdoc,
+  % degree-type = engineer
+]{thuthesis3}
+
+\usepackage{showframe}
+
+% 模板选项设置，包括个人信息、外观样式等
+% 较为冗长且一般不需要反复修改，我们把它放在单独的文件里
+\input{thuthesis-setup.def}
+
+% 开始编写论文
+\begin{document}
+
+%---------------------------------------------------------------------
+%	封面、摘要、前言和目录
+%---------------------------------------------------------------------
+
+% 生成封面页
+\maketitle
+
+% 文档默认使用 \flushbottom，即底部平齐
+% 效果更好，但可能出现 underfull \vbox 信息
+% 如需抑制这些信息，可以反注释以下命令
+% \raggedbottom
+
+\begin{abstract}
+  中文摘要
+\end{abstract}
+
+\begin{abstract*}
+  English abstract
+\end{abstract*}
+
+% 生成目录
+\tableofcontents
+% 生成图片清单
+% \listoffigures
+% 生成表格清单
+% \listoftables
+
+%---------------------------------------------------------------------
+%	正文部分
+%---------------------------------------------------------------------
+\mainmatter
+
+% 符号表
+% 语法与 description 环境一致
+% 两个可选参数依次为说明区域宽度、符号区域宽度
+% 带星号的符号表(notation*)不会插入目录
+% \begin{notation}[10cm]
+%   \item[DFT] 密度泛函理论 (Density functional theory)
+%   \item[DMRG] 密度矩阵重正化群 (Density-Matrix Reformation-Group)
+% \end{notation}
+
+% 建议将论文内容拆分为多个文件
+% 即新建一个 chapters 文件夹
+% 把每一章的内容单独放入一个 .tex 文件
+% 然后在这里用 \include 导入，例如
+%   \include{chapters/introduction}
+%   \include{chapters/environments}
+
+\chapter{引言}
+
+\section{量子计算}
+
+John Preskill 认为我们现在处于“含噪声的中型量子时代”。\cite{preskill2018}
+量子位的不稳定性和有限的量子比特数量限制了量子计算机的复杂度和纠错能力。
+
+%---------------------------------------------------------------------
+%	参考文献
+%---------------------------------------------------------------------
+
+% 生成参考文献页
+\printbibliography
+
+%---------------------------------------------------------------------
+%	致谢
+%---------------------------------------------------------------------
+
+\begin{acknowledgement}
+  感谢。
+\end{acknowledgement}
+
+%---------------------------------------------------------------------
+%	附录部分
+%---------------------------------------------------------------------
+
+% 附录部分使用单独的字母序号
+% \appendix
+
+% 可以在这里插入补充材料
+
+% 完工
+\end{document}
