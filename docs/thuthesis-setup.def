@@ -22,7 +22,7 @@
     %      Doctor of Education, Master of Engineering
     %   3. 本科生不需要填写
     %
-    degree-name  = {工学硕士},
+    degree-name  = {工学},
     degree-name* = {Master of Science},
     %
     % 培养单位
@@ -75,8 +75,8 @@
     % 密级和年限
     %   秘密, 机密, 绝密
     %
-    % secret-level = {秘密},
-    % secret-year  = {10},
+    secret-level = {秘密},
+    secret-year  = {10},
     %
     % 博士后专有部分
     %

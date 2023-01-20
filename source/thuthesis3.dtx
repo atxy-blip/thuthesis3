@@ -203,16 +203,6 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\c_@@_name_type_clist,\c_@@_name_type_en_clist}
-% 论文类型与学位类型。
-%    \begin{macrocode}
-\clist_const:Nn \c_@@_name_type_clist
-  { 学士, 硕士, 博士 }
-\clist_const:Nn \c_@@_name_type_en_clist
-  { Bachelor, Master, Doctor~of~Philosophy }
-%    \end{macrocode}
-% \end{variable}
-%
 % \begin{variable}{\c_@@_name_month_en_clist}
 % 英文月份名称。
 %    \begin{macrocode}
@@ -409,10 +399,17 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{\@@_box_to_wd:nn}
-% 水平盒子。
+% 固定宽度的水平盒子。
 %    \begin{macrocode}
-\cs_new:Npn \@@_box_to_wd:nn
-  { \mode_leave_vertical: \hbox_to_wd:nn }
+\cs_new:Npn \@@_box_to_wd:nn { \mode_leave_vertical: \hbox_to_wd:nn }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_to_ht:nn}
+% 固定宽度的垂直盒子。
+%    \begin{macrocode}
+\cs_new:Npn \@@_box_to_ht:nn #1#2
+  { \vbox_to_ht:nn { #1 } { #2 \tex_vfill:D } }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -713,9 +710,6 @@ To produce the documentation run the original source files ending with
 %
 % \begin{macro}{\@@_cover_info:}
 % 封面信息栏。
-% \begin{arguments}
-%   \item 条目
-% \end{arguments}
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cover_info:
   { \@@_cover_info_aux:NN \c_@@_name_coveritem_clist \l_@@_tmp_clist }
@@ -1738,41 +1732,8 @@ To produce the documentation run the original source files ending with
   { \keys_define:nn { thu / info } { #1 * .groups:n = { anonymous } } }
 %    \end{macrocode}
 %
-%    \begin{macrocode}
-%</class>
-%    \end{macrocode}
-%
-% 设置学位信息。该设置需要放在 \tn{ProcessKeysOptions} 命令后进行。
-%
-% \begin{variable}{\g_@@_info_type_tl}
-% 文档类型字样。
-%    \begin{macrocode}
-%<*def-g>
-\tl_new:N  \g_@@_info_type_tl
-\tl_set:Nx \g_@@_info_type_tl
-  { \clist_item:Nn \c_@@_name_type_clist { \g_@@_info_type_int } }
-%    \end{macrocode}
-% \end{variable}
-%
-% \begin{variable}{\g_@@_info_type_en_tl}
-% 英文的学位字样。
-%    \begin{macrocode}
-\tl_new:N  \g_@@_info_type_en_tl
-\tl_set:Nx \g_@@_info_type_en_tl
-  { \clist_item:Nn \c_@@_name_type_en_clist { \g_@@_info_type_int } }
-%    \end{macrocode}
-% \end{variable}
-%
-% \begin{variable}{\g_@@_info_degree_tl}
-% 学位类型字样。
-%    \begin{macrocode}
-%</def-g>
-%    \end{macrocode}
-% \end{variable}
-%
 % 盲审模式下抹去学校名称。
 %    \begin{macrocode}
-%<*class>
 \bool_if:NT \g_@@_opt_anon_bool
   {
     \tl_gclear:N \c_@@_name_thu_tl
@@ -2244,7 +2205,7 @@ To produce the documentation run the original source files ending with
 % \subsubsection{页面设置}
 % \label{sec:layout}
 %
-% 载入 \ref{subsubsec:constant-geometry} 的设置。
+% 载入 \ref{subsubsec:const-geometry} 的设置。
 %    \begin{macrocode}
 \exp_args:Nv \geometry { c_@@_geo_ \g_@@_info_output_tl _tl }
 %    \end{macrocode}
@@ -2484,12 +2445,12 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \keys_set:nn { ctex / chapter }
   {
-    nameformat   = {},
-    numberformat = {},
-    titleformat  = {},
+    nameformat   = { },
+    numberformat = { },
+    titleformat  = { },
     fixskip      = true,
-    lofskip      = 0pt,
-    lotskip      = 0pt,
+    lofskip      = \c_zero_dim,
+    lotskip      = \c_zero_dim
   }
 \clist_map_inline:nn
   { chapter, section, subsection, subsubsection, paragraph, subparagraph }
@@ -3466,15 +3427,27 @@ To produce the documentation run the original source files ending with
 %
 % \subparagraph{正面} 包括标题、学位、信息栏、日期。
 %
-% \begin{macro}{g/cover/title}
-% 研究生封面校名图片实例。
+% \begin{macro}{g/cover/secret}
+% 研究生封面实例。
 %    \begin{macrocode}
 %<*def-g>
+\@@_declare_element:nn { g / cover / secret }
+  {
+    content     = \skip_horizontal:n { -21.5 pt } \@@_cover_secret:,
+    format      = \sffamily \@@_zihao:n { 3 },
+    align       = l
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover/title}
+% 研究生封面实例。
+%    \begin{macrocode}
 \@@_declare_element:nn { g / cover / title }
   {
     content     = \g_@@_info_title_tl,
-    format      = \sffamily \@@_zihao:n { 1 },
-    bottom-skip = 70 pt
+    format      = \sffamily \@@_cover_title_zihao:,
+    bottom-skip = 24.1 pt
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3484,9 +3457,9 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover / degree }
   {
-    content     = 申请学位,
+    content     = \@@_cover_degree:,
     format      = \songti \@@_zihao:n { -2 } \@@_set_ccglue:N \c_@@_bp_dim,
-    bottom-skip = 40 pt plus 1 fill
+    bottom-skip = 0 pt plus 1 fill
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3497,8 +3470,8 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { g / cover / info }
   {
     content     = \@@_switch_name: \@@_cover_info:,
-    bottom-skip = 20 pt plus 1 fill,
-    format      = \normalfont \fangsong \@@_zihao:n { 3 }
+    format      = \normalfont \fangsong \@@_zihao:n { 3 },
+    bottom-skip = 20 pt
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3508,8 +3481,60 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover / date }
   {
-    content = \@@_datea:V \g_@@_info_date_tl,
+    content = \@@_box_to_ht:nn { 1.03 cm } { \@@_datea:V \g_@@_info_date_tl },
     format  = \songti \@@_zihao:n { 3 } \@@_set_ccglue:N \c_@@_bp_dim
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_title_zihao:}
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_cover_title_zihao:
+  {
+    \@@_zihao:nn
+      {\int_compare:nTF { \g_@@_info_type_int = 1 } { 1.8 } { 1.573 } }
+      { 1 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_secret:n}
+% 研究生封面的保密信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_secret:
+  {
+    \@@_box_to_ht:nn { 4 cm }
+      {
+        \tl_if_empty:NF \g_@@_info_secretlv_tl
+          {
+            \g_@@_info_secretlv_tl
+            {\fontspec{SimHei}\char"2605} % TODO
+            \@@_box_center:nn { 3 em } { \g_@@_info_secretyr_tl }
+            \zhnum_output:n { year }
+          }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_degree:}
+% 研究生封面的学位信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_degree:
+  {
+    \c_@@_name_applybegin_tl
+%    \end{macrocode}
+% 工程硕士学位的名称是固定的。
+%    \begin{macrocode}
+    \bool_lazy_and:nnTF
+      { \int_compare_p:n { \g_@@_info_type_int  = 2 } }
+      { \int_compare_p:n { \g_@@_info_dtype_int = 3 } }
+      { \c_@@_name_degreeeng_tl }
+      { \g_@@_info_degree_tl    }
+    \clist_item:Nn \c_@@_name_type_clist { \g_@@_info_type_int }
+    \int_compare:nF { \g_@@_info_dtype_int = 1 } { \c_@@_name_degreepro_tl }
+    \c_@@_name_applyend_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3556,7 +3581,7 @@ To produce the documentation run the original source files ending with
   {
     content     =
       \c_@@_text_cover_en_tl \@@_vskip:
-      \group_begin: \scshape \g_@@_info_type_en_tl \group_end:
+      \group_begin: \scshape ??? \group_end:
       \@@_vskip: { in } \@@_vskip: \g_@@_info_discip_en_tl,
     bottom-skip = 2 cm
   }
@@ -3858,15 +3883,10 @@ To produce the documentation run the original source files ending with
 %<*def-g>
 \@@_declare_page:nn { cover-g }
   {
-    element  = { title, degree, info, date },
+    element  = { secret, title, degree, info, date },
     prefix   = g / cover /,
-    top-skip = 0 pt,
-    geometry =
-      {
-        top     = 2cm,
-        bottom  = 6cm,
-        hmargin = 3.5cm
-      }
+    geometry = { vmargin = 6 cm, hmargin = 3.5 cm },
+    top-skip = -4 cm
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4344,12 +4364,12 @@ To produce the documentation run the original source files ending with
 %
 %
 % \subsection{配置常量}
-% \label{subsec:constant-config}
+% \label{subsec:const-config}
 %
 % 本节内容用于生成常量的默认定义，分为本科生和研究生模板两种。
 %
 % \subsubsection{名称}
-% \label{subsubsec:constant-name}
+% \label{subsubsec:const-name}
 %
 %
 % 由于同一名称在不同位置具有不同变体，本模板使用字母后缀名进行了区分，
@@ -4362,17 +4382,21 @@ To produce the documentation run the original source files ending with
   {
     { acknowledgement   } { 致 \qquad{} 谢                     },
     { acknowledgement a } { 致谢（盲审阶段，暂时隐去）         },
-%<def-u|def-g>    { copyright         } { 关于学位论文使用授权的说明         },
+%<def-g>    { apply begin       } { (申请清华大学                      },
+%<def-g>    { apply end         } { 学位论文)                          },
 %<def-u>    { author            } { 姓名                               },
 %<def-g>    { author            } { 研究生                             },
 %<def-g>    { author          a } { 申请人                             },
 %<def-p>    { author            } { 博士后姓名                         },
 %<def-p>    { clc               } { 分类号                             },
+%<def-u|def-g>    { copyright         } { 关于学位论文使用授权的说明         },
 %<def-p>    {       date        } { 报告提交日期                       },
 %<def-p>    {       dates       } { 工作完成日期                       },
 %<def-p>    { end   date        } { 研究工作期满时间                   },
 %<def-p>    { start date        } { 研究工作起始时间                   },
 %<def-g>    { degree            } { 申请学位级别                       },
+%<def-g>    { degree eng        } { 工程                               },
+%<def-g>    { degree pro        } { 专业                               },
 %<def-u>    { dept              } { 系别                               },
 %<def-g>    { dept              } { 培养单位                           },
 %<def-u>    { discip            } { 专业                               },
@@ -4380,19 +4404,18 @@ To produce the documentation run the original source files ending with
 %<def-g>    { discip          a } { 工程领域                           },
 %<def-p>    { discip          a } { 流动站       （一级学科）名称      },
 %<def-p>    { discip          b } { 专 \quad{} 业（二级学科）名称      },
-    { thu name file     } { tsinghua-name-bachelor.pdf         },
 %<def-p>    { id                } { 编号                               },
     { listoffigures     } { 插图目录                           },
     { listoftables      } { 表格目录                           },
     { notation          } { 符号表                             },
-    { originality       } { 声 \qquad{} 明       },
+    { originality       } { 声 \qquad{} 明                     },
     { orig sign         } { 作者签名                           },
     { paper list        } { 发表文章目录                       },
     { pdf creator       } { LaTeX~ with~ thuthesis3~ class     },
     { preface           } { 前 \qquad{} 言                     },
 %<def-p>    { report            } { 博士后研究工作报告                 },
 %<def-p>    { secret lv         } { 密级                               },
-%<def-u|def-g>    { stuid                } { 学号                            },
+%<def-u|def-g>    { stuid             } { 学号                               },
 %<def-u|def-g>    { supv            a } { 指导教师                           },
 %<def-u>    { supv            b } { 辅导教师                           },
 %<def-g>    { supv            b } { 副指导教师                         },
@@ -4402,6 +4425,7 @@ To produce the documentation run the original source files ending with
 %<def-u>    { thesis            } { 综合论文训练                       },
 %<def-p>    { thu bj            } { 清华大学 \quad （北京）            },
 %<def-p>    { thu hr            } { 清华大学人事处 （北京）            },
+    { thu name file     } { tsinghua-name-bachelor.pdf         },
 %<def-u>    { title             } { 题目                               }
 %<def-p>    { udc               } { U \hfil D \hfil C                  }
   }
@@ -4426,7 +4450,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 % \subsubsection{文本}
-% \label{subsubsec:constant-text}
+% \label{subsubsec:const-text}
 %
 % \begin{variable}{\c_@@_text_originality_tl}
 % 原创性声明。
@@ -4484,7 +4508,7 @@ To produce the documentation run the original source files ending with
 % \end{variable}
 %
 % \subsubsection{长度}
-% \label{subsubsec:constant-length}
+% \label{subsubsec:const-length}
 %
 % 默认固定长度值。
 %    \begin{macrocode}
@@ -4574,7 +4598,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 % \subsubsection{样式}
-% \label{subsubsec:constant-format}
+% \label{subsubsec:const-format}
 %
 % 默认样式。
 %    \begin{macrocode}
@@ -4604,16 +4628,6 @@ To produce the documentation run the original source files ending with
   }
   { \@@_define_fmt:nn #1 }
 %    \end{macrocode}
-%
-%    \begin{macrocode}
-\clist_const:Nn \c_@@_name_coveritem_clist
-%<def-u>  { dept, discip, author, supva, supvb, supvc }
-%<def-g>  { dept, discip, author, stuid, supva, supvb, supvc }
-%<def-p>  { author, discipa, discipb }
-%    \end{macrocode}
-%
-% \subsubsection{页面设置}
-% \label{subsubsec:constant-geometry}
 %
 % 研究生《写作指南》：
 % 页边距：上下左右均为 3.0 厘米，装订线 0 厘米；
@@ -4670,6 +4684,25 @@ To produce the documentation run the original source files ending with
 %<*(def-g|def-p)>
 \tl_gset_eq:NN \c_@@_geo_electronic_tl \c_@@_geo_print_tl
 %</(def-g|def-p)>
+%    \end{macrocode}
+% \end{variable}
+%
+% \subsubsection{杂项}
+% \label{subsubsec:const-misc}
+%
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_name_coveritem_clist
+%<def-u>  { dept, discip, author, supva, supvb, supvc }
+%<def-g>  { dept, discip, author, stuid, supva, supvb, supvc }
+%<def-p>  { author, discipa, discipb }
+%    \end{macrocode}
+%
+% \begin{variable}{\c_@@_name_type_clist}
+% 学位类型。
+%    \begin{macrocode}
+%<*def-g>
+\clist_const:Nn \c_@@_name_type_clist { 博士, 硕士 }
+%</def-g>
 %    \end{macrocode}
 % \end{variable}
 %
