@@ -158,14 +158,11 @@ To produce the documentation run the original source files ending with
 % \end{variable}
 %
 %
-% \begin{variable}{
-%   \g_@@_font_latin_tl,
-%   \g_@@_font_cjk_tl,
+% \begin{variable}{\g_@@_info_fontset_tl,
 %   \g_@@_font_math_tl}
 % 存储所使用字体名称的全局变量。
 %    \begin{macrocode}
-\tl_new:N \g_@@_font_latin_tl
-\tl_new:N \g_@@_font_cjk_tl
+\tl_new:N \g_@@_info_fontset_tl
 \tl_new:N \g_@@_font_math_tl
 %    \end{macrocode}
 % \end{variable}
@@ -324,8 +321,8 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{\@@_name:nn}
 % 根据变量名调用名称信息，可调整字符格式
 %    \begin{macrocode}
-\cs_new:Npn \@@_name:nn #1#2
-  { \group_begin: \@@_fmt:n {#1} \@@_name:n {#2} \group_end: }
+%\cs_new:Npn \@@_name:nn #1#2
+%  { \group_begin: \@@_fmt:n {#1} \@@_name:n {#2} \group_end: }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -353,12 +350,14 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_fontsize:nnn}
+% \begin{macro}{\@@_fontsize:nn,\@@_fontsize:nnn}
 % 用于设置字号的辅助函数。\pkg{ctex} 默认使用的行距是 1.2，我们在这里重新计算
 % \tn{baselineskip}，抛弃 \cs{l__ctex_font_size_tl} 中的第二个值。
 %    \begin{macrocode}
+\cs_new:Npn \@@_fontsize:nn #1#2
+  { \fontsize { #1 } { #2 } \selectfont }
 \cs_new:Npn \@@_fontsize:nnn #1#2#3
-  { \fontsize { #1 } { \fp_to_decimal:n { #3 * #1 } } \selectfont }
+  { \@@_fontsize:nn { #1 } { \fp_to_decimal:n { #3 * #1 } } }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -619,6 +618,27 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\thu@number@en}
+% 生成数字的英文表示。这里使用了可以展开的 \cs{int_case:nnTF} 以在
+% 目录中生成正确的条目。
+%    \begin{macrocode}
+\cs_new:Npn \thu@number@en #1
+  {
+    \int_case:nnF { #1 }
+      {
+        { 0  } { Zero      } { 1  } { One       } { 2  } { Two       }
+        { 3  } { Three     } { 4  } { Four      } { 5  } { Five      }
+        { 6  } { Six       } { 7  } { Seven     } { 8  } { Eight     }
+        { 9  } { Nine      } { 10 } { Ten       } { 11 } { Eleven    }
+        { 12 } { Twelve    } { 13 } { Thirteen  } { 14 } { Fourteen  }
+        { 15 } { Fifteen   } { 16 } { Sixteen   } { 17 } { Seventeen }
+        { 18 } { Eighteen  } { 19 } { Nineteen  } { 20 } { Twenty    }
+      }
+      { \BOOM }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsubsection{封面相关}
 %
 % \begin{macro}{\@@_name_gset_eq:nn}
@@ -854,7 +874,7 @@ To produce the documentation run the original source files ending with
 %
 % \begin{macro}{\exp_args:NVV}
 %    \begin{macrocode}
-\exp_args_generate:n { NVV }
+\cs_generate_variant:Nn \exp_args:NnV { NVV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1024,7 +1044,8 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{degree}
 % 学位，默认为博士。
 %    \begin{macrocode}
-    degree             .choices:nn = { doctor, master, bachelor, postdoc }
+    degree             .choices:nn =
+      { doctor, master, bachelor, postdoc }
       { \int_gset_eq:NN \g_@@_info_type_int \l_keys_choice_int },
     degree             .initial:n  = doctor,
 %    \end{macrocode}
@@ -1033,8 +1054,9 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{degree-type}
 % 研究生的学位类型，默认为学术学位。
 %    \begin{macrocode}
-    degree-type         .choices:nn = { academic, professional, engineer }
-    { \int_gset_eq:NN \g_@@_info_dtype_int \l_keys_choice_int },
+    degree-type         .choices:nn =
+      { academic, professional, engineer }
+      { \int_gset_eq:NN \g_@@_info_dtype_int \l_keys_choice_int },
     degree-type             .initial:n  = academic,
 %    \end{macrocode}
 % \end{macro}
@@ -1124,12 +1146,12 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}{latin-font,cjk-font}
+% \begin{macro}{fontset}
 % 中英文字体选项。
 %    \begin{macrocode}
     fontset         .choices:nn =
       { windows, mac, fandol, ubuntu, none }
-      { \tl_set_eq:NN \g_@@_font_latin_tl \l_keys_choice_tl },
+      { \tl_set_eq:NN \g_@@_info_fontset_tl \l_keys_choice_tl },
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1256,6 +1278,13 @@ To produce the documentation run the original source files ending with
 \bool_if:NTF \g_@@_opt_twoside_bool
   { \tl_const:Nn \c_@@_name_pagemode_tl { twoside } }
   { \tl_const:Nn \c_@@_name_pagemode_tl { oneside } }
+%    \end{macrocode}
+%
+% 处理语言后缀。
+%    \begin{macrocode}
+\@@_define_names:nnn { suffix } { } { _en }
+\bool_if:NF \g_@@_opt_chinese_bool
+  { \@@_name_gset_eq:nn { suffix } { suffix_en } }
 %    \end{macrocode}
 %
 %
@@ -1589,12 +1618,6 @@ To produce the documentation run the original source files ending with
   }
 %    \end{macrocode}
 %
-% 处理语言后缀。
-%    \begin{macrocode}
-\bool_if:NF \g_@@_opt_chinese_bool
-  { \@@_name_gset_eq: { suffix } { suffix_en } }
-%    \end{macrocode}
-%
 %
 % \subsection{个人信息}
 %
@@ -1746,23 +1769,6 @@ To produce the documentation run the original source files ending with
 %
 % \pkg{fontspec} 包含于 \pkg{ctex} 宏集，无需另行载入。
 %
-% \subsubsection{操作系统检测}
-%
-% 调用 \pkg{ctex} 提供的操作系统检测。
-%    \begin{macrocode}
-\ctex_detect_platform:
-%    \end{macrocode}
-% 判断用户是否自定义了中英文字体。如果其中任意一种未被定义，
-% 则使用系统预装字体覆盖字体选项。
-% Windows 或 macOS 外的系统被判断为 Linux，一律使用自由字体。
-%    \begin{macrocode}
-\tl_if_empty:NT \g_@@_font_latin_tl
-  { \tl_gset_eq:NN \g_@@_font_latin_tl \g__ctex_fontset_tl }
-\tl_if_empty:NT \g_@@_font_cjk_tl
-  { \tl_gset_eq:NN \g_@@_font_cjk_tl   \g__ctex_fontset_tl }
-%    \end{macrocode}
-%
-%
 % \subsubsection{定义英文字库}
 %
 % 接下来逐个定义所需要使用的字库。
@@ -1777,29 +1783,17 @@ To produce the documentation run the original source files ending with
     \__fontspec_main_setsansfont:nn { } { Arial           }
     \__fontspec_main_setmonofont:nn { Scale = MatchLowercase } { #1 }
   }
-\cs_new_protected:Npn \@@_loadfont_latin_win:
+\cs_new_protected:Npn \@@_loadfont_latin_windows:
   { \@@_loadfont_latin:n { Courier~New } }
 \cs_new_protected:Npn \@@_loadfont_latin_mac:
-  {
-    \@@_loadfont_latin:n { Menlo }
-%    \end{macrocode}
-% 检测 Times New Roman 是否具有小型大写字母（small caps）字型。
-% 这是 macOS 预装的字体版本较旧导致的。
-%    \begin{macrocode}
-    \fontspec_if_small_caps:F
-  {
-        \msg_warning:nn { thuthesis3 } { no-small-caps }
-        \__fontspec_main_setmainfont:nn
-          { \c_@@_name_gyrefeature_clist } { texgyretermes }
-      }
-  }
+  { \@@_loadfont_latin:n { Menlo } }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_loadfont_latin_gyre:}
+% \begin{macro}{\@@_loadfont_latin_fandol:}
 % 开源的 \TeX Gyre 西文字体。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_loadfont_latin_gyre:
+\cs_new_protected:Npn \@@_loadfont_latin_fandol:
   {
     \__fontspec_main_setmainfont:nn
       { \c_@@_name_gyrefeature_clist } { texgyretermes }
@@ -1813,6 +1807,13 @@ To produce the documentation run the original source files ending with
       }
       { texgyrecursor }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_loadfont_latin_ubuntu:}
+% Ubuntu 系统。
+%    \begin{macrocode}
+\cs_new_eq:NN \@@_loadfont_latin_ubuntu: \@@_loadfont_latin_fandol:
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1841,10 +1842,10 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_loadfont_cjk_win:}
+% \begin{macro}{\@@_loadfont_cjk_windows:}
 % Windows 中文字体。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_loadfont_cjk_win:
+\cs_new_protected:Npn \@@_loadfont_cjk_windows:
   {
     \setCJKmainfont { SimSun   }
       [ \c_@@_name_fakebold_tl, ItalicFont = KaiTi ]
@@ -1919,40 +1920,10 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-%
-% \begin{macro}{\@@_loadfont_cjk_founder:}
-% 方正字库（简繁扩展）
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_loadfont_cjk_founder:
-  {
-%    \end{macrocode}
-% 调整方正字体括号位置。
-% \footnote{\XeTeX 的调整方法来自 \url{https://www.zhihu.com/question/46241367/answer/101660183}。}
-%    \begin{macrocode}
-    \sys_if_engine_xetex:T
-      { \xeCJKEditPunctStyle {quanjiao} { optimize-kerning = true } }
-    \sys_if_engine_luatex:T
-      { \defaultCJKfontfeatures { JFM = { zh_CN/{quanjiao,fzpr} } } }
-    \setCJKmainfont { FZShuSong-Z01  }
-      [ BoldFont = FZXiaoBiaoSong-B05, ItalicFont = FZKai-Z03 ]
-    \setCJKsansfont { FZXiHeiI-Z08   } [ BoldFont = FZHei-B01 ]
-    \setCJKmonofont { FZFangSong-Z02 }
-    \setCJKfamilyfont { zhsong } { FZShuSong-Z01  }
-      [ BoldFont = FZXiaoBiaoSong-B05 ]
-    \setCJKfamilyfont { zhhei  } { FZHei-B01      }
-      [ \c_@@_name_fakebold_tl ]
-    \setCJKfamilyfont { zhkai  } { FZKai-Z03      }
-      [ \c_@@_name_fakebold_tl ]
-    \setCJKfamilyfont { zhfs   } { FZFangSong-Z02 }
-    \defaultCJKfontfeatures { }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_loadfont_cjk_noto:}
+% \begin{macro}{\@@_loadfont_cjk_ubuntu:}
 % Noto 思源字体。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_loadfont_cjk_noto:
+\cs_new_protected:Npn \@@_loadfont_cjk_ubuntu:
   {
     \setCJKmainfont [ \c_@@_name_notofeature_clist ]
       { NotoSerifCJKsc }
@@ -1968,28 +1939,9 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_loadfont_cjk_source:}
-% Source Han 思源字体。
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_loadfont_cjk_source:
-  {
-    \setCJKmainfont [ \c_@@_name_notofeature_clist ]
-      { SourceHanSerifSC }
-    \setCJKsansfont [ \c_@@_name_notofeature_clist ]
-      { SourceHanSansSC  }
-    \setCJKmonofont { FZFangSong-Z02 }
-    \setCJKfamilyfont { zhsong } { Source~Han~Serif~SC }
-    \setCJKfamilyfont { zhhei  } { Source~Han~Sans~SC  }
-    \setCJKfamilyfont { zhfs   } { FZFangSong-Z02      }
-    \setCJKfamilyfont { zhkai  } { FZKai-Z03           }
-      [ \c_@@_name_fakebold_tl ]
-  }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{variable}{\c_@@_name_fakebold_tl}
 %    \begin{macrocode}
-\tl_const:Nn \c_@@_name_fakebold_tl { AutoFakeBold = 2.17 }
+\tl_const:Nn \c_@@_name_fakebold_tl { AutoFakeBold = 3 }
 %    \end{macrocode}
 % \end{variable}
 %
@@ -2152,30 +2104,38 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{\@@_loadfont_math_none:}
 % 不进行数学字体配置。
 %    \begin{macrocode}
-\@@_cs_clear:N \@@_loadfont_math_none:
+\cs_new:Npn \@@_loadfont_math_none: { }
 %    \end{macrocode}
 % \end{macro}
 %
 %
 % \subsubsection{载入指定字库}
 %
-% \begin{macro}{\@@_loadfont_latin_windows:
-%   \@@_loadfont_latin_fandol:,\@@_loadfont_cjk_windows:}
-% 为兼容 \pkg{ctex} 做出的名称改变。
+% \begin{macro}{\@@_loadfont_latin_none:,\@@_loadfont_cjk_none:}
+% 不设置字库。
 %    \begin{macrocode}
-\cs_new_eq:NN \@@_loadfont_latin_windows: \@@_loadfont_latin_win:
-\cs_new_eq:NN \@@_loadfont_latin_fandol:  \@@_loadfont_latin_gyre:
-\cs_new_eq:NN \@@_loadfont_cjk_windows:   \@@_loadfont_cjk_win:
+\cs_new:Npn \@@_loadfont_latin_none: { }
+\cs_new:Npn \@@_loadfont_cjk_none:   { }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\@@_loadfont:}
-% 载入字体命令。
+% 判断用户是否自定义了中英文字体。如果其中任意一种未被定义，
+% 则调用 \pkg{ctex} 提供的操作系统检测，使用系统预装字体覆盖字体选项。
+% Windows 或 macOS 外的系统被判断为 Linux，一律使用自由字体。
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_loadfont:
   {
-    \use:c { @@_loadfont_latin_ \g_@@_font_latin_tl : }
-    \use:c { @@_loadfont_cjk_   \g_@@_font_cjk_tl   : }
+    \tl_if_empty:NT \g_@@_info_fontset_tl
+      {
+        \ctex_detect_platform:
+        \tl_gset_eq:NN \g_@@_info_fontset_tl \g__ctex_fontset_tl
+      }
+%    \end{macrocode}
+% 载入字体命令。
+%    \begin{macrocode}
+    \use:c { @@_loadfont_latin_ \g_@@_info_fontset_tl : }
+    \use:c { @@_loadfont_cjk_   \g_@@_info_fontset_tl : }
 %    \end{macrocode}
 % 自行定义 \pkg{ctex} 中的四类字体命令。
 %    \begin{macrocode}
@@ -2310,7 +2270,6 @@ To produce the documentation run the original source files ending with
       }
       {
         \tl_set:Nn \headrulewidth { 0.4 pt }
-        \dim_set:Nn \headheight { 20 pt }
         \clist_map_inline:Nn \g_@@_header_clist
           { \@@_header:nn ##1 }
       }
@@ -2437,12 +2396,14 @@ To produce the documentation run the original source files ending with
 \bool_if:NTF \g_@@_opt_chinese_bool
   { \keys_set:nn { ctex } { autoindent = 2 } }
   { \keys_set:nn { ctex } { autoindent = \c_@@_indent_en_dim } }
+%</class>
 %    \end{macrocode}
 %
 %
 % 各级标题格式设置。
 % |\keys_set:nn{ctex}| 实际相当于 \tn{ctexset}。
 %    \begin{macrocode}
+%<*(def-u|def-g|def-p)>
 \keys_set:nn { ctex / chapter }
   {
     nameformat   = { },
@@ -2457,17 +2418,42 @@ To produce the documentation run the original source files ending with
   { \keys_set:nn { ctex } { #1 / afterindent = true } }
 %    \end{macrocode}
 %
+% \begin{macro}{\@@_section_format:nnnnnn,\@@_section_format:nnnnn,
+%   \@@_section_format_en:nnnnn}
+% 辅助函数。
 %    \begin{macrocode}
-\keys_set:nn { ctex }
+\cs_new:Npn \@@_section_format:nnnnnn #1#2#3#4#5#6
   {
-    chapter        / beforeskip = \c_@@_chapterbefore_dim,
-    chapter        / afterskip  = \c_@@_chapterafter_dim,
-    chapter        / format     = \c_@@_fmt_chapter_tl,
-    section        / format     = \c_@@_fmt_section_tl,
-    subsection     / format     = \c_@@_fmt_subsection_tl,
-    subsubsection  / format     = \c_@@_fmt_subsubsection_tl,
-    paragraph      / format     = \c_@@_fmt_paragraph_tl,
-    subparagraph   / format     = \c_@@_fmt_subparagraph_tl,
+    \keys_set:nn { ctex / #2 }
+      {
+        format     = \sffamily \@@_fontsize:nn { #3 bp } { #4 bp },
+        beforeskip = #5 bp, afterskip  = #6 bp, #1
+      }
+  }
+\cs_new:Npn \@@_section_format:nnnnn
+  { \@@_section_format:nnnnnn { aftername = \quad } }
+%<def-u>\cs_set_eq:NN \@@_section_format_en:nnnnn \@@_section_format:nnnnn
+%<def-g|def-p>\cs_new:Npn  \@@_section_format_en:nnnnn
+%<def-g|def-p>  { \@@_section_format:nnnnnn { aftername = \space, format+ = \bfseries } }
+%</(def-u|def-g|def-p)>
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+%<*class>
+\clist_map_inline:Nn \c_@@_fmt_section_clist
+  { \use:c { @@_section_format \c@@_name_suffix_tl :nnnnn } #1 }
+%    \end{macrocode}
+%
+% 根据语言设定章编号格式。
+%    \begin{macrocode}
+\keys_set:nv { ctex / chapter }
+  { c_@@_fmt_chaptername \c_@@_name_suffix_tl _clist }
+%    \end{macrocode}
+%
+% 章标题额外需要居中。
+%    \begin{macrocode}
+\keys_set:nn { ctex / chapter } { format+ = \centering }
 %    \end{macrocode}
 %
 %
@@ -2475,6 +2461,8 @@ To produce the documentation run the original source files ending with
 %
 % 设置目录标题默认名称。
 %    \begin{macrocode}
+\keys_set:nn { ctex }
+  {
     contentsname   = \c_@@_name_tableofcontents_tl,
     listfigurename = \c_@@_name_listoffigures_tl,
     listtablename  = \c_@@_name_listoftables_tl,
@@ -4443,7 +4431,6 @@ To produce the documentation run the original source files ending with
     { figure        } { 图              } { figure                },
     { keywords      } { 关键词          } { KEYWORDS              },
     { thu           } { 清华大学        } { Tsinghua~ University  },
-    { suffix        } {                 } { _en                   },
     { table         } { 表              } { table                 }
   }
   { \@@_define_names:nnn #1 }
@@ -4608,20 +4595,8 @@ To produce the documentation run the original source files ending with
 %<def-g|def-p>    { pagestyle     } { headings                          },
     { abslabel      } { \bfseries                         },
     { abslabel_en   } {                                   },
-%<def-u>    { cover title   } { \bfseries                         },
-%<def-g>    { cover title   } {                                   },
-%<def-u>    { cover label   } { \kaishu                           },
-%<def-g>    { cover label   } { \bfseries                         },
-%<def-p>    { cover label   } {                                   },
-    { emblem color  } { black                             },
-    { name   color  } { black                             },
-    { section       } { \bigger \normalfont \sffamily     },
-    { chapter       } { \c_@@_fmt_section_tl \centering },
-    { chapterintoc  } { \c_@@_fmt_section_tl            },
-    { subsection    } { \c_@@_fmt_section_tl            },
-    { subsubsection } { \c_@@_fmt_section_tl            },
-    { paragraph     } { \c_@@_fmt_section_tl            },
-    { subparagraph  } { \c_@@_fmt_section_tl            },
+    { chapterintoc  } { \normalfont \sffamily             },
+    { chapter     } { \@@_zihao:n { 4 } \sffamily },
     { toc title     } { \centering \@@_zihao:n { 3 } \bfseries },
     { header        } { \small \kaishu                    },
     { footer        } { \small \rmfamily                  }
@@ -4629,14 +4604,102 @@ To produce the documentation run the original source files ending with
   { \@@_define_fmt:nn #1 }
 %    \end{macrocode}
 %
-% 研究生《写作指南》：
-% 页边距：上下左右均为 3.0 厘米，装订线 0 厘米；
-% 页眉距边界：2.2 厘米，页脚距边界：2.2 厘米。
+% \subsubsection{章节标题设置}
+% \label{subsubsec:const-section}
+%
+% \begin{variable}{\c_@@_fmt_section_clist}
+% 章节标题格式。
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_fmt_section_clist
+  {
+%    \end{macrocode}
+% 本科生要求：
+% \begin{center}
+%   \begin{tabular}{lclll}
+%     \toprule
+%     标题        & 中文       & 英文       & 段前/后间距 & 行距 \\
+%     \midrule
+%     一级节标题  & 黑体小三号 & Arial 15pt & 30/20 pt    & 20pt \\
+%     二级节标题  & 黑体四号   & Arial 14pt & 25/12 pt    & 18pt \\
+%     三级节标题  & 黑体小四号 & Arial 13pt & 12/6 pt     & 15pt \\
+%     四级节标题  & 黑体小四号 & Arial 12pt & 12/6 pt     &      \\
+%     \bottomrule
+%   \end{tabular}
+% \end{center}
+% ^^A TODO 修改为 tabular note
+% 这里三级节标题的“中文黑体小四号”和“英文 Arial 13pt”不一致，取 13pt。
+%    \begin{macrocode}
+%<*def-u>
+    { chapter       } { 15 } { 20 } { 30 } { 20 },
+    { section       } { 14 } { 18 } { 25 } { 12 },
+    { subsection    } { 13 } { 15 } { 12 } {  6 },
+    { subsubsection } { 12 } { 14 } { 12 } {  6 }
+%</def-u>
+%    \end{macrocode}
+% 研究生要求：
+% \begin{itemize}
+%   \item 各章标题，例如：“\textsf{第 1 章 引言}”。
+%
+%     章序号与章名之间空一个汉字符。
+%     采用黑体三号字，居中书写，单倍行距，
+%     段前空 24 磅，段后空 18 磅。
+%
+%   \item 一级节标题，例如：“\textsf{2.1 实验装置与实验方法}”。
+%
+%     节标题序号与标题名之间空一个汉字符（下同）。
+%     采用黑体四号（14pt）字居左书写，行距为固定值 20 磅，
+%     段前空 24 磅，段后空 6 磅。
+%
+%   \item 二级节标题，例如：“\textsf{2.1.1 实验装置}”。
+%
+%     采用黑体 13pt 字居左书写，行距为固定值 20 磅，
+%     段前空 12 磅，段后空 6 磅。
+%
+%   \item 三级节标题，例如：“\textsf{2.1.2.1 归纳法}”。
+%
+%     采用黑体小四号（12pt）字居左书写，行距为固定值 20 磅，
+%     段前空 12 磅，段后空 6 磅。
+% \end{itemize}
+%
+% 由于 Word 的行距算法不同，这里进行了一些调整使得视觉上更接近。
+% ^^A 我们将三号字的单倍行距（16*1.3bp）近似为20bp
+%    \begin{macrocode}
+%<*(def-g|def-p)>
+    { chapter       } { 16 } { 20 } { 27 } { 27 },
+    { section       } { 14 } { 20 } { 24 } {  6 },
+    { subsection    } { 13 } { 20 } { 12 } {  6 },
+    { subsubsection } { 12 } { 20 } { 12 } {  6 }
+%</(def-g|def-p)>
+  }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\c_@@_fmt_chaptername_clist,\c_@@_fmt_chaptername_en_clist}
+% 章编号格式。
+%    \begin{macrocode}
+\clist_const:Nn \c_@@_fmt_chaptername_clist
+  { name = { 第, 章 }, number = \thechapter }
+\clist_const:Nn \c_@@_fmt_chaptername_en_clist
+  {
+    name  = \chaptername \space,
+%<def-u>    number  = \thu@number@en { \thechapter }
+%<def-g|def-p>    number  = \thechapter,
+%<def-g|def-p>    format+ = \MakeUppercase
+  }
+%    \end{macrocode}
+% \end{variable}
+%
+% \subsubsection{页面设置}
+% \label{subsubsec:const-section}
 %
 % 本科生《写作指南》：
 % 页边距：上：3.8 厘米，下：3.2 厘米，左右：3 厘米，装订线：左 0.2 厘米。
 % 本科生 Word 模板：
 % 无页眉，页脚距边界：1.75 厘米。
+%
+% 研究生《写作指南》：
+% 页边距：上下左右均为 3.0 厘米，装订线 0 厘米；
+% 页眉距边界：2.2 厘米，页脚距边界：2.2 厘米。
 %
 % \pkg{fancyhdr} 的页眉是沿底部对齐的，所以只需设置 \tn{headsep}，
 % \tn{headheight} 可以适当增加高度允许多行页眉。
