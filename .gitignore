@@ -46,6 +46,11 @@ TDS/
 temp/
 mythesis/
 
+# LLM
+.claude
+.codex
+.llmdoc-tmp/
+
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
 *.bcf
