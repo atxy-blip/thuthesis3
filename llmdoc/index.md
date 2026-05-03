@@ -44,6 +44,8 @@ technology. Local directory names may differ from GitHub repository names; see
   reuse or evaluate.
 - `reference/git-commit-style.md`: commit subject labels, issue-reference
   suffixes, and language rules for commits and `.dtx` documentation.
+- `reference/versioning-and-changes.md`: pre-1.0 versioning, changelog format,
+  and when to add `\changes` entries.
 
 ## Memory
 

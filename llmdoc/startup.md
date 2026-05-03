@@ -27,7 +27,9 @@ Before non-trivial edits, read:
 4. `llmdoc/architecture/latex3-module-roadmap.md`
 5. `llmdoc/reference/git-commit-style.md` before drafting commits or changing
    public `.dtx` documentation
-6. the relevant guide or reference file for the task
+6. `llmdoc/reference/versioning-and-changes.md` before changing
+   `CHANGELOG.md`, release versions, or `\changes`
+7. the relevant guide or reference file for the task
 
 ## Sibling Repositories
 
