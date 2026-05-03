@@ -38,6 +38,8 @@ technology. Local directory names may differ from GitHub repository names; see
 
 ## Reference
 
+- `reference/class-options.md`: class-option inheritance rules, audit scope,
+  and documentation/source ordering.
 - `reference/sibling-repositories.md`: local paths, canonical GitHub URLs,
   roles, and llmdoc locations for related repositories.
 - `reference/latex3-patterns-from-njuthesis.md`: local LaTeX3 patterns to
@@ -52,5 +54,7 @@ technology. Local directory names may differ from GitHub repository names; see
 - `memory/decisions/2026-05-02-thuthesis3-as-destination.md`: decision that
   LaTeX3-native architecture lands here, not in `thuthesis2e/master`.
 - `memory/reflections/README.md`: placeholder for future working reflections.
+- `memory/reflections/2026-05-04-class-options.md`: reflection on class-option
+  inheritance scope and documentation alignment.
 
 Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.

@@ -30,6 +30,12 @@ Reference technology:
 - `../NJUThesis-njulug/source/njuthesis.dtx` uses `l3keys2e`,
   `\keys_define:nn`, module forwarding, and filtered key groups.
 
+Compatibility rule:
+
+- For class options, inherit public option names from `../thuthesis2e/master`.
+  Do not treat NJUThesis or `../thuthesis2e/refactor/*` branches as API
+  sources; they may guide implementation mechanics only.
+
 ## Phase 2: Data Model and Constants
 
 Goal: separate stored thesis data from page rendering.

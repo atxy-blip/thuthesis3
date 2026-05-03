@@ -48,6 +48,11 @@ Edit `source/thuthesis3.dtx` as the source of truth.
 Keep public documentation and implementation aligned when changing user-facing
 options, commands, or environments.
 
+For class options specifically, compare against option names in
+`../thuthesis2e/master`. Exclude `\thusetup`-only keys and math-style keys
+unless the task explicitly asks for them. Use NJUThesis only for LaTeX3
+mechanisms, not for the inherited public option list.
+
 Prefer small module-sized ports. Avoid broad mechanical rewrites that combine
 options, rendering, fonts, and tests in one change.
 

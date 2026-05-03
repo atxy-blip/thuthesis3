@@ -60,13 +60,177 @@ To produce the documentation run the original source files ending with
 \documentclass[fontset=fandol]{ctxdoc}
 \let\typ\texttt
 \let\exp\texttt
+\let\OPT\texttt
 \begin{document}
   \DocInput{thuthesis3.dtx}
-  ^^A \PrintChanges
-  ^^A \PrintIndex
+  \PrintChanges
+  \PrintIndex
 \end{document}
 %</driver>
 % \fi
+%
+% \begin{documentation}
+%
+% \section{模板}
+%
+% \subsection{模板选项}
+%
+% 模板选项位于 \tn{documentclass} 后的方括号内，用于指定模板的行为。
+% 下文中尖括号内列出了若干个允许的选项，其中加粗的为默认选项（缺省值）。
+%
+% \subsubsection{学位信息}
+%
+% \begin{function}[added=2026-05-04]{degree}
+%   \begin{syntax}
+%     \OPT{degree} = <(doctor)|master|bachelor|postdoc>
+%   \end{syntax}
+% 选择学位类型。可选值分别为博士研究生、硕士研究生、本科生和博士后，
+% 默认为博士研究生。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{degree-type}
+%   \begin{syntax}
+%     \OPT{degree-type} = <(academic)|professional>
+%   \end{syntax}
+% 选择研究生的学位类型。可选值分别为学术型和专业型，
+% 默认为学术型。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{thesis-type}
+%   \begin{syntax}
+%     \OPT{thesis-type} = <(thesis)|proposal>
+%   \end{syntax}
+% 选择文档类型。可选值分别为学位论文和开题报告，默认为学位论文。
+% \end{function}
+%
+% \subsubsection{语言}
+%
+% \begin{function}[added=2026-05-04]{main-language,language}
+%   \begin{syntax}
+%     \OPT{main-language} = <(chinese)|english>
+%     \OPT{language}      = <(chinese)|english>
+%   \end{syntax}
+% 选择论文的主要语言和局部语言，默认为中文。
+% \end{function}
+%
+% \subsubsection{输出和页面模式}
+%
+% \begin{function}[added=2026-05-04]{output}
+%   \begin{syntax}
+%     \OPT{output} = <(print)|electronic>
+%   \end{syntax}
+% 选择输出模式。可选值分别为打印版和电子版，默认为打印版。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{draft}
+%   \begin{syntax}
+%     <\OPT{draft}>
+%   \end{syntax}
+% 开启草稿模式，默认关闭。本选项会传递给底层 \cls{ctexbook} 文档类。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{oneside,twoside}
+%   \begin{syntax}
+%     <\OPT{oneside}|\OPT{twoside}>
+%   \end{syntax}
+% 选择单面或双面模式。本选项会传递给底层 \cls{ctexbook} 文档类。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{openright,openany}
+%   \begin{syntax}
+%     <\OPT{openright}|\OPT{openany}>
+%   \end{syntax}
+% 选择章节起始页。本选项会传递给底层 \cls{ctexbook} 文档类。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{raggedbottom}
+%   \begin{syntax}
+%     \OPT{raggedbottom} = <(true)|false>
+%   \end{syntax}
+% 选择是否允许页面底部不平齐，默认开启。
+% \end{function}
+%
+% \subsubsection{特殊格式}
+%
+% \begin{function}[added=2026-05-04]{style-override}
+%   \begin{syntax}
+%     \OPT{style-override} = <(none)|schwarzman>
+%   \end{syntax}
+% 选择学院特殊格式。当前可选值为无特殊格式和苏世民学院格式，
+% 默认不启用特殊格式。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{anonymous}
+%   \begin{syntax}
+%     \OPT{anonymous} = <true|(false)>
+%   \end{syntax}
+% 选择是否开启盲审模式，默认关闭。
+% \end{function}
+%
+% \subsubsection{字体}
+%
+% \begin{function}[added=2026-05-04]{fontset}
+%   \begin{syntax}
+%     \OPT{fontset} = <windows|mac|fandol|ubuntu|none>
+%   \end{syntax}
+% 选择正文字体集。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{windows-font-dir}
+%   \begin{syntax}
+%     \OPT{windows-font-dir} = \Arg{path}
+%   \end{syntax}
+% 指定 Windows 字体文件所在目录。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{math-font}
+%   \begin{syntax}
+%     \OPT{math-font} = <asana|cambria|fira|garamond|lm|libertinus|newcm|
+%       stix|bonum|dejavu|pagella|schola|termes|xits|none>
+%   \end{syntax}
+% 选择数学字体，默认为 \opt{xits}。
+% \end{function}
+%
+% \subsubsection{扫描页和配置}
+%
+% \begin{function}[added=2026-05-04]{originality,copyright}
+%   \begin{syntax}
+%     \OPT{originality} = \Arg{file}
+%     \OPT{copyright}   = \Arg{file}
+%   \end{syntax}
+% 指定原创性声明和使用授权书扫描件路径。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{config}
+%   \begin{syntax}
+%     \OPT{config} = \Arg{file-list}
+%   \end{syntax}
+% 指定需要额外载入的配置文件列表。
+% \end{function}
+%
+% \subsubsection{可选宏包}
+%
+% \begin{function}[added=2026-05-04]{biblatex,cleveref,ntheorem,enumitem,footmisc,unicode-math}
+%   \begin{syntax}
+%     \OPT{biblatex}     = <(true)|false>
+%     \OPT{cleveref}     = <(true)|false>
+%     \OPT{ntheorem}     = <(true)|false>
+%     \OPT{enumitem}     = <(true)|false>
+%     \OPT{footmisc}     = <(true)|false>
+%     \OPT{unicode-math} = <(true)|false>
+%   \end{syntax}
+% 选择是否载入模板默认使用的可选宏包，默认均载入。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{minimal}
+%   \begin{syntax}
+%     <\OPT{minimal}>
+%   \end{syntax}
+% 启用最小化模式，不载入上述可选宏包，并关闭数学字体设置。
+% \end{function}
+%
+% \end{documentation}
+%
 %
 % \begin{implementation}
 %
@@ -136,7 +300,7 @@ To produce the documentation run the original source files ending with
 % \end{variable}
 %
 % \begin{variable}{\g_@@_info_type_int}
-% 用于存储论文类型 \opt{type} 的变量。
+% 用于存储学位类型 \opt{degree} 的变量。
 %    \begin{macrocode}
 \int_new:N \g_@@_info_type_int
 %    \end{macrocode}
@@ -149,21 +313,53 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_@@_opt_twoside_bool}
-% 定义用于判断是否使用双面模式的变量，初始值为使用双面模式。
+% \begin{variable}{\g_@@_opt_proposal_bool}
+% 定义用于判断是否使用开题样式的变量。
 %    \begin{macrocode}
-\bool_new:N      \g_@@_opt_twoside_bool
-\bool_set_true:N \g_@@_opt_twoside_bool
+\bool_new:N \g_@@_opt_proposal_bool
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\g_@@_opt_chinese_bool}
+% 定义用于判断是否使用中文语言设定的变量。
+%    \begin{macrocode}
+\bool_new:N \g_@@_opt_chinese_bool
+%    \end{macrocode}
+% \end{variable}
 %
-% \begin{variable}{\g_@@_info_fontset_tl,
-%   \g_@@_font_math_tl}
-% 存储所使用字体名称的全局变量。
+% \begin{variable}{\g_@@_info_output_tl}
+% 保存输出模式。
+%    \begin{macrocode}
+\tl_new:N \g_@@_info_output_tl
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_opt_draft_bool}
+% 定义用于判断是否使用草稿模式的变量。
+%    \begin{macrocode}
+\bool_new:N        \g_@@_opt_draft_bool
+\bool_gset_false:N \g_@@_opt_draft_bool
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_opt_schwarzman_bool}
+% 定义用于判断是否使用苏世民学院样式的变量。
+%    \begin{macrocode}
+\bool_new:N \g_@@_opt_schwarzman_bool
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_opt_anon_bool}
+% 定义用于判断是否使用盲审模式的变量。
+%    \begin{macrocode}
+\bool_new:N \g_@@_opt_anon_bool
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_info_fontset_tl}
+% 存储所使用正文字体集名称的全局变量。
 %    \begin{macrocode}
 \tl_new:N \g_@@_info_fontset_tl
-\tl_new:N \g_@@_font_math_tl
 %    \end{macrocode}
 % \end{variable}
 %
@@ -174,17 +370,25 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_@@_font_path_bool}
-% 是否使用独立的字体文件。
+% \begin{variable}{\g_@@_font_math_tl}
+% 存储所使用数学字体名称的全局变量。
 %    \begin{macrocode}
-\bool_new:N \g_@@_font_path_bool
+\tl_new:N \g_@@_font_math_tl
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_@@_config_tl}
-% 保存配置文件名称。默认为空。
+% \begin{variable}{\g_@@_path_originality_tl,\g_@@_path_copyright_tl}
+% 存储扫描件路径的全局变量。
 %    \begin{macrocode}
-\tl_new:N \g_@@_config_tl
+\tl_new:N \g_@@_path_originality_tl
+\tl_new:N \g_@@_path_copyright_tl
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_config_clist}
+% 保存配置文件名称列表。
+%    \begin{macrocode}
+\clist_new:N \g_@@_config_clist
 %    \end{macrocode}
 % \end{variable}
 %
@@ -1042,6 +1246,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 % \begin{macro}{degree}
+% \changes{v0.1.0}{2025/05/04}{新增学位名称选项。}
 % 学位，默认为博士。
 %    \begin{macrocode}
     degree             .choices:nn =
@@ -1052,16 +1257,18 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{degree-type}
+% \changes{v0.1.0}{2025/05/04}{新增学位类型选项。}
 % 研究生的学位类型，默认为学术学位。
 %    \begin{macrocode}
     degree-type         .choices:nn =
-      { academic, professional, engineer }
+      { academic, professional }
       { \int_gset_eq:NN \g_@@_info_dtype_int \l_keys_choice_int },
     degree-type             .initial:n  = academic,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{thesis-type}
+% \changes{v0.1.0}{2025/05/04}{新增文档类型选项。}
 % 文档类型，默认为学位论文。
 %    \begin{macrocode}
     thesis-type              .choice:,
@@ -1074,6 +1281,7 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{language}
+% \changes{v0.1.0}{2025/05/04}{新增局部语言选项。}
 % 局部语言。
 %    \begin{macrocode}
     language              .choice:,
@@ -1086,6 +1294,7 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{main-language}
+% \changes{v0.1.0}{2025/05/04}{新增主要语言选项。}
 % 主要语言。
 %    \begin{macrocode}
     main-language              .choice:,
@@ -1096,21 +1305,8 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{originality}
-% 原创性声明。
-%    \begin{macrocode}
-    originality         .tl_set:N  = \g_@@_path_originality_tl,
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{copyright}
-% 使用授权书。
-%    \begin{macrocode}
-    copyright           .tl_set:N  = \g_@@_path_copyright_tl,
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{output}
+% \changes{v0.1.0}{2025/05/04}{新增输出模式选项。}
 % 输出模式。
 %    \begin{macrocode}
     output             .choices:nn = { print, electronic }
@@ -1119,34 +1315,86 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{draft,\g_@@_opt_draft_bool}
+% \begin{macro}{draft}
+% \changes{v0.1.0}{2025/05/04}{新增草稿模式选项。}
 % 是否开启草稿模式（默认关闭）。
 %    \begin{macrocode}
-    draft            .bool_gset:N  = \g_@@_opt_draft_bool,
-    draft              .initial:n  = false,
+    draft      .value_forbidden:n  = true,
+    draft                 .code:n  =
+      {
+        \bool_gset_true:N \g_@@_opt_draft_bool
+        \PassOptionsToClass { draft } { ctexbook }
+      },
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{oneside,twoside}
-% 单双面模式（默认为双面）。
+% \begin{macro}{oneside}
+% \changes{v0.1.0}{2025/05/04}{继承 \opt{oneside} 选项。}
+% \begin{macro}{twoside}
+% \changes{v0.1.0}{2025/05/04}{继承 \opt{twoside} 选项。}
 %    \begin{macrocode}
     oneside    .value_forbidden:n  = true,
+    oneside               .code:n  =
+      { \PassOptionsToClass { oneside } { ctexbook } },
     twoside    .value_forbidden:n  = true,
-    oneside  .bool_gset_inverse:N  = \g_@@_opt_twoside_bool,
+    twoside               .code:n  =
+      { \PassOptionsToClass { twoside } { ctexbook } },
 %    \end{macrocode}
 % \end{macro}
+% \end{macro}
+%
+% \begin{macro}{openright}
+% \changes{v0.1.0}{2025/05/04}{继承 \opt{openright} 选项。}
+% \begin{macro}{openany}
+% \changes{v0.1.0}{2025/05/04}{继承 \opt{openany} 选项。}
+%    \begin{macrocode}
+    openright  .value_forbidden:n  = true,
+    openright             .code:n  =
+      { \PassOptionsToClass { openright } { ctexbook } },
+    openany    .value_forbidden:n  = true,
+    openany               .code:n  =
+      { \PassOptionsToClass { openany   } { ctexbook } },
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% 苏世民学院的格式相比学校有如下变动：全文的脚注都连续编号（包括到附录中），不使用带圈数字；
+% 全文图、表、公式连续编号。
+%    \begin{macrocode}
+    style-override      .choice:,
+    style-override / none .code:n =
+      { \bool_gset_false:N \g_@@_opt_schwarzman_bool },
+    style-override / schwarzman .code:n =
+      { \bool_gset_true:N  \g_@@_opt_schwarzman_bool },
+    style-override .initial:n     = none,
+%    \end{macrocode}
 %
 % \begin{macro}{anonymous}
-% \begin{macro}{\g_@@_opt_anon_bool}
+% \changes{v0.1.0}{2025/05/04}{新增盲审模式选项。}
 % 盲审模式。
 %    \begin{macrocode}
     anonymous         .bool_set:N  = \g_@@_opt_anon_bool,
     anonymous          .initial:n  = false,
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{macro}{raggedbottom}
+% \changes{v0.1.0}{2025/05/04}{新增底部平齐选项。}
+% 是否使用底部平齐。
+%    \begin{macrocode}
+    raggedbottom        .choice:,
+    raggedbottom / true   .code:n  =
+      {
+        \PassOptionsToPackage { bottom } { footmisc }
+        \@@_at_begin_document:n { \raggedbottom }
+      },
+    raggedbottom / false  .code:n  = { },
+    raggedbottom       .initial:n  = true,
+%    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{fontset}
+% \changes{v0.1.0}{2025/05/04}{新增中英文字体选项。}
 % 中英文字体选项。
 %    \begin{macrocode}
     fontset         .choices:nn =
@@ -1155,7 +1403,16 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{windows-font-dir}
+% \changes{v0.1.0}{2025/05/04}{新增 Windows 下字体文件路径选项。}
+% Windows 下字体文件的路径。
+%    \begin{macrocode}
+    windows-font-dir   .tl_gset:N  = \g_@@_font_path_tl,
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{math-font}
+% \changes{v0.1.0}{2025/05/04}{新增数学字体选项。}
 % 数学字体选项。
 % 由 \pkg{unicode-math} 指定 \XeTeX 和 \LuaTeX 下使用的数学字体。
 %    \begin{macrocode}
@@ -1169,18 +1426,23 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{font-path}
-% 独立字体文件的路径。
+% \begin{macro}{originality}
+% \changes{v0.1.0}{2025/05/04}{新增原创性声明路径选项。}
+% 原创性声明扫描文件路径。
 %    \begin{macrocode}
-    font-path             .code:n  =
-      {
-        \bool_set_true:N \g_@@_font_path_bool
-        \tl_set_eq:NN \g_@@_font_path_tl \l_keys_value_tl
-      },
+    originality         .tl_set:N  = \g_@@_path_originality_tl,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{config,\g_@@_config_clist}
+% \begin{macro}{copyright}
+% \changes{v0.1.0}{2025/05/04}{新增授权书路径选项。}
+% 授权书扫描文件路径。
+%    \begin{macrocode}
+    copyright           .tl_set:N  = \g_@@_path_copyright_tl,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{config}
 % 配置文件路径。
 %    \begin{macrocode}
     config           .clist_set:N  = \g_@@_config_clist
@@ -1222,9 +1484,9 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{
 %   biblatex,
 %   cleveref,
+%   ntheorem,
 %   enumitem,
 %   footmisc,
-%   ntheorem,
 %   unicode-math,
 %   \g_@@_opt_load_blx_bool,
 %   \g_@@_opt_load_cref_bool,
@@ -1234,9 +1496,9 @@ To produce the documentation run the original source files ending with
 %   \g_@@_opt_load_um_bool,
 %   \@@_loadpkg_blx:,
 %   \@@_loadpkg_cref:,
+%   \@@_loadpkg_nthm:,
 %   \@@_loadpkg_enit:,
 %   \@@_loadpkg_fm:,
-%   \@@_loadpkg_nthm:,
 %   \@@_loadpkg_um:}
 %    \begin{macrocode}
 \clist_map_inline:nn
@@ -1275,7 +1537,7 @@ To produce the documentation run the original source files ending with
 %
 % 处理单双面模式选项。
 %    \begin{macrocode}
-\bool_if:NTF \g_@@_opt_twoside_bool
+\legacy_if:nTF { @twoside }
   { \tl_const:Nn \c_@@_name_pagemode_tl { twoside } }
   { \tl_const:Nn \c_@@_name_pagemode_tl { oneside } }
 %    \end{macrocode}
@@ -1501,7 +1763,7 @@ To produce the documentation run the original source files ending with
 %
 % 在双面模式下，使用 \pkg{emptypage} 清除空白页的页眉、页脚和页码。
 %    \begin{macrocode}
-\bool_if:NT \g_@@_opt_twoside_bool { \RequirePackage { emptypage } }
+\legacy_if:nT { @twoside } { \RequirePackage { emptypage } }
 %    \end{macrocode}
 %
 % \begin{macro}{\thuline}
@@ -2012,7 +2274,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new:Npn \@@_loadfont_math_cambria:
   {
-    \bool_if:NTF \g_@@_font_path_bool
+    \tl_if_empty:NTF \g_@@_font_path_tl
       {
         \__um_setmathfont:nn
           { Path = \g_@@_font_path_tl/, FontIndex = 1 }
@@ -2376,7 +2638,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_chapter_header:n #1
   {
-    \bool_if:NTF \g_@@_opt_twoside_bool
+    \legacy_if:nTF { @twoside }
       { \markboth { #1 } { #1 } }
       { \markboth { \hfill #1 \hfill } { } }
   }

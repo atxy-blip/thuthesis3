@@ -9,11 +9,16 @@
 
 ### 新增
 
+- 继承 ThuThesis 已实现的文档类选项。
+
 ### 变动
+
 
 ### 杂项
 
 - 初始化 `llmdoc` 项目记忆。
+- 记录文档类选项继承规则：选项名称以 `thuthesis2e/master` 为准，
+  NJUThesis 仅作为 LaTeX3 实现机制参考。
 
 [更新日志]: https://keepachangelog.com/zh-CN/1.1.0/
 [语义化版本]: https://semver.org/lang/zh-CN/
