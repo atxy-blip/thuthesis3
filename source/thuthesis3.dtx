@@ -229,6 +229,156 @@ To produce the documentation run the original source files ending with
 % 启用最小化模式，不载入上述可选宏包，并关闭数学字体设置。
 % \end{function}
 %
+%
+% \subsection{个人信息}
+%
+% \opt{info} 类用于录入封面、摘要和 PDF 元数据使用的个人信息。
+% 推荐使用分组形式：
+% \begin{verbatim}
+% \thusetup[info]{
+%   title  = {论文中文题目},
+%   title* = {Thesis English Title},
+% }
+% \end{verbatim}
+% 为了兼容旧版 \cls{thuthesis}，个人信息键也可以
+% 不加 \opt{info/} 前缀，直接写作 |\thusetup{title = {...}}|。
+% 新文档建议使用 \opt{info} 分组，旧文档不需要修改。
+% 以下选项中带有星号的通常为对应英文字段。
+%
+% \begin{function}[added=2026-05-04]{info/title,info/title*}
+%   \begin{syntax}
+%     \OPT{info/title}  = \Arg{论文中文题目}
+%     \OPT{info/title*} = \Arg{Thesis English Title}
+%   \end{syntax}
+% 中英文题目。中文题目可在内部使用 |\\| 手动断行。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/degree-category,info/degree-category*,info/degree-name,info/degree-name*}
+%   \begin{syntax}
+%     \OPT{info/degree-category}  = \Arg{中文学位名称}
+%     \OPT{info/degree-category*} = \Arg{英文学位名称}
+%   \end{syntax}
+% 申请学位名称。学术型博士需注明所属学科门类，例如哲学、经济学、
+% 法学、教育学、文学、历史学、理学、工学、农学、医学、军事学、
+% 管理学或艺术学；学术型硕士按学科门类填写相应的英文名称；
+% 专业型研究生填写专业学位名称，例如教育博士、工程硕士。
+% \opt{info/degree-name} 和 \opt{info/degree-name*} 是同一信息的别名。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/department,info/department*}
+%   \begin{syntax}
+%     \OPT{info/department}  = \Arg{院系名称}
+%     \OPT{info/department*} = \Arg{英文院系名称}
+%   \end{syntax}
+% 院系中英文名称。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/discipline,info/discipline*}
+%   \begin{syntax}
+%     \OPT{info/discipline}  = \Arg{学科名称}
+%     \OPT{info/discipline*} = \Arg{英文学科名称}
+%   \end{syntax}
+% 学科名称。研究生学术型学位中，获得一级学科授权的学科填写一级学科名称，
+% 其他填写二级学科名称；本科生填写专业名称，第二学位论文需标注“（第二学位）”。
+% 专业型研究生学位通常使用 \opt{info/professional-field}。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/professional-field,info/professional-field*,info/engineering-field,info/engineering-field*}
+%   \begin{syntax}
+%     \OPT{info/professional-field}  = \Arg{专业领域}
+%     \OPT{info/professional-field*} = \Arg{Professional Field}
+%     \OPT{info/engineering-field}   = \Arg{工程领域}
+%     \OPT{info/engineering-field*}  = \Arg{Engineering Field}
+%   \end{syntax}
+% 专业型研究生学位使用的专业领域。2019 级及之前工程硕士学位论文，
+% 使用工程领域选项填写相应工程领域名称；其他专业学位类别的学位论文
+% 无需填写工程领域。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/author,info/author*,info/student-id}
+%   \begin{syntax}
+%     \OPT{info/author}     = \Arg{中文姓名}
+%     \OPT{info/author*}    = \Arg{Name in Pinyin}
+%     \OPT{info/student-id} = \Arg{学号}
+%   \end{syntax}
+% 作者姓名和学号。学号仅用于本、研论文开题报告等需要显示学号的格式。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/supervisor,info/supervisor*}
+%   \begin{syntax}
+%     \OPT{info/supervisor}  = \Arg{导师姓名, 职称}
+%     \OPT{info/supervisor*} = \Arg{Professor Supervisor Name}
+%   \end{syntax}
+% 导师信息。中文姓名与职称之间以西文逗号分隔，英文名无需添加逗号。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/associate-supervisor,info/associate-supervisor*}
+%   \begin{syntax}
+%     \OPT{info/associate-supervisor} = \Arg{副导师姓名, 职称}
+%     \OPT{info/associate-supervisor*}= \Arg{Professor Assoc-Supervisor Name}
+%   \end{syntax}
+% 副导师信息。本科生对应辅导教师，硕士对应副指导教师。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/co-supervisor,info/co-supervisor*,info/joint-supervisor,info/joint-supervisor*}
+%   \begin{syntax}
+%     \OPT{info/co-supervisor}     = \Arg{联合指导教师姓名, 职称}
+%     \OPT{info/co-supervisor*}    = \Arg{Professor Join-Supervisor Name}
+%     \OPT{info/joint-supervisor}  = \Arg{联合指导教师姓名, 职称}
+%     \OPT{info/joint-supervisor*} = \Arg{Professor Join-Supervisor Name}
+%   \end{syntax}
+% 联合指导教师信息。\opt{info/joint-supervisor} 是兼容别名。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/date,info/start-date,info/end-date}
+%   \begin{syntax}
+%     \OPT{info/date}       = \Arg{yyyy-mm-dd}
+%     \OPT{info/start-date} = \Arg{yyyy-mm-dd}
+%     \OPT{info/end-date}   = \Arg{yyyy-mm-dd}
+%   \end{syntax}
+% 成文日期，默认使用编译当天日期，也可以手动指定，要求使用 ISO 格式。
+% \opt{info/start-date} 和 \opt{info/end-date} 用于博士后课题开始日期和结束日期。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/secret-level,info/secret-year}
+%   \begin{syntax}
+%     \OPT{info/secret-level} = \Arg{密级}
+%     \OPT{info/secret-year}  = \Arg{保密年限}
+%   \end{syntax}
+% 秘密级别和年限。如果定义了 \opt{info/secret-level}，封面会显示对应密级。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/clc,info/udc,info/id,info/discipline-level-1,info/discipline-level-2}
+%   \begin{syntax}
+%     \OPT{info/clc}                = \Arg{中国图书资料分类法类号}
+%     \OPT{info/udc}                = \Arg{国际十进制分类法类号}
+%     \OPT{info/id}                 = \Arg{论文编号}
+%     \OPT{info/discipline-level-1} = \Arg{一级学科名称}
+%     \OPT{info/discipline-level-2} = \Arg{二级学科名称}
+%   \end{syntax}
+% 博士后封面相关信息。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/keywords,info/keywords*}
+%   \begin{syntax}
+%     \OPT{info/keywords}  = \Arg{关键词 1, 关键词 2}
+%     \OPT{info/keywords*} = \Arg{keyword 1, keyword 2}
+%   \end{syntax}
+% 关键词列表。关键词之间以西文逗号隔开，模板会根据不同论文格式生成相应分隔符。
+% \end{function}
+%
+% \begin{function}[added=2026-05-04]{info/spine-title,info/spine-author,info/spine-font,info/include-spine}
+%   \begin{syntax}
+%     \OPT{info/spine-title}  = \Arg{书脊标题}
+%     \OPT{info/spine-author} = \Arg{书脊作者}
+%     \OPT{info/spine-font}   = \Arg{字体命令}
+%     \OPT{info/include-spine}= <true|(false)>
+%   \end{syntax}
+% 研究生论文书脊信息。默认书脊使用论文题目和作者姓名，也可以通过
+% \opt{info/spine-title} 和 \opt{info/spine-author} 修改。
+% \opt{info/include-spine} 用于选择是否在中文封面后生成书脊页。
+% \end{function}
+%
 % \end{documentation}
 %
 %
@@ -356,6 +506,13 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\g_@@_opt_spine_bool}
+% 定义用于判断是否生成书脊页的变量。
+%    \begin{macrocode}
+\bool_new:N \g_@@_opt_spine_bool
+%    \end{macrocode}
+% \end{variable}
+%
 % \begin{variable}{\g_@@_info_fontset_tl}
 % 存储所使用正文字体集名称的全局变量。
 %    \begin{macrocode}
@@ -420,11 +577,14 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \clist_const:Nn \c_@@_name_anon_clist
   {
-    author, chairman, email, student-id, reviewer,
-    supervisor-contact, supervisor, supervisor-ii
+    author, student-id, supervisor, associate-supervisor,
+    co-supervisor, joint-supervisor
   }
 \clist_const:Nn \c_@@_name_anon_en_clist
-  { author, supervisor, supervisor-ii }
+  {
+    author, supervisor, associate-supervisor,
+    co-supervisor, joint-supervisor
+  }
 %    \end{macrocode}
 % \end{variable}
 %
@@ -527,6 +687,17 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 %\cs_new:Npn \@@_name:nn #1#2
 %  { \group_begin: \@@_fmt:n {#1} \@@_name:n {#2} \group_end: }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_key_alias:nn}
+% 为历史上没有 \opt{info/} 前缀的设置项定义兼容入口。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_key_alias:nn #1#2
+  {
+    \keys_define:nn { thu }
+      { #2 .meta:nn = { thu / #1 } { #2 = {##1} } }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -940,7 +1111,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_info:}
+% \begin{macro}{\@@_cover_info_aux:NN}
 % 更新封面信息栏的条目列表。
 % \begin{arguments}
 %   \item 原有的条目列表
@@ -1241,7 +1412,7 @@ To produce the documentation run the original source files ending with
 % \subsection{模板选项}
 %
 %    \begin{macrocode}
-\keys_define:nn { thu }
+\keys_define:nn { thu / opt }
   {
 %    \end{macrocode}
 %
@@ -1532,7 +1703,7 @@ To produce the documentation run the original source files ending with
 %
 % 获取输入的文档类选项。
 %    \begin{macrocode}
-\ProcessKeysOptions { thu }
+\ProcessKeysOptions { thu / opt }
 %    \end{macrocode}
 %
 % 处理单双面模式选项。
@@ -1882,139 +2053,200 @@ To produce the documentation run the original source files ending with
 %
 %
 % \subsection{个人信息}
+% \changes{v0.1.0}{2025/05/04}{继承个人信息选项。}
 %
 %    \begin{macrocode}
 \keys_define:nn { thu / info }
   {
 %    \end{macrocode}
 %
-% \begin{macro}{info/title,info/title*}
+% \begin{macro}{title,title*}
 % 题目。中文题目可使用 |\\| 手动断行。以下标注星号（|*|）的皆为对应的英文字段。
 %    \begin{macrocode}
-    title               .tl_set:N = \g_@@_info_title_tl           ,
-    title              .initial:n = { 空 }                        ,
-    title*              .tl_set:N = \g_@@_info_title_en_tl        ,
-    title*             .initial:n = { Empty }                     ,
+    title                   .tl_set:N = \g_@@_info_title_tl          ,
+    title                  .initial:n = { 空 }                       ,
+    title*                  .tl_set:N = \g_@@_info_title_en_tl       ,
+    title*                 .initial:n = { Empty }                    ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/keywords,info/keywords*}
+% \begin{macro}{keywords,keywords*}
 % 关键词列表。
 %    \begin{macrocode}
-    keywords         .clist_set:N = \g_@@_info_keywords_clist     ,
-    keywords*        .clist_set:N = \g_@@_info_keywords_en_clist  ,
+    keywords             .clist_set:N = \g_@@_info_keywords_clist    ,
+    keywords*            .clist_set:N = \g_@@_info_keywords_en_clist ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/author,info/author*}
+% \begin{macro}{author,author*}
 % 年级、学号、姓名。
 %    \begin{macrocode}
-    author              .tl_set:N = \g_@@_info_author_tl          ,
-    author*             .tl_set:N = \g_@@_info_author_en_tl       ,
+    author                  .tl_set:N = \g_@@_info_author_tl        ,
+    author*                 .tl_set:N = \g_@@_info_author_en_tl     ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/student-id,info/author,info/author*}
+% \begin{macro}{student-id,author,author*}
 % 学号。
 %    \begin{macrocode}
-    student-id          .tl_set:N = \g_@@_info_stuid_tl           ,
+    student-id              .tl_set:N = \g_@@_info_stuid_tl          ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/department,info/department*}
+% \begin{macro}{department,department*}
 % 院系、专业、方向。
 %    \begin{macrocode}
-    department          .tl_set:N = \g_@@_info_dept_tl            ,
-    department*         .tl_set:N = \g_@@_info_dept_en_tl         ,
+    department              .tl_set:N = \g_@@_info_dept_tl           ,
+    department*             .tl_set:N = \g_@@_info_dept_en_tl        ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/degree-name,info/degree-name*}
+% \begin{macro}{degree-name,degree-name*,degree-category,degree-category*}
 % 。
 %    \begin{macrocode}
-    degree-name         .tl_set:N = \g_@@_info_degree_tl          ,
-    degree-name*        .tl_set:N = \g_@@_info_degree_en_tl       ,
+    degree-name             .tl_set:N = \g_@@_info_degree_tl         ,
+    degree-name*            .tl_set:N = \g_@@_info_degree_en_tl      ,
+    degree-category         .tl_set:N = \g_@@_info_degree_tl         ,
+    degree-category*        .tl_set:N = \g_@@_info_degree_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/discipline,info/discipline*}
+% \begin{macro}{discipline,discipline*}
 % 专业方向。
 %    \begin{macrocode}
-    discipline           .tl_set:N = \g_@@_info_discip_tl         ,
-    discipline*          .tl_set:N = \g_@@_info_discip_en_tl      ,
+    discipline              .tl_set:N = \g_@@_info_discip_tl         ,
+    discipline*             .tl_set:N = \g_@@_info_discip_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/supervisor,info/supervisor*}
+% \begin{macro}{supervisor,supervisor*}
 % 导师信息。中文导师全称使用 |clist| 存储，便于进行分割。
 %    \begin{macrocode}
-    supervisor          .clist_set:N = \g_@@_info_supva_clist     ,
-    supervisor*            .tl_set:N = \g_@@_info_supva_en_tl     ,
+    supervisor           .clist_set:N = \g_@@_info_supva_clist       ,
+    supervisor*             .tl_set:N = \g_@@_info_supva_en_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/associate-supervisor,info/associate-supervisor*}
+% \begin{macro}{associate-supervisor,associate-supervisor*}
 % 导师信息。
 %    \begin{macrocode}
-    associate-supervisor .clist_set:N = \g_@@_info_supvb_clist    ,
-    associate-supervisor*   .tl_set:N = \g_@@_info_supvb_en_tl    ,
+    associate-supervisor .clist_set:N = \g_@@_info_supvb_clist       ,
+    associate-supervisor*   .tl_set:N = \g_@@_info_supvb_en_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/co-supervisor,info/co-supervisor*}
+% \begin{macro}{co-supervisor,co-supervisor*}
 % 导师信息。
 %    \begin{macrocode}
-    co-supervisor       .clist_set:N = \g_@@_info_supvc_clist     ,
-    co-supervisor*         .tl_set:N = \g_@@_info_supvc_en_tl     ,
+    co-supervisor        .clist_set:N = \g_@@_info_supvc_clist       ,
+    co-supervisor*          .tl_set:N = \g_@@_info_supvc_en_tl       ,
+    joint-supervisor     .clist_set:N = \g_@@_info_supvc_clist       ,
+    joint-supervisor*       .tl_set:N = \g_@@_info_supvc_en_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/date}
+% \begin{macro}{professional-field,professional-field*}
+% 专业学位领域。
+%    \begin{macrocode}
+    professional-field      .tl_set:N = \g_@@_info_pfield_tl        ,
+    professional-field*     .tl_set:N = \g_@@_info_pfield_en_tl     ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{engineering-field,engineering-field*}
+% 工程领域。
+%    \begin{macrocode}
+    engineering-field       .tl_set:N = \g_@@_info_efield_tl        ,
+    engineering-field*      .tl_set:N = \g_@@_info_efield_en_tl     ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{date}
 % 提交日期，初始值为编译当天日期。
 %    \begin{macrocode}
-    date         .tl_set:N = \g_@@_info_date_tl                   ,
-    date        .initial:V = \c_@@_today_tl                       ,
+    date                    .tl_set:N = \g_@@_info_date_tl           ,
+    date                   .initial:V = \c_@@_today_tl               ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/start-date,info/end-date}
+% \begin{macro}{start-date,end-date}
 % 博士后课题开始日期和结束日期。
 %    \begin{macrocode}
-    start-date         .tl_set:N = \g_@@_info_startdate_tl        ,
-    start-date        .initial:V = \c_@@_today_tl                 ,
-    end-date           .tl_set:N = \g_@@_info_enddate_tl          ,
-    end-date          .initial:V = \c_@@_today_tl                 ,
+    start-date              .tl_set:N = \g_@@_info_startdate_tl      ,
+    start-date             .initial:V = \c_@@_today_tl               ,
+    end-date                .tl_set:N = \g_@@_info_enddate_tl        ,
+    end-date               .initial:V = \c_@@_today_tl               ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/secret-level,info/secret-level}
+% \begin{macro}{secret-level,secret-level}
 % 。
 %    \begin{macrocode}
-    secret-level        .tl_set:N = \g_@@_info_secretlv_tl        ,
-    secret-year         .tl_set:N = \g_@@_info_secretyr_tl        ,
+    secret-level            .tl_set:N = \g_@@_info_secretlv_tl       ,
+    secret-year             .tl_set:N = \g_@@_info_secretyr_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{info/clc,info/udc,info/id,
-%  info/discipline-level-1,info/discipline-level-2}
+% \begin{macro}{clc,udc,id,
+%  discipline-level-1,discipline-level-2}
 % 博士后封面相关信息，包括中国图书资料分类法》的类号、《国际十进制分类法
 % UDC》的类号、论文编号、一级学科名称、二级学科名称。
 %    \begin{macrocode}
-    clc                 .tl_set:N = \g_@@_info_clc_tl             ,
-    udc                 .tl_set:N = \g_@@_info_udc_tl             ,
-    id                  .tl_set:N = \g_@@_info_id_tl              ,
-    discipline-level-1  .tl_set:N = \g_@@_info_discipa_tl         ,
-    discipline-level-2  .tl_set:N = \g_@@_info_discipb_tl
+    clc                     .tl_set:N = \g_@@_info_clc_tl            ,
+    udc                     .tl_set:N = \g_@@_info_udc_tl            ,
+    id                      .tl_set:N = \g_@@_info_id_tl             ,
+    discipline-level-1      .tl_set:N = \g_@@_info_discipa_tl        ,
+    discipline-level-2      .tl_set:N = \g_@@_info_discipb_tl        ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{include-spine,spine-title,spine-author,spine-font}
+% 书脊相关信息。
+%    \begin{macrocode}
+    include-spine         .bool_set:N = \g_@@_opt_spine_bool         ,
+    include-spine          .initial:n = false                        ,
+    spine-title             .tl_set:N = \g_@@_info_spine_title_tl    ,
+    spine-author            .tl_set:N = \g_@@_info_spine_author_tl   ,
+    spine-font              .tl_set:N = \g_@@_info_spine_font_tl
   }
 %    \end{macrocode}
 % \end{macro}
 %
+% \changes{v0.1.0}{2025/05/04}{提供个人信息选项的旧版兼容。}
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+    title, title*, keywords, keywords*,
+    author, author*, student-id,
+    department, department*,
+    degree-name, degree-name*, degree-category, degree-category*,
+    discipline, discipline*,
+    supervisor, supervisor*,
+    associate-supervisor, associate-supervisor*,
+    co-supervisor, co-supervisor*,
+    joint-supervisor, joint-supervisor*,
+    professional-field, professional-field*,
+    engineering-field, engineering-field*,
+    date, start-date, end-date,
+    secret-level, secret-year,
+    clc, udc, id, discipline-level-1, discipline-level-2,
+    include-spine, spine-title, spine-author, spine-font
+  }
+  { \@@_define_key_alias:nn { info } {#1} }
+%    \end{macrocode}
+%
 % 将指定信息项归入 \opt{anonymous} 组，以在盲审模式下选择性屏蔽。
 %    \begin{macrocode}
 \clist_map_inline:Nn \c_@@_name_anon_clist
-  { \keys_define:nn { thu / info } { #1   .groups:n = { anonymous } } }
+  {
+    \keys_define:nn { thu / info } { #1   .groups:n = { anonymous } }
+    \keys_define:nn { thu        } { #1   .groups:n = { anonymous } }
+  }
 \clist_map_inline:Nn \c_@@_name_anon_en_clist
-  { \keys_define:nn { thu / info } { #1 * .groups:n = { anonymous } } }
+  {
+    \keys_define:nn { thu / info } { #1 * .groups:n = { anonymous } }
+    \keys_define:nn { thu        } { #1 * .groups:n = { anonymous } }
+  }
 %    \end{macrocode}
 %
 % 盲审模式下抹去学校名称。

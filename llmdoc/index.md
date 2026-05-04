@@ -40,6 +40,9 @@ technology. Local directory names may differ from GitHub repository names; see
 
 - `reference/class-options.md`: class-option inheritance rules, audit scope,
   and documentation/source ordering.
+- `reference/setup-info-keys.md`: `\thusetup` personal-info key inheritance,
+  grouped `info` syntax, legacy unprefixed compatibility, and anonymous-mode
+  filtering rules.
 - `reference/sibling-repositories.md`: local paths, canonical GitHub URLs,
   roles, and llmdoc locations for related repositories.
 - `reference/latex3-patterns-from-njuthesis.md`: local LaTeX3 patterns to
@@ -56,5 +59,7 @@ technology. Local directory names may differ from GitHub repository names; see
 - `memory/reflections/README.md`: placeholder for future working reflections.
 - `memory/reflections/2026-05-04-class-options.md`: reflection on class-option
   inheritance scope and documentation alignment.
+- `memory/reflections/2026-05-04-info-key-compatibility.md`: reflection on
+  grouped `info` keys, legacy aliases, and avoiding NJUThesis-only docs.
 
 Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.

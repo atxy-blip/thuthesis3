@@ -1,0 +1,18 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+GROUPED-SAVED-TITLE: GroupedTitle
+GROUPED-SAVED-JOINT: GroupedJointSupervisor
+GROUPED-SAVED-DEGREE: GroupedDegree
+GROUPED-SAVED-PROFESSIONAL: GroupedProfessionalField
+LEGACY-TITLE: LegacyTitle
+LEGACY-TITLE-EN: LegacyEnglishTitle
+LEGACY-JOINT: LegacyJointSupervisor
+LEGACY-JOINT-EN: LegacyEnglishJointSupervisor
+LEGACY-DEGREE: LegacyDegree
+LEGACY-DEGREE-EN: LegacyEnglishDegree
+LEGACY-PROFESSIONAL: LegacyProfessionalField
+LEGACY-PROFESSIONAL-EN: LegacyEnglishProfessionalField
+LEGACY-ENGINEERING: LegacyEngineeringField
+LEGACY-ENGINEERING-EN: LegacyEnglishEngineeringField
+LEGACY-SPINE-TITLE: LegacySpineTitle
+LEGACY-INCLUDE-SPINE: false

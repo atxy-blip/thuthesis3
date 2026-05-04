@@ -1,0 +1,105 @@
+\input{regression-test.tex}
+\documentclass[
+  fontset = fandol,
+  math-font = none,
+  biblatex = false,
+  cleveref = false,
+  ntheorem = false,
+  enumitem = false,
+  footmisc = false,
+  unicode-math = false
+]{thuthesis3}
+
+\ExplSyntaxOn
+\tl_new:N \l__thutest_prof_tl
+
+\thusetup[info]
+  {
+    title                = {Grouped Title},
+    title*               = {Grouped English Title},
+    author               = {Grouped Author},
+    author*              = {Grouped English Author},
+    student-id           = {20260001},
+    supervisor           = {Grouped Supervisor},
+    supervisor*          = {Grouped English Supervisor},
+    associate-supervisor = {Grouped Associate Supervisor},
+    associate-supervisor*= {Grouped English Associate Supervisor},
+    co-supervisor        = {Grouped Co Supervisor},
+    co-supervisor*       = {Grouped English Co Supervisor},
+    joint-supervisor     = {Grouped Joint Supervisor},
+    joint-supervisor*    = {Grouped English Joint Supervisor},
+    department           = {Grouped Department},
+    department*          = {Grouped English Department},
+    degree-category      = {Grouped Degree},
+    degree-category*     = {Grouped English Degree},
+    discipline           = {Grouped Discipline},
+    discipline*          = {Grouped English Discipline},
+    professional-field   = {Grouped Professional Field},
+    professional-field*  = {Grouped English Professional Field},
+    engineering-field    = {Grouped Engineering Field},
+    engineering-field*   = {Grouped English Engineering Field},
+    date                 = {2026-05-04},
+    start-date           = {2026-01-01},
+    end-date             = {2026-12-31},
+    secret-level         = {secret},
+    secret-year          = {10},
+    clc                  = {CLC},
+    udc                  = {UDC},
+    id                   = {ID},
+    discipline-level-1   = {Level One},
+    discipline-level-2   = {Level Two},
+    include-spine        = true,
+    spine-title          = {Grouped Spine Title},
+    spine-author         = {Grouped Spine Author},
+    spine-font           = {\bfseries},
+    keywords             = {alpha, beta},
+    keywords*            = {alpha*, beta*}
+  }
+
+\tl_set_eq:NN \l_tmpa_tl \g__thu_info_title_tl
+\clist_set_eq:NN \l_tmpa_clist \g__thu_info_supvc_clist
+\tl_set_eq:NN \l_tmpb_tl \g__thu_info_degree_tl
+\tl_set_eq:NN \l__thutest_prof_tl \g__thu_info_pfield_tl
+
+\thusetup
+  {
+    title              = {Legacy Title},
+    title*             = {Legacy English Title},
+    degree-category    = {Legacy Degree},
+    degree-category*   = {Legacy English Degree},
+    professional-field = {Legacy Professional Field},
+    professional-field*= {Legacy English Professional Field},
+    engineering-field  = {Legacy Engineering Field},
+    engineering-field* = {Legacy English Engineering Field},
+    joint-supervisor   = {Legacy Joint Supervisor},
+    joint-supervisor*  = {Legacy English Joint Supervisor},
+    include-spine      = false,
+    spine-title        = {Legacy Spine Title}
+  }
+
+\begin{document}
+\START
+
+\typeout{GROUPED-SAVED-TITLE:~\l_tmpa_tl}
+\typeout{GROUPED-SAVED-JOINT:~\clist_use:Nn \l_tmpa_clist {,}}
+\typeout{GROUPED-SAVED-DEGREE:~\l_tmpb_tl}
+\typeout{GROUPED-SAVED-PROFESSIONAL:~\l__thutest_prof_tl}
+
+\typeout{LEGACY-TITLE:~\g__thu_info_title_tl}
+\typeout{LEGACY-TITLE-EN:~\g__thu_info_title_en_tl}
+\typeout{LEGACY-JOINT:~\clist_use:Nn \g__thu_info_supvc_clist {,}}
+\typeout{LEGACY-JOINT-EN:~\g__thu_info_supvc_en_tl}
+\typeout{LEGACY-DEGREE:~\g__thu_info_degree_tl}
+\typeout{LEGACY-DEGREE-EN:~\g__thu_info_degree_en_tl}
+\typeout{LEGACY-PROFESSIONAL:~\g__thu_info_pfield_tl}
+\typeout{LEGACY-PROFESSIONAL-EN:~\g__thu_info_pfield_en_tl}
+\typeout{LEGACY-ENGINEERING:~\g__thu_info_efield_tl}
+\typeout{LEGACY-ENGINEERING-EN:~\g__thu_info_efield_en_tl}
+\typeout{LEGACY-SPINE-TITLE:~\g__thu_info_spine_title_tl}
+\bool_if:NTF \g__thu_opt_spine_bool
+  { \typeout{LEGACY-INCLUDE-SPINE:~true} }
+  { \typeout{LEGACY-INCLUDE-SPINE:~false} }
+
+\ExplSyntaxOff
+\OMIT
+\end{document}

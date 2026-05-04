@@ -60,8 +60,8 @@
     %
     % 联合指导教师
     %
-    co-supervisor  = {宇多田光, 助理教授},
-    co-supervisor* = {Professor Mou Moumou},
+    % co-supervisor  = {宇多田光, 助理教授},
+    % co-supervisor* = {Professor Mou Moumou},
     %
     % 日期
     %   使用 ISO 格式；默认为当前时间
@@ -75,8 +75,8 @@
     % 密级和年限
     %   秘密, 机密, 绝密
     %
-    secret-level = {秘密},
-    secret-year  = {10},
+    % secret-level = {秘密},
+    % secret-year  = {10},
     %
     % 博士后专有部分
     %

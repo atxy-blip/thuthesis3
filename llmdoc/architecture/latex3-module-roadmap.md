@@ -35,6 +35,10 @@ Compatibility rule:
 - For class options, inherit public option names from `../thuthesis2e/master`.
   Do not treat NJUThesis or `../thuthesis2e/refactor/*` branches as API
   sources; they may guide implementation mechanics only.
+- For `\thusetup` personal-information keys, use `thu / info` as the canonical
+  grouped key family while preserving every inherited unprefixed
+  `../thuthesis2e/master` key through top-level aliases. Documentation text for
+  those keys should come from ThuThesis, not NJUThesis.
 
 ## Phase 2: Data Model and Constants
 

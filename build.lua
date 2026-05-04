@@ -7,6 +7,7 @@ module        = "thuthesis3"
 
 checkengines  = {"xetex", "luatex"}
 checkopts     = "-interaction=batchmode"
+lvtext        = ".tex"
 
 textfiles     = {"LICENSE", "README*.md", "CHANGELOG.md", "*.ins"}
 ctanreadme    = "README-CTAN.md"

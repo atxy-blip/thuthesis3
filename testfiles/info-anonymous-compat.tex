@@ -1,0 +1,51 @@
+\input{regression-test.tex}
+\documentclass[
+  anonymous,
+  fontset = fandol,
+  math-font = none,
+  biblatex = false,
+  cleveref = false,
+  ntheorem = false,
+  enumitem = false,
+  footmisc = false,
+  unicode-math = false
+]{thuthesis3}
+
+\ExplSyntaxOn
+\tl_new:N \l__thutest_stuid_tl
+
+\thusetup[info]
+  {
+    title      = {Grouped Visible Title},
+    author     = {Grouped Hidden Author},
+    student-id = {Grouped Hidden Student ID},
+    supervisor = {Grouped Hidden Supervisor}
+  }
+\tl_set_eq:NN \l_tmpa_tl \g__thu_info_title_tl
+\tl_set_eq:NN \l_tmpb_tl \g__thu_info_author_tl
+\tl_set_eq:NN \l__thutest_stuid_tl \g__thu_info_stuid_tl
+\clist_set_eq:NN \l_tmpa_clist \g__thu_info_supva_clist
+
+\thusetup
+  {
+    title      = {Legacy Visible Title},
+    author     = {Legacy Hidden Author},
+    student-id = {Legacy Hidden Student ID},
+    supervisor = {Legacy Hidden Supervisor}
+  }
+
+\begin{document}
+\START
+
+\typeout{GROUPED-ANON-TITLE:~\l_tmpa_tl}
+\typeout{GROUPED-ANON-AUTHOR:~\l_tmpb_tl}
+\typeout{GROUPED-ANON-STUDENT-ID:~\l__thutest_stuid_tl}
+\typeout{GROUPED-ANON-SUPERVISOR:~\clist_use:Nn \l_tmpa_clist {,}}
+\typeout{LEGACY-ANON-TITLE:~\g__thu_info_title_tl}
+\typeout{LEGACY-ANON-AUTHOR:~\g__thu_info_author_tl}
+\typeout{LEGACY-ANON-STUDENT-ID:~\g__thu_info_stuid_tl}
+\typeout{LEGACY-ANON-SUPERVISOR:~\clist_use:Nn \g__thu_info_supva_clist {,}}
+
+\ExplSyntaxOff
+\OMIT
+\end{document}
