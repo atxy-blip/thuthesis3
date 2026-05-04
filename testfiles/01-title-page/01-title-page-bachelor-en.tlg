@@ -2,556 +2,821 @@ This is a generated file for the l3build validation system.
 Don't change this file in any respect.
 *geometry* verbose mode - [ newgeometry ] result:
 * driver: xetex
-* paper: a4paper
+* paper: <default>
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
-* modes: twoside 
-* h-part:(L,W,R)=(91.04872pt, 421.10089pt, 85.35826pt)
-* v-part:(T,H,B)=(108.12054pt, 645.87758pt, 91.04872pt)
+* modes: 
+* h-part:(L,W,R)=(90.3375pt, 416.83289pt, 90.3375pt)
+* v-part:(T,H,B)=(72.26999pt, 700.50687pt, 72.26999pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
-* \textwidth=421.10089pt
-* \textheight=645.87758pt
-* \oddsidemargin=18.77873pt
-* \evensidemargin=13.08827pt
-* \topmargin=3.97676pt
-* \headheight=12.0pt
-* \headsep=19.8738pt
+* \textwidth=416.83289pt
+* \textheight=700.50687pt
+* \oddsidemargin=18.0675pt
+* \evensidemargin=18.0675pt
+* \topmargin=-108.12012pt
+* \headheight=54.06006pt
+* \headsep=54.06006pt
 * \topskip=12.0pt
-* \footskip=42.67912pt
-* \marginparwidth=56.9055pt
-* \marginparsep=14.22636pt
+* \footskip=41.25641pt
+* \marginparwidth=38.0pt
+* \marginparsep=7.0pt
 * \columnsep=10.0pt
 * \skip\footins=10.8pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
 * \@twocolumnfalse
-* \@twosidetrue
-* \@mparswitchtrue
+* \@twosidefalse
+* \@mparswitchfalse
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
-File: thu-fig-logo.pdf Graphic file (type pdf)
-<use thu-fig-logo.pdf>
-File: thu-text-logo.pdf Graphic file (type pdf)
-<use thu-text-logo.pdf>
-Package fontspec Info: 
-(fontspec)             Could not resolve font "SimHei/I" (it probably doesn't exist).
-Package fontspec Info: 
-(fontspec)             Could not resolve font "SimHei/BI" (it probably doesn't exist).
-Package fontspec Info: 
-(fontspec)             Could not resolve font "SimHei/I" (it probably doesn't exist).
-Package fontspec Info: 
-(fontspec)             Font family 'SimHei(0)' created for font 'SimHei' with options [Script={CJK},AutoFakeBold={3}].
-(fontspec)              
-(fontspec)              This font family consists of the following NFSS series/shapes:
-(fontspec)              
-(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"SimHei/OT:script=hani;language=dflt;"
-(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"SimHei/OT:script=hani;language=dflt;embolden=3;"
-Package fontspec Info: 
-(fontspec)             Could not resolve font "FangSong/BI" (it probably doesn't exist).
-Package fontspec Info: 
-(fontspec)             Could not resolve font "FangSong/B" (it probably doesn't exist).
-Package fontspec Info: 
-(fontspec)             Could not resolve font "FangSong/I" (it probably doesn't exist).
-Package fontspec Info: 
-(fontspec)             Font family 'FangSong(0)' created for font 'FangSong' with options [Script={CJK}].
-(fontspec)              
-(fontspec)              This font family consists of the following NFSS series/shapes:
-(fontspec)              
-(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"FangSong/OT:script=hani;language=dflt;"
-LaTeX Font Info:    Font shape `TU/XITSMath-Regular(2)/m/n' will be
-(Font)              scaled to size 16.0617pt on input line ....
-LaTeX Font Info:    Font shape `TU/XITSMath-Regular(2)/m/n' will be
-(Font)              scaled to size 14.05399pt on input line ....
-LaTeX Font Info:    Font shape `TU/XITSMath-Regular(2)/m/n' will be
-(Font)              scaled to size 10.54048pt on input line ....
-LaTeX Font Info:    Font shape `TU/XITSMath-Regular(3)/m/n' will be
-(Font)              scaled to size 16.05827pt on input line ....
-LaTeX Font Info:    Font shape `TU/XITSMath-Regular(3)/m/n' will be
-(Font)              scaled to size 14.05098pt on input line ....
-LaTeX Font Info:    Font shape `TU/XITSMath-Regular(3)/m/n' will be
-(Font)              scaled to size 10.53824pt on input line ....
+File: tsinghua-name-bachelor.pdf Graphic file (type pdf)
+<use tsinghua-name-bachelor.pdf>
 Completed box being shipped out [1]
-\vbox(724.40726+0.0)x439.87962
+\vbox(741.76328+0.0)x434.90039
 .\hbox(0.0+0.0)x0.0
-..\kern -72.26999
-..\vbox(0.0+0.0)x0.0, glue set 72.26999fil
-...\kern -72.26999
-...\hbox(0.0+0.0)x0.0
-....\hbox(0.0+0.0)x0.0, shifted 845.04684
-.....\kern 0.0
-.....\glue 0.0 plus 1.0fil minus 1.0fil
-....\glue 0.0 plus 1.0fil minus 1.0fil
+..\special{pdf:docinfo<</Title(\376\377\155\105\214\010\040\034\116\272\116\354\040\035\116\000\213\315\127\050\202\361\145\207\116\055\166\204\210\150\217\276\040\024\040\024\127\372\116\216\213\355\145\231\136\223\166\204\170\024\172\166)/Subject()/Creator(\376\377\000L\000a\000T\000e\000X\000\040\000w\000i\000t\000h\000\040\000t\000h\000u\000t\000h\000e\000s\000i\000s\0003\000\040\000c\000l\000a\000s\000s)/Author(\376\377\147\320\147\320\147\320)/Keywords()>>}
+.\vbox(0.0+0.0)x0.0, glue set 109.12386fil
+..\kern 0.0
+..\kern -108.12012
+..\kern -1.00374
+..\hbox(0.0+0.0)x0.0, glue set - 17.06377fil
+...\kern 0.0
+...\kern 18.0675
+...\kern -1.00374
+...\special{pdf:dest (page.) [@thispage /XYZ @xpos @ypos null]}
+...\penalty 10000
 ...\glue 0.0 plus 1.0fil minus 1.0fil
-.\glue 3.97676
-.\vbox(720.4305+0.0)x421.10089, shifted 18.77873
-..\vbox(12.0+0.0)x421.10089, glue set 12.0fil
-...\glue 0.0 plus 1.0fil
-...\hbox(0.0+0.0)x421.10089
-....\special{color push gray 0}
-....\hbox(0.0+0.0)x421.10089
-....\special{color pop}
-..\glue 19.8738
-..\glue(\lineskip) 0.0
-..\vbox(645.87758+0.0)x421.10089, glue set 108.27945fill
-...\write-{}
-...\special{color push gray 0}
-...\write-{}
-...\glue(\topskip) 12.0
-...\hbox(0.0+0.0)x421.10089
-....\glue(\leftskip) 0.0 plus 1.0fil
-....\hbox(0.0+0.0)x0.0
-....\vbox(0.0+0.0)x421.10089
-.....\hbox(0.0+0.0)x421.10089, glue set 421.10089fil
-......\hbox(0.0+0.0)x0.0
-......\penalty 10000
-......\glue(\parfillskip) 0.0 plus 1.0fil
-......\glue(\rightskip) 0.0
-.....\glue 0.0 plus 1.0fil minus 1.0fil
+..\glue 0.0 plus 1.0fil minus 1.0fil
+.\glue(\lineskip) 0.0
+.\vbox(741.76328+0.0)x434.90039
+..\glue -108.12012
+..\vbox(849.88339+0.0)x416.83289, shifted 18.0675
+...\vbox(54.06006+0.0)x416.83289, glue set 54.06006fil
+....\glue 0.0 plus 1.0fil
+....\hbox(0.0+0.0)x416.83289
+.....\hbox(0.0+0.0)x416.83289
+...\glue 54.06006
+...\glue(\lineskip) 0.0
+...\vbox(700.50687+0.0)x416.83289, glue set 124.51062fill
+....\write-{}
+....\special{pdf:majorversion 1}
+....\special{pdf:minorversion 7}
+....\special{pdf:docview<</OpenAction[@page1/Fit]/PageMode/UseOutlines>>}
+....\special{pdf:dest (Doc-Start) [@thispage /XYZ @xpos @ypos null]}
+....\write-{}
+....\write-{}
+....\glue(\topskip) 12.0
+....\rule(0.0+0.0)x*
 ....\penalty 10000
-....\glue(\parfillskip) 0.0
-....\glue(\rightskip) 0.0 plus 1.0fil
-...\glue 19.07124
-...\glue 0.0
-...\glue(\parskip) 0.0 plus 1.0
-...\glue(\parskip) 0.0
-...\glue(\lineskip) 1.0
-...\hbox(50.58913+0.0)x421.10089, glue set 124.0272fil
-....\glue(\leftskip) 0.0 plus 1.0fil
-....\hbox(0.0+0.0)x0.0
-....\rule(*+*)x0.0
-....\penalty 10000
-....\glue -5.01874
 ....\glue 0.0
-....\hbox(50.58913+0.0)x50.58899
-.....\hbox(50.58926+0.0)x50.58926
-......\hbox(50.58926+0.0)x50.58926
-.......\hbox(50.58926+0.0)x0.0
-........\special{pdf:btrans}
-........\special{x:scale 0.74118 0.74118}
-........\hbox(68.255+0.0)x0.0, glue set - 68.255fil
-.........\hbox(68.255+0.0)x68.255
-..........\XeTeXpdffile "../thu-fig-logo.pdf"
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\special{pdf:etrans}
-.......\kern 50.58926
-.......\glue 0.0 plus 1.0fil minus 1.0fil
-....\glue 10.03749
-....\hbox(45.62605+0.0)x117.43874
-.....\hbox(38.59981+0.0)x117.43874, shifted -7.02625
-......\hbox(38.59981+0.0)x117.43874
-.......\hbox(38.59993+0.0)x117.44234
-........\hbox(38.59993+0.0)x117.44234
-.........\hbox(38.59993+0.0)x0.0
-..........\special{pdf:btrans}
-..........\special{x:scale 0.8182 0.8182}
-..........\hbox(47.17625+0.0)x0.0, glue set - 143.53625fil
-...........\hbox(47.17625+0.0)x143.53625
-............\XeTeXpdffile "../thu-text-logo.pdf"
-...........\glue 0.0 plus 1.0fil minus 1.0fil
-..........\special{pdf:etrans}
-.........\kern 117.44234
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-....\penalty 10000
-....\glue(\parfillskip) 0.0
-....\glue(\rightskip) 0.0 plus 1.0fil
-...\glue 17.06374
-...\glue 0.0
-...\glue(\parskip) 0.0 plus 1.0
-...\glue(\parskip) 0.0
-...\glue(\baselineskip) 17.33362
-...\hbox(29.64198+3.8111)x421.10089, glue set 75.04395fil
-....\glue(\leftskip) 0.0 plus 1.0fil
+....\glue 0.0
 ....\hbox(0.0+0.0)x0.0
-....\TU/SimHei(0)/b/n/36.135 综
-....\glue 10.8406 plus 1.14514 minus 4.20161
-....\TU/SimHei(0)/b/n/36.135 合
-....\glue 10.8406 plus 1.14514 minus 4.20161
-....\TU/SimHei(0)/b/n/36.135 论
-....\glue 10.8406 plus 1.14514 minus 4.20161
-....\TU/SimHei(0)/b/n/36.135 文
-....\glue 10.8406 plus 1.14514 minus 4.20161
-....\TU/SimHei(0)/b/n/36.135 训
-....\glue 10.8406 plus 1.14514 minus 4.20161
-....\TU/SimHei(0)/b/n/36.135 练
-....\kern -0.00017
-....\kern 0.00017
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\glue(\baselineskip) 5.73077
+....\hbox(9.92772+1.27036)x416.83289, glue set 362.6304fill
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\glue 0.0 plus 1.0fill
+.....\TU/SimSun(1)/m/n/12.045 机
+.....\glue 0.0 plus 0.60463
+.....\TU/SimSun(1)/m/n/12.045 密
+.....\glue 3.01125 plus 1.50562 minus 1.00374
+.....\TU/TimesNewRoman(0)/m/n/12.045 10
+.....\glue 3.01125 plus 1.50562 minus 1.00374
+.....\TU/SimSun(1)/m/n/12.045 年
+.....\kern -0.00017
+.....\kern 0.00017
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\rule(0.0+0.0)x*
 ....\penalty 10000
-....\glue(\parfillskip) 0.0
-....\glue(\rightskip) 0.0 plus 1.0fil
-...\glue 48.18
-...\glue 0.0
-...\glue(\parskip) 0.0 plus 1.0
-...\glue(\parskip) 0.0
-...\glue(\lineskip) 1.0
-...\hbox(21.51004+114.99995)x421.10089
-....\glue(\leftskip) 0.0 plus 1.0fil
-....\hbox(0.0+0.0)x0.0
-....\vbox(21.51004+114.99995)x421.10089, glue set 11.50198fil
-.....\hbox(21.51004+2.95634)x421.10089, glue set 14.81929fil
-......\glue(\leftskip) 0.0 plus 1.0fil
-......\hbox(0.0+0.0)x0.0
-......\TU/SimHei(0)/m/n/26.09749 浅
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 谈
-......\glue 0.0 plus 2.11703
-......\glue 14.67984 minus 12.33514
-......\rule(0.0+0.0)x-14.67984
-......\TU/SimHei(0)/m/n/26.09749 “人
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 们
+....\glue 0.0 plus 1.0fill
+....\glue 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(18.06744+0.0)x416.83289, glue set 136.6485fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\hbox(18.06744+0.0)x143.53589
+......\hbox(18.0675+0.0)x143.53625
+.......\hbox(18.0675+0.0)x143.53625
+........\hbox(18.0675+0.0)x0.0
+.........\special{pdf:btrans}
+.........\special{x:scale 1 1}
+.........\hbox(18.0675+0.0)x0.0, glue set - 143.53625fil
+..........\hbox(18.0675+0.0)x143.53625
+...........\XeTeXpdffile "./tsinghua-name-bachelor.pdf"
+..........\glue 0.0 plus 1.0fil minus 1.0fil
+.........\special{pdf:etrans}
+........\kern 143.53625
+........\glue 0.0 plus 1.0fil minus 1.0fil
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\rule(0.0+0.0)x*
+....\penalty 10000
+....\glue 26.74565
+....\glue 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(29.64198+3.8111)x416.83289, glue set 54.84274fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\TU/SimHei(0)/b/n/36.135 综
+.....\glue 18.06749 plus 0.18292 minus 6.61525
+.....\TU/SimHei(0)/b/n/36.135 合
+.....\glue 18.06749 plus 0.18292 minus 6.61525
+.....\TU/SimHei(0)/b/n/36.135 论
+.....\glue 18.06749 plus 0.18292 minus 6.61525
+.....\TU/SimHei(0)/b/n/36.135 文
+.....\glue 18.06749 plus 0.18292 minus 6.61525
+.....\TU/SimHei(0)/b/n/36.135 训
+.....\glue 18.06749 plus 0.18292 minus 6.61525
+.....\TU/SimHei(0)/b/n/36.135 练
+.....\kern -0.00017
+.....\kern 0.00017
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\rule(0.0+0.0)x*
+....\penalty 10000
+....\glue 51.21504
+....\glue 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(21.51004+43.46454)x416.83289, glue set 1.14207fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\glue 12.045
+.....\hbox(13.97408+1.83496)x54.2025, glue set 0.00002fil
+......\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/SimHei(0)/m/n/18.06749 题
+......\glue 0.0 plus 0.92134
+......\TU/SimHei(0)/m/n/18.06749 目
 ......\penalty 10000
-......\TU/SimHei(0)/m/n/26.09749 ”
-......\rule(0.0+0.0)x-14.67984
-......\glue 14.67984 minus 12.53903
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 一
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 词
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 在
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 英
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 文
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 中
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 的
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 表
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 达
-......\penalty 0
-......\glue(\rightskip) 0.0 plus 1.0fil
-.....\penalty 300
-.....\glue(\baselineskip) 8.15549
-.....\hbox(21.51004+2.75246)x421.10089, glue set 80.13947fil
-......\glue(\leftskip) 0.0 plus 1.0fil
-......\rule(0.0+0.0)x0.0
-......\TU/SimHei(0)/m/n/26.09749 —
-......\penalty 10000
-......\glue -0.10194
-......\TU/SimHei(0)/m/n/26.09749 —
-......\rule(0.0+0.0)x-0.10194
-......\glue 0.05098 minus 0.0255
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 基
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 于
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 语
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 料
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 库
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 的
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 研
-......\glue 0.0 plus 2.11703
-......\TU/SimHei(0)/m/n/26.09749 究
+......\TU/SimHei(0)/m/n/18.06749 ：
+......\rule(0.0+0.0)x-12.35083
+......\kern 0.00075
+......\kern -0.00075
+......\kern -0.99649
+......\kern 0.99649
+......\glue 12.35083 minus 8.96318
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\vbox(21.51004+43.46454)x348.30124
+......\hbox(21.51004+2.95634)x348.30124, glue set 0.28287
+.......\hbox(0.0+0.0)x0.0
+.......\TU/SimHei(0)/m/n/26.09749 浅
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 谈
+.......\glue 0.0 plus 3.19376
+.......\glue 14.67984 minus 12.33514
+.......\rule(0.0+0.0)x-14.67984
+.......\TU/SimHei(0)/m/n/26.09749 “人
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 们
+.......\penalty 10000
+.......\TU/SimHei(0)/m/n/26.09749 ”
+.......\rule(0.0+0.0)x-14.67984
+.......\glue 14.67984 minus 12.53903
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 一
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 词
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 在
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 英
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 文
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 中
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 的
+.......\glue(\rightskip) 0.0
+......\penalty 300
+......\glue(\baselineskip) 16.2457
+......\hbox(21.51004+2.75246)x348.30124, glue set 35.2333fil
+.......\TU/SimHei(0)/m/n/26.09749 表
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 达
+.......\penalty 0
+.......\glue 0.0 plus 3.19376
+.......\glue 0.05098 minus 0.0255
+.......\rule(0.0+0.0)x0.0
+.......\TU/SimHei(0)/m/n/26.09749 —
+.......\penalty 10000
+.......\glue -0.10194
+.......\TU/SimHei(0)/m/n/26.09749 —
+.......\rule(0.0+0.0)x-0.10194
+.......\glue 0.05098 minus 0.0255
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 基
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 于
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 语
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 料
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 库
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 的
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 研
+.......\glue 0.0 plus 3.19376
+.......\TU/SimHei(0)/m/n/26.09749 究
+.......\kern -0.00017
+.......\kern 0.00017
+.......\penalty 10000
+.......\glue(\parfillskip) 0.0 plus 1.0fil
+.......\glue(\rightskip) 0.0
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\rule(0.0+0.0)x*
+....\penalty 10000
+....\glue 54.06006
+....\glue 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(13.23695+1.75655)x416.83289, glue set 112.05646fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\hbox(13.17422+1.69382)x64.24, glue set 32.12001fil
+......\TU/FangSong(0)/m/n/16.06 系
+......\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/FangSong(0)/m/n/16.06 别
 ......\kern -0.00017
 ......\kern 0.00017
+.....\hbox(5.95976+0.31366)x16.06
 ......\penalty 10000
-......\glue(\parfillskip) 0.0
-......\glue(\rightskip) 0.0 plus 1.0fil
-.....\glue(\parskip) 0.0
-.....\glue(\parskip) 0.0
-.....\glue(\baselineskip) 11.749
-.....\hbox(18.12042+5.63235)x421.10089, glue set 31.63356fil
-......\glue(\leftskip) 0.0 plus 1.0fil
-......\hbox(0.0+0.0)x0.0
-......\TU/TimesNewRoman(0)/m/n/26.09749 Expressing
-......\glue 6.52437 plus 3.26218 minus 2.17479
-......\TU/TimesNewRoman(0)/m/it/26.09749 renmen
-......\kern 0.0
-......\kern -0.0002
-......\kern 0.0002
-......\glue 6.52437 plus 3.26218 minus 2.17479
-......\TU/TimesNewRoman(0)/m/n/26.09749 in
-......\glue 6.52437 plus 3.26218 minus 2.17479
-......\TU/TimesNewRoman(0)/m/n/26.09749 English—A
-......\glue(\rightskip) 0.0 plus 1.0fil
-.....\penalty 300
-.....\glue(\baselineskip) 8.8691
-.....\hbox(18.12042+5.63235)x421.10089, glue set 105.07735fil
-......\glue(\leftskip) 0.0 plus 1.0fil
-......\TU/TimesNewRoman(0)/m/n/26.09749 Corpus-based
-......\glue 6.52437 plus 3.26218 minus 2.17479
-......\TU/TimesNewRoman(0)/m/n/26.09749 Study
-......\kern -0.0002
-......\kern 0.0002
+......\TU/FangSong(0)/m/n/16.06 ：
+......\rule(0.0+0.0)x-11.60587
+......\kern 0.0007
+......\kern -0.0007
+......\kern -0.99649
+......\kern 0.99649
+......\glue 11.60587 minus 9.34743
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\hbox(13.23695+1.75655)x112.41998
+......\TU/FangSong(0)/m/n/16.06 外
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 国
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 语
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 言
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 文
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 学
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 系
+......\kern -0.00017
+......\kern 0.00017
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\glue(\baselineskip) 20.88103
+....\hbox(13.36243+1.75655)x416.83289, glue set 112.05646fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\hbox(13.11148+1.63107)x64.24, glue set 32.12001fil
+......\TU/FangSong(0)/m/n/16.06 专
+......\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/FangSong(0)/m/n/16.06 业
+......\kern -0.00017
+......\kern 0.00017
+.....\hbox(5.95976+0.31366)x16.06
 ......\penalty 10000
-......\glue(\parfillskip) 0.0
-......\glue(\rightskip) 0.0 plus 1.0fil
-.....\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/FangSong(0)/m/n/16.06 ：
+......\rule(0.0+0.0)x-11.60587
+......\kern 0.0007
+......\kern -0.0007
+......\kern -0.99649
+......\kern 0.99649
+......\glue 11.60587 minus 9.34743
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\hbox(13.36243+1.75655)x112.41998, glue set 16.06fil
+......\TU/FangSong(0)/m/n/16.06 英
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 语
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 语
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 言
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 文
+......\glue 0.0 plus 1.36491
+......\TU/FangSong(0)/m/n/16.06 学
+......\kern -0.00017
+......\kern 0.00017
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\glue(\baselineskip) 21.0065
+....\hbox(13.23695+1.81927)x416.83289, glue set 112.05646fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\hbox(13.23695+1.56834)x64.24, glue set 32.12001fil
+......\TU/FangSong(0)/m/n/16.06 姓
+......\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/FangSong(0)/m/n/16.06 名
+......\kern -0.00017
+......\kern 0.00017
+.....\hbox(5.95976+0.31366)x16.06
+......\penalty 10000
+......\TU/FangSong(0)/m/n/16.06 ：
+......\rule(0.0+0.0)x-11.60587
+......\kern 0.0007
+......\kern -0.0007
+......\kern -0.99649
+......\kern 0.99649
+......\glue 11.60587 minus 9.34743
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\hbox(13.17422+1.81927)x112.41998, glue set 64.23999fil
+......\hbox(13.17422+1.81927)x48.18
+.......\TU/FangSong(0)/m/n/16.06 某
+.......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/FangSong(0)/m/n/16.06 某
+.......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/FangSong(0)/m/n/16.06 某
+.......\kern -0.00017
+.......\kern 0.00017
+.......\glue 0.0 minus 1.0fill
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\glue(\baselineskip) 21.0065
+....\hbox(13.17422+1.81927)x416.83289, glue set 112.05646fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\hbox(13.11148+1.75655)x64.24, glue set 0.0fil
+......\TU/FangSong(0)/m/n/16.06 指
+......\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/FangSong(0)/m/n/16.06 导
+......\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/FangSong(0)/m/n/16.06 教
+......\glue 0.0 plus 1.0fil minus 1.0fil
+......\TU/FangSong(0)/m/n/16.06 师
+......\kern -0.00017
+......\kern 0.00017
+.....\hbox(5.95976+0.31366)x16.06
+......\penalty 10000
+......\TU/FangSong(0)/m/n/16.06 ：
+......\rule(0.0+0.0)x-11.60587
+......\kern 0.0007
+......\kern -0.0007
+......\kern -0.99649
+......\kern 0.99649
+......\glue 11.60587 minus 9.34743
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\hbox(13.17422+1.81927)x112.41998, glue set 16.06fil
+......\hbox(13.17422+1.81927)x48.18
+.......\TU/FangSong(0)/m/n/16.06 某
+.......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/FangSong(0)/m/n/16.06 某
+.......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/FangSong(0)/m/n/16.06 某
+.......\kern -0.00017
+.......\kern 0.00017
+.......\glue 0.0 minus 1.0fill
+......\glue 16.06
+......\hbox(13.11148+1.69382)x32.12, glue set - 16.06fill
+.......\TU/FangSong(0)/m/n/16.06 副
+.......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/FangSong(0)/m/n/16.06 教
+.......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/FangSong(0)/m/n/16.06 授
+.......\kern -0.00017
+.......\kern 0.00017
+.......\glue 0.0 minus 1.0fill
+......\glue 0.0 plus 1.0fil minus 1.0fil
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\rule(0.0+0.0)x*
 ....\penalty 10000
-....\glue(\parfillskip) 0.0
-....\glue(\rightskip) 0.0 plus 1.0fil
-...\glue(\parskip) 0.0 plus 1.0
-...\glue(\parskip) 0.0
-...\glue(\lineskip) 1.0
-...\hbox(66.16759+58.13673)x421.10089, glue set 96.8238fil
-....\glue 81.30374
-....\hbox(66.16759+58.13673)x242.97334
-.....\mathon
-.....\vbox(66.16759+58.13673)x242.97334
-......\hbox(21.75316+9.32292)x242.97334
-.......\glue(\tabskip) 0.0
-.......\hbox(21.75316+9.32292)x242.97334, glue set 24.09fil
-........\rule(21.75316+9.32292)x0.0
-........\glue 6.0
-........\glue 0.00002
-........\hbox(13.17422+1.69382)x71.13188, glue set 6.89189fil
-.........\hbox(13.17422+1.69382)x64.23999
-..........\special{color push gray 0}
-..........\hbox(13.17422+1.69382)x64.23999, glue set 16.06filll
-...........\TU/FangSong(0)/m/n/16.06 系
-...........\glue 0.0 plus 2.0filll minus 1.0filll
-...........\TU/FangSong(0)/m/n/16.06 别
-...........\kern -0.00017
-...........\kern 0.00017
-...........\glue 0.0 plus 1.0fil minus 1.0fil
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\hbox(5.95976+0.31366)x23.33147, glue set 7.27147fil
-.........\hbox(5.95976+0.31366)x16.06
-..........\special{color push gray 0}
-..........\penalty 10000
-..........\TU/FangSong(0)/m/n/16.06 ：
-..........\rule(0.0+0.0)x-11.60587
-..........\kern 0.0007
-..........\kern -0.0007
-..........\kern -0.99649
-..........\kern 0.99649
-..........\glue 11.60587 minus 9.34743
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\TU/FangSong(0)/m/n/16.06 外
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 国
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 语
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 言
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 文
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 学
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 系
-........\kern -0.00017
-........\kern 0.00017
-........\glue 0.0 plus 1.0fil
-........\glue 6.0
-.......\glue(\tabskip) 0.0
-......\glue(\lineskip) 0.0
-......\hbox(21.75316+9.32292)x242.97334
-.......\glue(\tabskip) 0.0
-.......\hbox(21.75316+9.32292)x242.97334, glue set 40.15fil
-........\rule(21.75316+9.32292)x0.0
-........\glue 6.0
-........\glue 0.00002
-........\hbox(13.11148+1.63107)x71.13188, glue set 6.89189fil
-.........\hbox(13.11148+1.63107)x64.23999
-..........\special{color push gray 0}
-..........\hbox(13.11148+1.63107)x64.23999, glue set 16.06filll
-...........\TU/FangSong(0)/m/n/16.06 专
-...........\glue 0.0 plus 2.0filll minus 1.0filll
-...........\TU/FangSong(0)/m/n/16.06 业
-...........\kern -0.00017
-...........\kern 0.00017
-...........\glue 0.0 plus 1.0fil minus 1.0fil
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\hbox(5.95976+0.31366)x23.33147, glue set 7.27147fil
-.........\hbox(5.95976+0.31366)x16.06
-..........\special{color push gray 0}
-..........\penalty 10000
-..........\TU/FangSong(0)/m/n/16.06 ：
-..........\rule(0.0+0.0)x-11.60587
-..........\kern 0.0007
-..........\kern -0.0007
-..........\kern -0.99649
-..........\kern 0.99649
-..........\glue 11.60587 minus 9.34743
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\TU/FangSong(0)/m/n/16.06 英
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 语
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 语
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 言
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 文
-........\glue 0.0 plus 0.81671
-........\TU/FangSong(0)/m/n/16.06 学
-........\kern -0.00017
-........\kern 0.00017
-........\glue 0.0 plus 1.0fil
-........\glue 6.0
-.......\glue(\tabskip) 0.0
-......\glue(\lineskip) 0.0
-......\hbox(21.75316+9.32292)x242.97334
-.......\glue(\tabskip) 0.0
-.......\hbox(21.75316+9.32292)x242.97334, glue set 8.03fil
-........\rule(21.75316+9.32292)x0.0
-........\glue 6.0
-........\glue 0.00002
-........\hbox(13.23695+1.56834)x71.13188, glue set 6.89189fil
-.........\hbox(13.23695+1.56834)x64.23999
-..........\special{color push gray 0}
-..........\hbox(13.23695+1.56834)x64.23999, glue set 16.06filll
-...........\TU/FangSong(0)/m/n/16.06 姓
-...........\glue 0.0 plus 2.0filll minus 1.0filll
-...........\TU/FangSong(0)/m/n/16.06 名
-...........\kern -0.00017
-...........\kern 0.00017
-...........\glue 0.0 plus 1.0fil minus 1.0fil
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\hbox(5.95976+0.31366)x23.33147, glue set 7.27147fil
-.........\hbox(5.95976+0.31366)x16.06
-..........\special{color push gray 0}
-..........\penalty 10000
-..........\TU/FangSong(0)/m/n/16.06 ：
-..........\rule(0.0+0.0)x-11.60587
-..........\kern 0.0007
-..........\kern -0.0007
-..........\kern -0.99649
-..........\kern 0.99649
-..........\glue 11.60587 minus 9.34743
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\hbox(13.17422+1.81927)x64.23999, glue set 4.015filll
-.........\TU/FangSong(0)/m/n/16.06 某
-.........\glue 0.0 plus 2.0filll
-.........\TU/FangSong(0)/m/n/16.06 某
-.........\glue 0.0 plus 2.0filll
-.........\TU/FangSong(0)/m/n/16.06 某
-.........\kern -0.00017
-.........\kern 0.00017
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\glue 24.09
-........\hbox(0.0+0.0)x40.15, glue set 40.15fil
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\glue 0.0 plus 1.0fil
-........\glue 6.0
-.......\glue(\tabskip) 0.0
-......\glue(\lineskip) 0.0
-......\hbox(21.75316+9.32292)x242.97334
-.......\glue(\tabskip) 0.0
-.......\hbox(21.75316+9.32292)x242.97334
-........\rule(21.75316+9.32292)x0.0
-........\glue 6.0
-........\glue 0.00002
-........\hbox(13.11148+1.75655)x71.13188, glue set 6.89189fil
-.........\hbox(13.11148+1.75655)x64.23999
-..........\special{color push gray 0}
-..........\hbox(13.11148+1.75655)x64.23999
-...........\TU/FangSong(0)/m/n/16.06 指
-...........\glue 0.0 plus 2.0filll minus 1.0filll
-...........\TU/FangSong(0)/m/n/16.06 导
-...........\glue 0.0 plus 2.0filll minus 1.0filll
-...........\TU/FangSong(0)/m/n/16.06 教
-...........\glue 0.0 plus 2.0filll minus 1.0filll
-...........\TU/FangSong(0)/m/n/16.06 师
-...........\kern -0.00017
-...........\kern 0.00017
-...........\glue 0.0 plus 1.0fil minus 1.0fil
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\hbox(5.95976+0.31366)x23.33147, glue set 7.27147fil
-.........\hbox(5.95976+0.31366)x16.06
-..........\special{color push gray 0}
-..........\penalty 10000
-..........\TU/FangSong(0)/m/n/16.06 ：
-..........\rule(0.0+0.0)x-11.60587
-..........\kern 0.0007
-..........\kern -0.0007
-..........\kern -0.99649
-..........\kern 0.99649
-..........\glue 11.60587 minus 9.34743
-..........\special{color pop}
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\hbox(13.17422+1.81927)x64.23999, glue set 4.015filll
-.........\TU/FangSong(0)/m/n/16.06 某
-.........\glue 0.0 plus 2.0filll
-.........\TU/FangSong(0)/m/n/16.06 某
-.........\glue 0.0 plus 2.0filll
-.........\TU/FangSong(0)/m/n/16.06 某
-.........\kern -0.00017
-.........\kern 0.00017
-.........\glue 0.0 plus 1.0fil minus 1.0fil
-........\glue 24.09
-........\hbox(13.11148+1.69382)x48.18
-.........\special{color push gray 0}
-.........\TU/FangSong(0)/m/n/16.06 副
-.........\glue 0.0 plus 0.81671
-.........\TU/FangSong(0)/m/n/16.06 教
-.........\glue 0.0 plus 0.81671
-.........\TU/FangSong(0)/m/n/16.06 授
-.........\kern -0.00017
-.........\kern 0.00017
-.........\special{color pop}
-........\glue 0.0 plus 1.0fil
-........\glue 6.0
-.......\glue(\tabskip) 0.0
-.....\mathoff
+....\glue 39.83368
+....\glue 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(9.92772+1.22331)x416.83289, glue set 164.97682fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\TU/TimesNewRoman(0)/m/n/12.045 2011
+.....\glue 3.01125 plus 1.50562 minus 1.00374
+.....\TU/SimSun(1)/m/n/12.045 年
+.....\glue 3.01125 plus 1.50562 minus 1.00374
+.....\TU/TimesNewRoman(0)/m/n/12.045 6
+.....\glue 3.01125 plus 1.50562 minus 1.00374
+.....\TU/SimSun(1)/m/n/12.045 月
+.....\glue 3.01125 plus 1.50562 minus 1.00374
+.....\TU/TimesNewRoman(0)/m/n/12.045 1
+.....\glue 3.01125 plus 1.50562 minus 1.00374
+.....\TU/SimSun(1)/m/n/12.045 日
+.....\kern -0.00017
+.....\kern 0.00017
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\rule(0.0+0.0)x*
 ....\penalty 10000
-....\glue(\parfillskip) 0.0 plus 1.0fil
-....\glue(\rightskip) 0.0
-...\glue 0.0 plus 1.0fill
-...\glue(\parskip) 0.0 plus 1.0
-...\glue(\parskip) 0.0
-...\glue(\lineskip) 1.0
-...\hbox(13.23695+1.63107)x421.10089, glue set 152.89516fil
-....\glue(\leftskip) 0.0 plus 1.0fil
-....\hbox(0.0+0.0)x0.0
-....\TU/SimSun(0)/m/n/16.06 二
-....\glue 0.48177 plus 0.33495 minus 0.34013
-....\TU/SimSun(0)/m/n/16.06 〇
-....\glue 0.48177 plus 0.33495 minus 0.34013
-....\TU/SimSun(0)/m/n/16.06 一
-....\glue 0.48177 plus 0.33495 minus 0.34013
-....\TU/SimSun(0)/m/n/16.06 一
-....\glue 0.48177 plus 0.33495 minus 0.34013
-....\TU/SimSun(0)/m/n/16.06 年
-....\glue 0.48177 plus 0.33495 minus 0.34013
-....\TU/SimSun(0)/m/n/16.06 六
-....\glue 0.48177 plus 0.33495 minus 0.34013
-....\TU/SimSun(0)/m/n/16.06 月
-....\kern -0.00017
-....\kern 0.00017
-....\penalty 10000
-....\glue(\parfillskip) 0.0
-....\glue(\rightskip) 0.0 plus 1.0fil
-...\rule(0.0+0.0)x*
-...\penalty 10000
-...\glue 60.22499
-...\glue 0.0
-...\glue 0.0 plus 1.0fil
-...\glue 0.0
-...\glue 0.0 plus 0.0001fil
-..\glue(\baselineskip) 42.67912
-..\hbox(0.0+0.0)x421.10089
-...\special{color push gray 0}
-...\hbox(0.0+0.0)x421.10089
-...\special{color pop}
-.\kern -724.40726
-.\hbox(0.0+0.0)x0.0
-..\kern -72.26999
-..\vbox(0.0+0.0)x0.0, glue set 72.26999fil
-...\kern -72.26999
-...\hbox(0.0+0.0)x0.0
-....\hbox(0.0+0.0)x0.0, shifted 845.04684
-.....\kern 0.0
-.....\glue 0.0 plus 1.0fil minus 1.0fil
-....\glue 0.0 plus 1.0fil minus 1.0fil
-...\glue 0.0 plus 1.0fil minus 1.0fil
-.\kern 724.40726
+....\glue 0.0 plus 1.0fill
+....\glue 0.0
+....\glue 0.0 plus 1.0fil
+....\glue 0.0
+....\glue 0.0 plus 0.0001fil
+...\glue(\baselineskip) 41.25641
+...\hbox(0.0+0.0)x416.83289
+....\hbox(0.0+0.0)x416.83289
 .\kern 0.0
+Completed box being shipped out [2]
+\vbox(777.61383+0.0)x439.87962
+.\vbox(0.0+0.0)x0.0, glue set 73.2733fil
+..\kern 0.0
+..\kern -72.26956
+..\kern -1.00374
+..\hbox(0.0+0.0)x0.0, glue set - 17.775fil
+...\kern 0.0
+...\kern 18.77873
+...\kern -1.00374
+...\special{pdf:dest (page.) [@thispage /XYZ @xpos @ypos null]}
+...\penalty 10000
+...\glue 0.0 plus 1.0fil minus 1.0fil
+..\glue 0.0 plus 1.0fil minus 1.0fil
+.\glue(\lineskip) 0.0
+.\vbox(777.61383+0.0)x439.87962
+..\glue -72.26956
+..\vbox(849.88339+0.0)x421.10089, shifted 18.77873
+...\vbox(54.06006+0.0)x421.10089, glue set 54.06006fil
+....\glue 0.0 plus 1.0fil
+....\hbox(0.0+0.0)x421.10089
+.....\hbox(0.0+0.0)x421.10089
+...\glue 54.06006
+...\glue(\lineskip) 0.0
+...\vbox(700.50687+0.0)x421.10089, glue set 477.81104fill
+....\write-{}
+....\write-{}
+....\write-{}
+....\glue(\topskip) 12.0
+....\rule(0.0+0.0)x*
+....\penalty 10000
+....\glue 10.0
+....\glue 0.0
+....\special{pdf:dest (section*.1) [@thispage /XYZ @xpos @ypos null]}
+....\penalty 10000
+....\write4{\protect \BOOKMARK [0][-]{copyright.0}{\376\377\121\163\116\216\133\146\117\115\213\272\145\207\117\177\165\050\143\210\147\103\166\204\213\364\146\016}{}% 1}
+....\special{pdf:dest (copyright.0) [@thispage /XYZ @xpos @ypos null]}
+....\penalty 10000
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(14.96214+1.97612)x421.10089, glue set 93.11177fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\TU/SimHei(0)/m/n/18.06749 关
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 于
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 学
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 位
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 论
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 文
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 使
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 用
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 授
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 权
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 的
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 说
+.....\glue 0.0 plus 1.12457
+.....\TU/SimHei(0)/m/n/18.06749 明
+.....\kern -0.00017
+.....\kern 0.00017
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0 plus 1.0fil
+....\rule(0.0+0.0)x*
+....\penalty 10000
+....\glue 60.0
+....\glue 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(9.92772+1.27036)x421.10089, glue set - 0.02258
+.....\hbox(0.0+0.0)x24.09
+.....\TU/SimSun(1)/m/n/12.045 本
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 人
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 完
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 全
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 了
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 解
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 清
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 华
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 大
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 学
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 有
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 关
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 保
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 留
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 、
+.....\rule(0.0+0.0)x-7.76338
+.....\glue 7.76338 minus 6.44595
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 使
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 用
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 学
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 位
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 论
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 文
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 的
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 规
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 定
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 ，
+.....\rule(0.0+0.0)x-8.70439
+.....\glue 8.70439 minus 7.24582
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 即
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 ：
+.....\rule(0.0+0.0)x-8.7985
+.....\glue 8.7985 minus 7.29286
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 学
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 校
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 有
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 权
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 保
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 留
+.....\glue(\rightskip) 0.0
+....\penalty 150
+....\glue(\baselineskip) 3.25592
+....\hbox(9.92772+1.27036)x421.10089, glue set - 0.0325
+.....\TU/SimSun(1)/m/n/12.045 学
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 位
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 论
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 文
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 的
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 复
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 印
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 件
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 ，
+.....\rule(0.0+0.0)x-8.70439
+.....\glue 8.70439 minus 7.24582
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 允
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 许
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 该
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 论
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 文
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 被
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 查
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 阅
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 和
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 借
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 阅
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 ；
+.....\rule(0.0+0.0)x-8.84555
+.....\glue 8.84555 minus 7.33992
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 学
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 校
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 可
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 以
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 公
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 布
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 该
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 论
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 文
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 的
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 全
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 部
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 或
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 部
+.....\glue(\rightskip) 0.0
+....\penalty 150
+....\glue(\baselineskip) 3.25592
+....\hbox(9.92772+1.27036)x421.10089, glue set 115.69432fil
+.....\TU/SimSun(1)/m/n/12.045 分
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 内
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 容
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 ，
+.....\rule(0.0+0.0)x-8.70439
+.....\glue 8.70439 minus 7.24582
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 可
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 以
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 采
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 用
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 影
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 印
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 、
+.....\rule(0.0+0.0)x-7.76338
+.....\glue 7.76338 minus 6.44595
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 缩
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 印
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 或
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 其
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 他
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 复
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 制
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 手
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 段
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 保
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 存
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 该
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 论
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(1)/m/n/12.045 文
+.....\penalty 10000
+.....\TU/SimSun(1)/m/n/12.045 。
+.....\rule(0.0+0.0)x-7.76338
+.....\kern 0.00047
+.....\kern -0.00047
+.....\kern -0.18753
+.....\kern 0.18753
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0 plus 1.0fil
+.....\glue(\rightskip) 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\glue(\baselineskip) 3.30298
+....\hbox(9.88066+2.41133)x421.10089, glue set 184.22377fil
+.....\hbox(0.0+0.0)x24.09
+.....\TU/TimesNewRoman(0)/b/n/12.045 (
+.....\TU/SimSun(0)/b/n/12.045 涉
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 密
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 的
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 学
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 位
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 论
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 文
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 在
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 解
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 密
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 后
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 应
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 遵
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 守
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 此
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 规
+.....\glue 0.0 plus 0.73799
+.....\TU/SimSun(0)/b/n/12.045 定
+.....\TU/TimesNewRoman(0)/b/n/12.045 )
+.....\kern 0.0
+.....\kern -0.0002
+.....\kern 0.0002
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0 plus 1.0fil
+.....\glue(\rightskip) 0.0
+....\rule(0.0+0.0)x*
+....\penalty 10000
+....\glue 56.9055
+....\glue 0.0
+....\glue(\parskip) 0.0 plus 1.0
+....\glue(\parskip) 0.0
+....\hbox(9.92772+1.22331)x421.10089, glue set 336.7859fil
+.....\glue(\leftskip) 0.0 plus 1.0fil
+.....\hbox(0.0+0.0)x0.0
+.....\glue 24.09
+.....\TU/SimSun(1)/m/n/12.045 年
+.....\kern -0.00017
+.....\kern 0.00017
+.....\glue 12.045
+.....\TU/SimSun(1)/m/n/12.045 月
+.....\kern -0.00017
+.....\kern 0.00017
+.....\glue 12.045
+.....\TU/SimSun(1)/m/n/12.045 日
+.....\kern -0.00017
+.....\kern 0.00017
+.....\penalty 10000
+.....\glue(\parfillskip) 0.0
+.....\glue(\rightskip) 0.0
+....\rule(0.0+0.0)x*
+....\penalty 10000
+....\glue 0.0 plus 1.0fill
+....\glue 0.0
+....\glue 0.0 plus 1.0fil
+....\glue 0.0
+....\glue 0.0 plus 0.0001fil
+...\glue(\baselineskip) 41.25641
+...\hbox(0.0+0.0)x421.10089
+....\hbox(0.0+0.0)x421.10089

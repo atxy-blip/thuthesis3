@@ -4580,9 +4580,10 @@ To produce the documentation run the original source files ending with
   }
 %    \end{macrocode}
 %
-% 为了运行测试，配置一个兼容性命令。
+% 为了运行测试，创建兼容性命令。稍后会针对配置进行拆分。
 %    \begin{macrocode}
-\cs_new_eq:NN \thu@titlepage \maketitle
+\cs_new_eq:NN \thu@titlepage    \maketitle
+\cs_new_eq:NN \thu@titlepage@en \maketitle
 %</class>
 %    \end{macrocode}
 % \end{macro}
