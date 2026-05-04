@@ -1723,18 +1723,18 @@ To produce the documentation run the original source files ending with
 %
 % \subsection{用户接口}
 %
-% \begin{macro}{abstract, bib, image, footer, footnote, header,
-%   info, label-sep, listoffigures, listoftables,
-%   math, style, theorem, tableofcontents}
-% 定义模块名的元（meta）键值对。
+% \begin{macro}{\@@_keys_set_exclude_groups:nnn}
+% 兼容旧版 \pkg{l3kernel} 的键分组过滤接口。
 %    \begin{macrocode}
-\clist_map_inline:nn
+\cs_if_exist:NTF \keys_set_exclude_groups:nnn
   {
-    abstract, bib, image, footer, footnote, header,
-    info, label-sep, listoffigures, listoftables,
-    math, style, theorem, tableofcontents
+    \cs_new_eq:NN \@@_keys_set_exclude_groups:nnn
+      \keys_set_exclude_groups:nnn
   }
-  { \keys_define:nn { thu } { #1 .meta:nn = { thu / #1 } {##1} } }
+  {
+    \cs_new_protected:Npn \@@_keys_set_exclude_groups:nnn #1#2#3
+      { \use:c { keys_set_filter:nnn } {#1} {#2} {#3} }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1743,14 +1743,34 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_opt_anon_bool
   {
-    \cs_new:Npn \@@_keys_set:nn #1#2
-      { \keys_set_filter:nnn {#1} { anonymous } {#2} }
+    \cs_new_protected:Npn \@@_keys_set:nn #1#2
+      { \@@_keys_set_exclude_groups:nnn {#1} { anonymous } {#2} }
   }
   { \cs_new_eq:NN \@@_keys_set:nn \keys_set:nn }
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{abstract, bib, image, footer, footnote, header,
+%   info, label-sep, listoffigures, listoftables,
+%   math, style, theorem, tableofcontents}
+% 定义模块名的键值对。模块键调用 \cs{@@_keys_set:nn} 以保留盲审模式
+% 下的分组过滤。
+%    \begin{macrocode}
+\clist_map_inline:nn
+  {
+    abstract, bib, image, footer, footnote, header,
+    info, label-sep, listoffigures, listoftables,
+    math, style, theorem, tableofcontents
+  }
+  {
+    \keys_define:nn { thu }
+      { #1 .code:n = { \@@_keys_set:nn { thu / #1 } {##1} } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\thusetup}
+% \changes{v0.1.0}{2026/05/04}{统一 \tn{thusetup} 可选参数的键路径处理。}
 % 定义设置接口。
 % \begin{arguments}
 %   \item 可选的键路径
@@ -1758,19 +1778,15 @@ To produce the documentation run the original source files ending with
 % \end{arguments}
 % \cls{thuthesis3} 的键值对设置一共三层：最外层为指示名空间的
 % \opt{thu}，第二层为上方设定的模块名称，最内层为具体设置项。
-% 在路径留空时，本接口仅使用最外层名空间，向下兼容旧版设置；
-% 在路径填入模块名时，第二个参数为键值对类型，可以减少一层缩进；
-% 在路径填入完整设置项时，第二个参数为具体的值。
+% 在路径留空时，本接口仅使用最外层名空间，向下兼容旧版设置。
+% 可选参数会统一作为顶层 \opt{thu} 键路径处理，因此模块名和完整
+% 键路径均通过顶层模块键转发。
 %    \begin{macrocode}
 \NewDocumentCommand \thusetup { o m }
   {
     \tl_if_novalue:nTF { #1 }
       { \@@_keys_set:nn { thu } { #2 } }
-      {
-        \tl_if_in:nnTF { #1 } { / }
-          { \@@_keys_set:nn { thu } { #1 = {#2} } }
-          { \@@_keys_set:nn { thu  /  #1 } {#2}   }
-      }
+      { \@@_keys_set:nn { thu } { #1 = {#2} } }
   }
 %    \end{macrocode}
 % \end{macro}

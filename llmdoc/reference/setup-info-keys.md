@@ -29,6 +29,11 @@ Implement this compatibility with narrow `.meta:nn` forwarding from top-level
 `thu` keys to `thu / info`; do not move the canonical storage keys back to the
 top level.
 
+The `\thusetup` optional argument is normalized as a top-level `thu` key
+assignment. Module forms such as `\thusetup[info]{...}` rely on the top-level
+`info` module key to forward through the internal filtered setter; full paths
+such as `\thusetup[info/title]{...}` are also passed as top-level nested keys.
+
 ## Source Of Truth
 
 The inherited key names and user-facing descriptions come from
