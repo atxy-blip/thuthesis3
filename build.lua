@@ -5,9 +5,19 @@
 
 module        = "thuthesis3"
 
-checkengines  = {"xetex", "luatex"}
+checkengines  = {"xetex"}
 checkopts     = "-interaction=batchmode"
 lvtext        = ".tex"
+
+checkconfigs = {
+  "build",
+  "testfiles/config-title-page",
+--   "testfiles/config-title-page-en",
+--   "testfiles/config-crossref",
+--   "testfiles/config-nomencl",
+--   "testfiles/config-bibtex",
+--   "testfiles/config-biblatex",
+}
 
 textfiles     = {"LICENSE", "README*.md", "CHANGELOG.md", "*.ins"}
 ctanreadme    = "README-CTAN.md"

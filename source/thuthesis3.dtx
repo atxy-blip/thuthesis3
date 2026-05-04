@@ -4578,6 +4578,11 @@ To produce the documentation run the original source files ending with
     \exp_args:NV \pagestyle \c_@@_fmt_pagestyle_tl
     \pagenumbering { Roman }
   }
+%    \end{macrocode}
+%
+% 为了运行测试，配置一个兼容性命令。
+%    \begin{macrocode}
+\cs_new_eq:NN \thu@titlepage \maketitle
 %</class>
 %    \end{macrocode}
 % \end{macro}
