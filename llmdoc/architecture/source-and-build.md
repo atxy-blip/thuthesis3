@@ -34,7 +34,8 @@ Important sections in `source/thuthesis3.dtx`:
 - bibliography and citations;
 - footnotes, figures, tables, lists, theorem, and math style;
 - cover, copyright, abstract, acknowledgement, achievements, notation, and
-  constants.
+  constants (cover generation now uses LaTeX3 hook mechanism: `cover/begin`,
+  `cover/body`, `cover/end`).
 
 ## Build System
 

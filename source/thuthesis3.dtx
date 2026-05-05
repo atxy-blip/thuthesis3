@@ -1173,6 +1173,7 @@ To produce the documentation run the original source files ending with
 %
 %
 % \subsection{页面对象}
+% \changes{v0.1.0}{使用 \pkg{xtemplate} 面向对象构建封面页绘制框架。}
 %
 % 本模板使用 \pkg{xtemplate} 提供的面向对象方法简化封面和摘要的绘制过程。
 %
@@ -2035,6 +2036,28 @@ To produce the documentation run the original source files ending with
       { \@@_check_pkg_conflict:nn { unicode-math } { #1 } }
   }
 %    \end{macrocode}
+%
+%
+% \subsection{钩子机制}
+% \changes{v0.1.0}{2026/05/04}{将封面执行逻辑拆解为三个钩子。}
+%
+% \begin{macro}{thuthesis3/cover/begin,thuthesis3/cover/body,thuthesis3/cover/end}
+% 封面流程钩子。由于默认配置文件会向这些钩子添加代码，
+% 需要在载入配置文件前先行声明。
+% 名称中的 |.| 代表本模板名 \cls{thuthesis3}。
+% 命名逻辑为，钩子名代表模块下的逻辑位置，而标签概括实际执行的功能。
+%    \begin{macrocode}
+\hook_new:n { . / cover / begin }
+\hook_new:n { . / cover / body  }
+\hook_new:n { . / cover / end   }
+%    \end{macrocode}
+%
+% 设置标签的默认规则，规定主封面代码始终在承诺书前执行。
+%    \begin{macrocode}
+\hook_gset_rule:nnnn { . / cover / body } { main } < { decl-a }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \subsection{配置文件}
 %
@@ -2952,7 +2975,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 %<*class>
 \clist_map_inline:Nn \c_@@_fmt_section_clist
-  { \use:c { @@_section_format \c@@_name_suffix_tl :nnnnn } #1 }
+  { \use:c { @@_section_format \c_@@_name_suffix_tl :nnnnn } #1 }
 %    \end{macrocode}
 %
 % 根据语言设定章编号格式。
@@ -4467,41 +4490,44 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_make_cover:}
-% 生成本科生或研究生的普通封面。
+% 在草稿模式下，封面绘制将被禁用，有助于提升编译速度。
+% 通过不同选项进行分流，使得钩子内部最终不包含逻辑判断，
+% 仅需调用恰当的实例生成封面。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_make_cover:
+\bool_if:NF \g_@@_opt_draft_bool
   {
-%<def-u>    \UseInstance { thu } { cover-u    }
-%<def-g>    \UseInstance { thu } { cover-g    } \cleardoublepage
-%<def-g>    \UseInstance { thu } { cover-g-en }
-%<def-p>    \UseInstance { thu } { cover-a-p  } \cleardoublepage
-%<def-p>    \UseInstance { thu } { cover-b-p  }
-  }
+    \hook_gput_code:nnn { . / cover / body } { main }
+      {
+%<def-u>        \UseInstance { thu } { cover-u    }
+%<*def-g>
+        \UseInstance { thu } { cover-g    }
+        \cleardoublepage
+        \UseInstance { thu } { cover-g-en }
+%</def-g>
+%<*def-p>
+        \UseInstance { thu } { cover-a-p  }
+        \cleardoublepage
+        \UseInstance { thu } { cover-b-p  }
+%</def-p>
+      }
 %    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{\@@_make_decla:}
-% 位于封面后的声明页面。
-% 生成本科生的诚信承诺书或研究生的学位论文原创性声明。
+% 根据选项设置声明页钩子。
+% 位于封面后的承诺书页面，
+% 用于生成本科生的诚信承诺书或研究生的学位论文原创性声明。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_make_decla:
-  {
+    \hook_gput_code:nnn { . / cover / body } { decl-a }
+      {
 %<*(def-u|def-g)>
-    \cleardoublepage
-    \UseInstance { thu } { copyright }
-    \cleardoublepage
+        \cleardoublepage
+        \UseInstance { thu } { copyright }
+        \cleardoublepage
 %</(def-u|def-g)>
-  }
+      }
 %    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_make_declb:}
 % 位于封底的声明页面。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_make_declb:
-  {
-    \AtEndEnvironment { document }
+    \hook_gput_code:nnn { env / document / end } { decl-b }
       {
         \cleardoublepage
         \UseInstance { thu } { originality }
@@ -4510,7 +4536,30 @@ To produce the documentation run the original source files ending with
   }
 %</(def-u|def-g|def-p)>
 %    \end{macrocode}
-% \end{macro}
+%
+% 封面前处理。封面本身不占用页码编号。
+%    \begin{macrocode}
+%<*class>
+\hook_gput_code:nnn { . / cover / begin } { presetup  }
+  { \pagenumbering { gobble } }
+%    \end{macrocode}
+%
+% 封面后处理。在标题页后清空标题中的换行符，
+% 使用大写罗马字母页码，恢复正常字体设置。
+%    \begin{macrocode}
+\hook_gput_code:nnn { . / cover / end } { postsetup }
+  {
+    \tl_remove_all:Nn \g_@@_info_title_tl { \\ }
+    \cleardoublepage
+    \exp_args:NV \pagestyle \c_@@_fmt_pagestyle_tl
+    \pagenumbering { Roman }
+  }
+%    \end{macrocode}
+%
+% 保证文档在 \opt{twoside} 模式下总是在偶数页结束。
+%    \begin{macrocode}
+\hook_gput_next_code:nn { env / document / end } { \cleardoublepage }
+%    \end{macrocode}
 %
 %
 % \subsubsection{用户接口}
@@ -4518,7 +4567,6 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{\@@_new_img_cmd:nn}
 % 用于定义插入图片命令的辅助函数。
 %    \begin{macrocode}
-%<*class>
 \cs_new_protected:Npn \@@_new_img_cmd:nn #1#2
   {
     \exp_args:Nc \NewDocumentCommand { thu #1 } { o m m }
@@ -4548,35 +4596,18 @@ To produce the documentation run the original source files ending with
 %
 %
 % \begin{macro}{\maketitle}
+% \changes{v0.1.0}{2026/05/04}{使用 \LaTeX 钩子机制处理封面绘制。}
 % 重定义 \tn{maketitle} 以生成封面。
 % 在草稿模式下，封面绘制将被禁用，有助于提升编译速度。
+% 在钩子机制下，这里只需要作为钩子的锚点，
+% 具体需要执行的代码已被预先分发到钩子内。
+% \cs{hook_use:n} 不能用 |.| 来简化钩子路径。
 %    \begin{macrocode}
 \RenewDocumentCommand \maketitle { }
   {
-    \bool_if:NF \g_@@_opt_draft_bool
-      {
-        \pagenumbering { gobble }
-          { \@@_make_cover:    }
-      }
-%    \end{macrocode}
-% 生成封面后清除标题中的换行控制符，便于在摘要中输出。
-%    \begin{macrocode}
-    \tl_remove_all:Nn \g_@@_info_title_tl { \\ }
-%    \end{macrocode}
-% 如果在选择了 \opt{decl-page}，就生成本科生的诚信承诺书，
-% 或研究生的原创性声明和出版授权书。
-%    \begin{macrocode}
-    \bool_if:NF \g_@@_opt_draft_bool
-      {
-        \@@_make_decla:
-        \@@_make_declb:
-      }
-%    \end{macrocode}
-% 在标题页后使用大写罗马字母页码，恢复正常字体设置。
-%    \begin{macrocode}
-    \cleardoublepage
-    \exp_args:NV \pagestyle \c_@@_fmt_pagestyle_tl
-    \pagenumbering { Roman }
+    \hook_use:n { thuthesis3 / cover / begin }
+    \hook_use:n { thuthesis3 / cover / body  }
+    \hook_use:n { thuthesis3 / cover / end   }
   }
 %    \end{macrocode}
 %

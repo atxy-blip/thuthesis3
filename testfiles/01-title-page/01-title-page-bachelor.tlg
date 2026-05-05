@@ -404,7 +404,7 @@ Completed box being shipped out [1]
 ....\hbox(0.0+0.0)x416.83289
 .\kern 0.0
 Completed box being shipped out [2]
-\vbox(777.61383+0.0)x439.87962
+\vbox(722.98454+0.0)x439.87962
 .\vbox(0.0+0.0)x0.0, glue set 73.2733fil
 ..\kern 0.0
 ..\kern -72.26956
@@ -418,16 +418,16 @@ Completed box being shipped out [2]
 ...\glue 0.0 plus 1.0fil minus 1.0fil
 ..\glue 0.0 plus 1.0fil minus 1.0fil
 .\glue(\lineskip) 0.0
-.\vbox(777.61383+0.0)x439.87962
+.\vbox(722.98454+0.0)x439.87962
 ..\glue -72.26956
-..\vbox(849.88339+0.0)x421.10089, shifted 18.77873
+..\vbox(795.2541+0.0)x421.10089, shifted 18.77873
 ...\vbox(54.06006+0.0)x421.10089, glue set 54.06006fil
 ....\glue 0.0 plus 1.0fil
 ....\hbox(0.0+0.0)x421.10089
 .....\hbox(0.0+0.0)x421.10089
 ...\glue 54.06006
 ...\glue(\lineskip) 0.0
-...\vbox(700.50687+0.0)x421.10089, glue set 477.81104fill
+...\vbox(645.87758+0.0)x421.10089, glue set 423.18175fill
 ....\write-{}
 ....\write-{}
 ....\write-{}

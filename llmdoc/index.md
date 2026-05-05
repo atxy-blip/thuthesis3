@@ -51,6 +51,8 @@ technology. Local directory names may differ from GitHub repository names; see
   suffixes, and language rules for commits and `.dtx` documentation.
 - `reference/versioning-and-changes.md`: pre-1.0 versioning, changelog format,
   and when to add `\changes` entries.
+- `reference/latexpagediff-verification.md`: visual-equivalence verification
+  when l3build `.tlg` tests fail after internal reordering.
 
 ## Memory
 
@@ -61,5 +63,7 @@ technology. Local directory names may differ from GitHub repository names; see
   inheritance scope and documentation alignment.
 - `memory/reflections/2026-05-04-info-key-compatibility.md`: reflection on
   grouped `info` keys, legacy aliases, and avoiding NJUThesis-only docs.
+- `memory/reflections/2026-05-04-cover-hooks.md`: reflection on hook-based cover
+  generation with begin/body/end phases and rule-ordered labels.
 
 Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.

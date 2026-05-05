@@ -70,9 +70,12 @@ adapting the final design here.
 
 Goal: replace ad hoc execution ordering with named phases.
 
+Status: cover begin/body/end phases implemented (2026-05-04).  Remaining
+hook-based phases are still planned.
+
 Candidate modules:
 
-- cover begin/body/end phases;
+- ~~cover begin/body/end phases~~ (implemented);
 - frontmatter and mainmatter transitions;
 - delayed bibliography setup;
 - PDF metadata and resource resolution;

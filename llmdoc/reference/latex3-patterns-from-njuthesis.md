@@ -50,9 +50,14 @@ NJUThesis has hook-based cover generation in recent source:
 - ordered hook rules for page parts;
 - one-shot hook code for document-end cleanup.
 
-This pattern is a candidate for ThuThesis frontmatter, cover, bibliography, and
-begin-document setup ordering. Prove behavior with the `thuthesis2e` oracle
-before committing to a final hook API.
+Adopted in `thuthesis3` for cover generation (`thuthesis3/cover/begin`,
+`thuthesis3/cover/body`, `thuthesis3/cover/end`).  Hook labels (`main`,
+`decl-a`, `decl-b`) and a rule (`main < decl-a`) control execution order.
+Draft mode is handled by conditionally registering hook code rather than
+branching inside `\maketitle`.
+
+This pattern remains a candidate for frontmatter transitions, bibliography
+setup, and other begin-document ordering.
 
 ## Caution
 

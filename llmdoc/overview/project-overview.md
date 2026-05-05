@@ -26,7 +26,9 @@ requests before it implements the original class's full feature set.
 - defines `\thusetup`, `\thusetformat`, `\thusetlength`,
   `\thusetname`, and `\thusettext`;
 - defines module keys under `thu / ...`;
-- uses `xtemplate` page and element instances for layout-sensitive pages.
+- uses `xtemplate` page and element instances for layout-sensitive pages;
+- generates covers through LaTeX3 hook phases (`cover/begin`, `cover/body`,
+  `cover/end`) with rule-ordered labels (`main`, `decl-a`, `decl-b`).
 
 ## Strategic Context
 
