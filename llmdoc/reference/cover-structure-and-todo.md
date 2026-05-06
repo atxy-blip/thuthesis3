@@ -67,7 +67,7 @@ Related but separate front/back matter pages:
 
 Current oracle test coverage in `../thuthesis2e`:
 
-- `testfiles/01-title-page/`: 30 fixtures:
+- `testfiles/01-title-page/`: 29 fixtures:
   - 3 bachelor;
   - 10 doctor Chinese-cover cases;
   - 2 doctor English-cover cases;
@@ -107,10 +107,10 @@ Current reusable architecture:
   `top-skip`, `bottom-skip`, bookmark fields, and page-level rendering;
 - declarative page instances:
   - `cover-u`;
-  - `cover-g`;
+  - `cover-g-zh`;
   - `cover-g-en`;
-  - `cover-a-p`;
-  - `cover-b-p`;
+  - `cover-p-a`;
+  - `cover-p-b`;
   - `copyright`;
   - `originality`;
 - cover execution hooks:
@@ -131,31 +131,96 @@ Counting declared cover/title-page instances, `thuthesis3` currently has five
 main page kinds plus two declaration/authorization page instances:
 
 1. Bachelor cover instance: `cover-u`.
-2. Graduate Chinese cover instance: `cover-g`.
+2. Graduate Chinese cover instance: `cover-g-zh`.
 3. Graduate English cover instance: `cover-g-en`.
-4. Postdoc report cover instance: `cover-a-p`.
-5. Postdoc title-page placeholder: `cover-b-p`.
+4. Postdoc report cover instance: `cover-p-a`.
+5. Postdoc title-page placeholder: `cover-p-b`.
 6. Copyright page instance: `copyright`.
 7. Originality statement instance: `originality`.
 
 Current local title-page fixtures in `thuthesis3` mirror only
 `../thuthesis2e/testfiles/01-title-page/`:
 
-- 30 imported fixtures total;
+- 29 imported fixtures total;
 - no imported `01-title-page-en/` fixture tree yet;
 - `testfiles/config-title-page.lua` currently runs only a smoke subset:
   bachelor, doctor-1-1, and master-1-1.
 
+Current short instance names follow a family-first convention:
+
+| Family | Instance names | Meaning |
+| --- | --- | --- |
+| Undergraduate | `cover-u` | Undergraduate Chinese cover. |
+| Graduate | `cover-g-zh`, `cover-g-en` | Graduate Chinese/proposal cover and graduate English cover. |
+| Postdoctoral | `cover-p-a`, `cover-p-b` | Postdoc report cover and postdoc title page. The `p` marks the postdoc family; `a`/`b` keeps the upstream page-slot order from `p / cover-a /` and `p / cover-b /`. |
+
+Avoid the older reversed spelling `cover-a-p`/`cover-b-p`: it hides the family
+axis and makes the postdoc pair look less related to the rest of the cover
+taxonomy. Also avoid `cover-g-a`/`cover-g-b` for graduate pages: the graduate
+split is a language split, so `cover-g-zh`/`cover-g-en` records more meaning
+than an ordered pair.
+
+## Local Title-Page Fixture Mapping
+
+The imported `testfiles/01-title-page/*.tex` files are best understood as a
+cover-category matrix. Each fixture varies only the class options and
+`\thusetup` keys needed to exercise an isolated cover instance. This table records
+the current local inputs, not the desired final behavior.
+
+| Fixture | Cover category | Instance surface | Class options | Input keys / variation |
+| --- | --- | --- | --- | --- |
+| `01-title-page-bachelor.tex` | Bachelor Chinese cover | `\UseInstance{thu}{cover-u}` | `degree=bachelor` | Baseline bachelor keys: `title`, `department`, `discipline`, `author`, `supervisor`, `date`. Current local file calls the page instance directly. |
+| `01-title-page-bachelor-secret.tex` | Bachelor Chinese cover, secret mark | `\UseInstance{thu}{cover-u}` | `degree=bachelor` | Baseline bachelor keys plus `secret-level`, `secret-year`. |
+| `01-title-page-bachelor-en.tex` | Bachelor Chinese cover, English-main input | `\UseInstance{thu}{cover-u}` | `degree=bachelor` | Baseline bachelor keys plus `language`, `title*`; exercises the Chinese cover when main language is English. |
+| `01-title-page-doctor-1-1.tex` | Graduate Chinese cover, doctor academic baseline | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor` | `title`, `degree-category`, `department`, `discipline`, `author`, `supervisor`, `date`. |
+| `01-title-page-doctor-1-2.tex` | Graduate Chinese cover, doctor academic associate supervisor | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor` | Doctor academic baseline plus `associate-supervisor`. |
+| `01-title-page-doctor-1-3.tex` | Graduate Chinese cover, doctor academic title wrapping variant | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor` | Same key set as doctor-1-1; input values vary title length/wrapping. |
+| `01-title-page-doctor-1-4.tex` | Graduate Chinese cover, doctor academic title plus associate supervisor variant | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor` | Same key set as doctor-1-2; input values vary title length/wrapping. |
+| `01-title-page-doctor-1-5.tex` | Graduate Chinese cover, doctor academic secret mark | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor` | Doctor academic baseline plus `secret-level`, `secret-year`. |
+| `01-title-page-doctor-1-6.tex` | Graduate Chinese cover, doctor academic co-supervisor | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor` | Doctor academic baseline plus `co-supervisor`. |
+| `01-title-page-doctor-1-7.tex` | Graduate Chinese cover, doctor professional baseline | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor, degree-type=professional` | Professional doctor keys omit `discipline`: `title`, `degree-category`, `department`, `author`, `supervisor`, `date`. |
+| `01-title-page-doctor-1-8.tex` | Graduate Chinese cover, doctor professional secret mark | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor, degree-type=professional` | Doctor professional baseline plus `secret-level`, `secret-year`. |
+| `01-title-page-doctor-1-9.tex` | Graduate Chinese cover, doctor professional co-supervisor | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor, degree-type=professional` | Doctor professional baseline plus `co-supervisor`. |
+| `01-title-page-doctor-1-10.tex` | Graduate Chinese cover, doctor professional co-supervisor and secret mark | `\UseInstance{thu}{cover-g-zh}` | `degree=doctor, degree-type=professional` | Doctor professional baseline plus `co-supervisor`, `secret-level`, `secret-year`. |
+| `01-title-page-doctor-2-1.tex` | Graduate English cover, doctor academic | `\UseInstance{thu}{cover-g-en}` | `degree=doctor` | English starred keys: `title*`, `degree-category*`, `discipline*`, `author*`, `supervisor*`, `associate-supervisor*`, plus `date`. |
+| `01-title-page-doctor-2-2.tex` | Graduate English cover, doctor professional | `\UseInstance{thu}{cover-g-en}` | `degree=doctor, degree-type=professional` | English starred keys omit `discipline*`: `title*`, `degree-category*`, `author*`, `supervisor*`, `associate-supervisor*`, plus `date`. |
+| `01-title-page-master-1-1.tex` | Graduate Chinese cover, master academic baseline | `\UseInstance{thu}{cover-g-zh}` | `degree=master` | `title`, `degree-category`, `department`, `discipline`, `author`, `supervisor`, `co-supervisor`, `date`. |
+| `01-title-page-master-1-2.tex` | Graduate Chinese cover, master academic secret mark | `\UseInstance{thu}{cover-g-zh}` | `degree=master` | Master academic baseline plus `secret-level`, `secret-year`. |
+| `01-title-page-master-1-3.tex` | Graduate Chinese cover, master professional baseline | `\UseInstance{thu}{cover-g-zh}` | `degree=master, degree-type=professional` | Professional master keys omit `discipline`: `title`, `degree-category`, `department`, `author`, `supervisor`, `co-supervisor`, `date`. |
+| `01-title-page-master-1-4.tex` | Graduate Chinese cover, master professional secret mark | `\UseInstance{thu}{cover-g-zh}` | `degree=master, degree-type=professional` | Master professional baseline plus `secret-level`, `secret-year`. |
+| `01-title-page-master-1-5.tex` | Graduate Chinese cover, master professional field | `\UseInstance{thu}{cover-g-zh}` | `degree=master, degree-type=professional` | Master professional baseline plus `professional-field`. |
+| `01-title-page-master-1-6.tex` | Graduate Chinese cover, master professional field and secret mark | `\UseInstance{thu}{cover-g-zh}` | `degree=master, degree-type=professional` | Master professional baseline plus `professional-field`, `secret-level`, `secret-year`. |
+| `01-title-page-master-1-7.tex` | Graduate Chinese cover, engineering master field | `\UseInstance{thu}{cover-g-zh}` | `degree=master, degree-type=professional` | Master professional baseline plus `engineering-field`; exercises engineering-master label behavior. |
+| `01-title-page-master-1-8.tex` | Graduate Chinese cover, engineering master secret mark | `\UseInstance{thu}{cover-g-zh}` | `degree=master, degree-type=professional` | Master professional baseline plus `engineering-field`, `secret-level`; notably no `secret-year` key in this fixture. |
+| `01-title-page-master-2-1.tex` | Graduate English cover, master academic | `\UseInstance{thu}{cover-g-en}` | `degree=master` | English starred keys: `title*`, `degree-category*`, `discipline*`, `author*`, `supervisor*`, `associate-supervisor*`, plus `date`. |
+| `01-title-page-master-2-2.tex` | Graduate English cover, master professional | `\UseInstance{thu}{cover-g-en}` | `degree=master, degree-type=professional` | English starred keys omit `discipline*`: `title*`, `degree-category*`, `author*`, `supervisor*`, `associate-supervisor*`, plus `date`. |
+| `01-title-page-master-2-3.tex` | Graduate English cover, master professional field | `\UseInstance{thu}{cover-g-en}` | `degree=master, degree-type=professional` | Master professional English keys plus `professional-field*`. |
+| `01-title-page-postdoc-1.tex` | Postdoc report cover | `\UseInstance{thu}{cover-p-a}` | `degree=postdoc` | `title`, `author`, `date`, `start-date`, `end-date`. |
+| `01-title-page-postdoc-2.tex` | Postdoc title page placeholder | `\UseInstance{thu}{cover-p-b}` | `degree=postdoc` | `title`, `title*`, `author`, `discipline-level-1`, `discipline-level-2`, `date`, `start-date`, `end-date`. The target instance exists as an empty placeholder. |
+| `01-title-page-proposal.tex` | Graduate Chinese proposal cover | `\UseInstance{thu}{cover-g-zh}` | `thesis-type=proposal, degree=doctor` | Proposal keys: `title`, `department`, `discipline`, `author`, `student-id`, `supervisor`, `associate-supervisor`, `date`; no `degree-category`. |
+
+Category-to-instance mapping implied by these fixtures:
+
+| Category | Instance surface in fixtures | Current `thuthesis3` instance target | Main axes exercised |
+| --- | --- | --- | --- |
+| Bachelor Chinese cover | `\UseInstance{thu}{cover-u}` | `cover-u` | `language`, `title*`, `secret-level`, `secret-year`. |
+| Graduate Chinese cover | `\UseInstance{thu}{cover-g-zh}` | `cover-g-zh` | `degree`, `degree-type`, `thesis-type`, `discipline` versus professional field keys, supervisor variants, secret keys. |
+| Graduate English cover | `\UseInstance{thu}{cover-g-en}` | `cover-g-en` | `degree`, `degree-type`, `discipline*` versus `professional-field*`, English supervisor fields. |
+| Postdoc report cover | `\UseInstance{thu}{cover-p-a}` | `cover-p-a` | Report title, author, entry/exit dates. |
+| Postdoc title page | `\UseInstance{thu}{cover-p-b}` | `cover-p-b` placeholder | Chinese/English titles, discipline levels, entry/exit dates. |
+| Graduate proposal cover | `\UseInstance{thu}{cover-g-zh}` | `cover-g-zh` with proposal data | `thesis-type=proposal`, `student-id`, no `degree-category`. |
+
 ## thuthesis3 Gaps Against the Oracle
 
 - Legacy isolated commands are collapsed: `\thu@titlepage` and
-  `\thu@titlepage@en` both alias to `\maketitle`, so tests that mean "only the
-  Chinese cover" or "only the English cover" do not yet exercise the same
-  surface as `thuthesis2e`.
+  `\thu@titlepage@en` both alias to `\maketitle`. The local title-page fixtures
+  now bypass those commands and call `xtemplate` instances directly, so separate
+  command-compatibility tests are still needed.
 - Postdoc legacy commands are missing: `\thu@cover@postdoc` and
-  `\thu@titlepage@postdoc` are currently undefined, and the imported postdoc
-  `.tlg` files record those undefined-control-sequence failures.
-- `cover-b-p` is declared but has an empty element list, so the second postdoc
+  `\thu@titlepage@postdoc` are currently undefined. The local postdoc fixtures
+  now call `cover-p-a` and placeholder `cover-p-b` directly, so their saved
+  `.tlg` files need regeneration after accepting the instance-isolation policy.
+- `cover-p-b` is declared but has an empty element list, so the second postdoc
   page is only a placeholder.
 - `cover-g-en` still has incomplete degree text (`???`) and does not yet encode
   the academic/professional differences from `thuthesis2e`.
@@ -179,12 +244,12 @@ Current local title-page fixtures in `thuthesis3` mirror only
 1. Add a cover command compatibility layer:
    - `\thu@titlepage` should render only the family-appropriate Chinese cover;
    - `\thu@titlepage@en` should render only the graduate English cover;
-   - `\thu@cover@postdoc` should render only `cover-a-p`;
-   - `\thu@titlepage@postdoc` should render only `cover-b-p`.
+   - `\thu@cover@postdoc` should render only `cover-p-a`;
+   - `\thu@titlepage@postdoc` should render only `cover-p-b`.
 2. Keep `\maketitle` as the public full-flow command, but make the hook body
    call the same isolated rendering helpers so tests and production behavior use
    one implementation.
-3. Finish `cover-g` parity:
+3. Finish `cover-g-zh` parity:
    - degree/category sentence for thesis and proposal;
    - academic/professional label switching;
    - engineering-master label behavior;
@@ -204,8 +269,8 @@ Current local title-page fixtures in `thuthesis3` mirror only
    - optional co-supervisor label width behavior;
    - bachelor proposal label if retained from the legacy surface.
 6. Finish postdoc parity:
-   - populate `cover-b-p`;
-   - verify `cover-a-p` against `\thu@cover@postdoc`;
+   - populate `cover-p-b`;
+   - verify `cover-p-a` against `\thu@cover@postdoc`;
    - implement postdoc top fields, dates, title/title* behavior, discipline
      level fields, and organization/date footer exactly as the oracle expects.
 7. Implement spine support:

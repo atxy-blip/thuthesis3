@@ -4404,11 +4404,11 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{cover-g}
+% \begin{macro}{cover-g-zh}
 % 默认研究生普通封面正面实例。
 %    \begin{macrocode}
 %<*def-g>
-\@@_declare_page:nn { cover-g }
+\@@_declare_page:nn { cover-g-zh }
   {
     element  = { secret, title, degree, info, date },
     prefix   = g / cover /,
@@ -4438,11 +4438,11 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{cover-a-p}
+% \begin{macro}{cover-p-a}
 % 默认博士后封面实例。
 %    \begin{macrocode}
 %<*def-p>
-\@@_declare_page:nn { cover-a-p }
+\@@_declare_page:nn { cover-p-a }
   {
     element     = { top, report, title, author, info, thu, date },
     prefix      = p / cover-a /
@@ -4450,10 +4450,10 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{cover-b-p}
-% 默认博士后封面实例。
+% \begin{macro}{cover-p-b}
+% 博士后题名页实例。当前内容尚未迁移完成，先保留空实例作为测试和后续实现的占位。
 %    \begin{macrocode}
-\@@_declare_page:nn { cover-b-p }
+\@@_declare_page:nn { cover-p-b }
   {
     element     = {  },
     prefix      = p / cover-b /,
@@ -4506,14 +4506,14 @@ To produce the documentation run the original source files ending with
       {
 %<def-u>        \UseInstance { thu } { cover-u    }
 %<*def-g>
-        \UseInstance { thu } { cover-g    }
+        \UseInstance { thu } { cover-g-zh }
         \cleardoublepage
         \UseInstance { thu } { cover-g-en }
 %</def-g>
 %<*def-p>
-        \UseInstance { thu } { cover-a-p  }
+        \UseInstance { thu } { cover-p-a  }
         \cleardoublepage
-        \UseInstance { thu } { cover-b-p  }
+        \UseInstance { thu } { cover-p-b  }
 %</def-p>
       }
 %    \end{macrocode}

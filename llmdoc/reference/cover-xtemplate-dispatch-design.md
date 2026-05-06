@@ -84,8 +84,25 @@ cover / originality / g
 cover / originality / p
 ```
 
-Keep old instance names such as `cover-u`, `cover-g`, and `cover-g-en` only as
-temporary aliases or compatibility shims while migrating tests.
+The current transitional names are shorter, but they should still be
+family-first:
+
+```text
+cover-u
+cover-g-zh
+cover-g-en
+cover-p-a
+cover-p-b
+```
+
+Use `zh`/`en` when the axis is language, as with graduate covers. Use `a`/`b`
+only when the axis is a fixed page slot, as with the two postdoc pages.
+
+For postdoc pages, use `cover-p-a` and `cover-p-b`, not the reversed
+`cover-a-p`/`cover-b-p`. The `p` records the family axis; `a` and `b` are only
+the two postdoc page slots. Keep these short names only as temporary aliases or
+compatibility shims while migrating tests toward semantic names such as
+`cover / p / report` and `cover / p / titlepage`.
 
 ## Registry API
 

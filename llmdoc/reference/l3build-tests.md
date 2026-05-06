@@ -10,8 +10,11 @@ regenerating `.tlg` files.
 - `testfiles/info-anonymous-compat.tex`: anonymous-mode filtering coverage. It
   currently exists with a saved `.tlg`, but `build.lua` excludes it from the
   default check run.
-- `testfiles/01-title-page/`: title-page fixtures imported from upstream
-  ThuThesis and regenerated for `thuthesis3`.
+- `testfiles/01-title-page/`: 29 title-page fixtures imported from upstream
+  ThuThesis and regenerated for `thuthesis3`. Their cover-category and input
+  matrix is documented in `llmdoc/reference/cover-structure-and-todo.md`.
+  These fixtures call concrete `xtemplate` cover instances directly; legacy
+  command compatibility needs separate tests.
 - `testfiles/config-title-page.lua`: focused title-page config. It currently
   includes a smoke subset rather than every imported title-page fixture.
 
