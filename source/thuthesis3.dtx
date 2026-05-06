@@ -549,6 +549,13 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\g_@@_prevdepth_dim}
+% 用于存储临时的 \tn{prevdepth}。
+%    \begin{macrocode}
+\dim_new:N \g_@@_prevdepth_dim
+%    \end{macrocode}
+% \end{variable}
+%
 % \begin{variable}{\c_@@_today_tl}
 % 编译当天日期，格式为 |yyyy-mm-dd|。
 %    \begin{macrocode}
@@ -765,8 +772,14 @@ To produce the documentation run the original source files ending with
 \cs_new:Npo \@@_set_ccglue:N #1
   {
     \sys_if_engine_xetex:TF
-      { \skip_set:Nn \l__ctex_ccglue_skip { #1 } }
-      { \ltjsetparameter { kanjiskip = { #1 } } }
+      {
+        \CJKfamily + { }
+        \skip_set:Nn \l__ctex_ccglue_skip { #1 }
+      }
+      {
+        \fontspec { \CJK@family }
+        \ltjsetparameter { kanjiskip = { #1 } }
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -826,6 +839,33 @@ To produce the documentation run the original source files ending with
   { \@@_box_to_wd:nn { #1 } { #2 \tex_hss:D } }
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{macro}{\@@_box_paragraph:nn}
+% 替代 \tn{parbox} 的功能，生成指定宽度的顶对齐垂直盒子。
+% \tn{@parboxrestore} 用于重置段落参数，保证 \tn{lastbox} 正确。
+% 这里还需要通过全局变量存储 \tn{prevdepth} 的值，
+% 保存盒子内部最后一行的真实深度，维持上下方的行距一致。
+% \footnote{\url{https://tex.stackexchange.com/q/34971/}}
+% \begin{arguments}
+%   \item 宽度，|dim| 型变量
+%   \item 内容
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_paragraph:nn #1#2
+  {
+    \vbox_top:n
+      {
+        \@parboxrestore
+        \dim_set:Nn \tex_hsize:D {#1}
+        #2
+        \dim_gset_eq:NN \g_@@_prevdepth_dim \tex_prevdepth:D
+      }
+    \tex_par:D
+    \dim_set_eq:NN \tex_prevdepth:D \g_@@_prevdepth_dim
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{\@@_uline:n}
 % 指定宽度的下划线。
@@ -1237,7 +1277,7 @@ To produce the documentation run the original source files ending with
       \@@_align:
       \l_@@_format_tl \l_@@_content_tl \tex_par:D
     \group_end:
-    \__thu_vskip:N \l_@@_bottom_skip
+    \skip_vertical:N \l_@@_bottom_skip
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1309,9 +1349,10 @@ To produce the documentation run the original source files ending with
       { \exp_args:NV \newgeometry \l_@@_geometry_tl }
     \thispagestyle { empty }
 %    \end{macrocode}
-% 由于起始位置没有内容，\tn{vspace*} 会使第一个元素的位置与上边距有一定距离。
+% 先放置一个空盒子，使页面顶部留白与 \LaTeXe{} 的 |\null\vskip| 行为一致。
 %    \begin{macrocode}
-    \__thu_vskip:N \l_@@_top_skip
+    \hbox:n { }
+    \skip_vertical:N \l_@@_top_skip
     \exp_args:NVV \@@_bookmark:nn
       \l_@@_bm_text_tl \l_@@_bm_name_tl
     \group_begin:
@@ -3955,20 +3996,21 @@ To produce the documentation run the original source files ending with
 % \subparagraph{正面} 包括标题、学位、信息栏、日期。
 %
 % \begin{macro}{g/cover/secret}
-% 研究生封面实例。
+% 研究生封面密级实例。
 %    \begin{macrocode}
 %<*def-g>
 \@@_declare_element:nn { g / cover / secret }
   {
-    content     = \skip_horizontal:n { -21.5 pt } \@@_cover_secret:,
-    format      = \sffamily \@@_zihao:n { 3 },
-    align       = l
+    content     = \@@_cover_secret:,
+    format      = \sffamily \fontsize { 16bp } { 20bp } \selectfont,
+    align       = l,
+    bottom-skip = 40.5 pt
   }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{g/cover/title}
-% 研究生封面实例。
+% 研究生封面标题实例。
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover / title }
   {
@@ -3980,12 +4022,16 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{g/cover/degree}
-% 研究生封面标题实例。
+% 研究生封面学位信息实例。
+% 申请学位的学科门类或专业学位类别: 三号（16bp）宋体字，字距延伸 0.5bp，
+% 所以 \cs{CJKglue} 应该设为 1 bp。
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover / degree }
   {
     content     = \@@_cover_degree:,
-    format      = \songti \@@_zihao:n { -2 } \@@_set_ccglue:N \c_@@_bp_dim,
+    format      =
+      \fontsize { 16 bp } { 22 bp } \selectfont
+      \@@_set_ccglue:N \c_@@_bp_dim,
     bottom-skip = 0 pt plus 1 fill
   }
 %    \end{macrocode}
@@ -4031,9 +4077,11 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cover_secret:
   {
-    \@@_box_to_ht:nn { 4 cm }
+    \parbox [t] [2 cm] [t] { \textwidth }
       {
-        \tl_if_empty:NF \g_@@_info_secretlv_tl
+        \skip_horizontal:n { -21.5 pt }
+        \tl_if_empty:NTF \g_@@_info_secretlv_tl
+          { \phantom { 秘密 } }
           {
             \g_@@_info_secretlv_tl
             {\fontspec{SimHei}\char"2605} % TODO
@@ -4059,7 +4107,7 @@ To produce the documentation run the original source files ending with
       { \int_compare_p:n { \g_@@_info_dtype_int = 3 } }
       { \c_@@_name_degreeeng_tl }
       { \g_@@_info_degree_tl    }
-    \clist_item:Nn \c_@@_name_type_clist { \g_@@_info_type_int }
+    %\clist_item:Nn \c_@@_name_type_clist { \g_@@_info_type_int }
     \int_compare:nF { \g_@@_info_dtype_int = 1 } { \c_@@_name_degreepro_tl }
     \c_@@_name_applyend_tl
   }
@@ -4412,8 +4460,13 @@ To produce the documentation run the original source files ending with
   {
     element  = { secret, title, degree, info, date },
     prefix   = g / cover /,
-    geometry = { vmargin = 6 cm, hmargin = 3.5 cm },
-    top-skip = -4 cm
+    geometry =
+      {
+        top     = 2 cm,
+        bottom  = 6 cm,
+        hmargin = 3.5 cm
+      },
+    top-skip = 8.1 pt
   }
 %    \end{macrocode}
 % \end{macro}

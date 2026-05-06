@@ -210,6 +210,76 @@ Category-to-instance mapping implied by these fixtures:
 | Postdoc title page | `\UseInstance{thu}{cover-p-b}` | `cover-p-b` placeholder | Chinese/English titles, discipline levels, entry/exit dates. |
 | Graduate proposal cover | `\UseInstance{thu}{cover-g-zh}` | `cover-g-zh` with proposal data | `thesis-type=proposal`, `student-id`, no `degree-category`. |
 
+## Graduate Chinese Cover Layout Notes
+
+The first layout parity target is the doctor academic Chinese cover without
+secret information:
+
+- oracle: `../thuthesis2e/thuthesis.dtx`, `\thu@titlepage@thesis`;
+- local fixture: `testfiles/01-title-page/01-title-page-doctor-1-1.tex`;
+- local instance: `\UseInstance{thu}{cover-g-zh}`.
+
+The relevant `thuthesis2e` vertical skeleton is:
+
+```latex
+\newgeometry{ top=2cm, bottom=6cm, hmargin=3.5cm }
+\thispagestyle{empty}
+\null\vskip 8.1pt
+\begingroup
+  \centering
+  \parbox[t][2cm][t]{\textwidth}{%
+    \hskip -21.5pt%
+    \thu@titlepage@secret
+  }\par
+  \vskip 40.5pt
+  ... title ...
+  \vskip 24.1pt
+  ... degree/category ...
+  \vfill
+  ... info ...
+\endgroup
+```
+
+The matching `thuthesis3` implementation rules are:
+
+- Page `top-skip` must reproduce legacy `\null\vskip`, not a rule-based
+  `\vspace*` substitute. In the generic page template, place an empty hbox and
+  then the requested skip. A zero-height rule suppresses the later baseline
+  glue and moves the whole title/degree block.
+- Element `bottom-skip` must be ordinary vertical glue. Between declared cover
+  elements, use plain `\skip_vertical:N` so `bottom-skip = 24.1pt` behaves like
+  the legacy `\vskip 24.1pt`.
+- `g/cover/secret` is part of the vertical layout even when no secret is
+  printed. It must reserve the same fixed box as the oracle:
+  `\parbox[t][2cm][t]{\textwidth}{...}`.
+- The graduate secret mark format should use the explicit oracle metrics
+  `\sffamily\fontsize{16bp}{20bp}\selectfont`. The generic
+  `\@@_zihao:n { 3 }` selects a different line skip here, which changes the
+  baseline glue after the fixed secret box.
+- `g/cover/degree` should use the explicit oracle metrics
+  `\fontsize{16bp}{22bp}\selectfont` plus `\@@_set_ccglue:N \c_@@_bp_dim`.
+  The helper should also set the CJK family so the CJK glue is applied in the
+  same font context as the legacy `thuthesis2e` code.
+
+Do not compensate for a mismatch with a naked magic offset such as
+`top-skip = -9.34pt`. That value can make one overlay look aligned, but it
+only hides the real causes: missing `\null` behavior, wrong rule-based skip
+semantics, or different font line metrics.
+
+After these fixes, the visible title and degree text in
+`01-title-page-doctor-1-1` matches the `thuthesis2e` bbox coordinates exactly.
+The following lower blocks still need separate parity work:
+
+- the academic info block should be matched against the legacy
+  `\parbox[t][7.25cm][t]{\textwidth}{\fangsong\fontsize{16bp}{31.2bp}...}`;
+- the professional graduate info block has a different vertical contract and
+  should be checked separately;
+- the date position should be verified only after the info block is fixed,
+  because the current lower-page mismatch is downstream of that block.
+
+For the reproducible overlay, bbox, and shipped-box trace commands, see
+`llmdoc/reference/latexpagediff-verification.md`.
+
 ## thuthesis3 Gaps Against the Oracle
 
 - Legacy isolated commands are collapsed: `\thu@titlepage` and
