@@ -38,11 +38,22 @@ l3build `.tlg` equality is necessary but not sufficient:
 `thuthesis3/build.lua` currently declares:
 
 - module: `thuthesis3`;
-- check engines: `xetex`, `luatex`;
+- check engine: `xetex`;
 - typesetting engine: `xelatex`;
 - source directory: `source`;
 - source file: `source/thuthesis3.dtx`;
 - generated install files: `.cls`, `.def`, and `tsinghua-name-bachelor.pdf`.
 
-The repository currently has no `testfiles/` tree. Until tests are ported,
-avoid claiming behavior compatibility from this repository alone.
+The repository has a local `testfiles/` tree. Current focused coverage includes:
+
+- top-level setup-key compatibility tests (`info-keys-compat.tex` and
+  `info-anonymous-compat.tex`, with anonymous mode currently excluded in
+  `build.lua`);
+- imported title-page fixtures under `testfiles/01-title-page/`;
+- `testfiles/config-title-page.lua`, which currently includes a small title-page
+  smoke subset for bachelor, doctor, and master covers.
+
+The title-page fixtures were imported from upstream ThuThesis and regenerated
+for `thuthesis3` in May 2026. They provide local regression coverage, but the
+legacy `../thuthesis2e` suite remains the compatibility oracle for behavior not
+yet ported here.

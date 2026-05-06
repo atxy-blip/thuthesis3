@@ -35,18 +35,25 @@ Important sections in `source/thuthesis3.dtx`:
 - footnotes, figures, tables, lists, theorem, and math style;
 - cover, copyright, abstract, acknowledgement, achievements, notation, and
   constants (cover generation now uses LaTeX3 hook mechanism: `cover/begin`,
-  `cover/body`, `cover/end`).
+  `cover/body`, `cover/end`, and `cover/back`; `cover/back` is linked to the
+  dedicated `enddocument` hook only from `\maketitle`).
 
 ## Build System
 
 `build.lua` uses l3build with:
 
 - `module = "thuthesis3"`;
-- `checkengines = {"xetex", "luatex"}`;
+- `checkengines = {"xetex"}`;
+- `checkopts = "-interaction=batchmode"`;
+- `checkconfigs = {"build", "testfiles/config-title-page"}` with additional
+  title-page-related configs left commented for future expansion;
 - `typesetexe = "xelatex"`;
 - `typesetfiles = {"thuthesis3.dtx"}`;
 - `unpackexe = "xetex"`;
 - `unpackfiles = {"thuthesis3.dtx"}`.
+
+There is also a custom `save-all` target that iterates over configured test
+configs and saves the discovered tests for each config.
 
 The README preview path is:
 
@@ -59,3 +66,11 @@ xelatex docs/thuthesis-example.tex
 
 Do not edit generated `.cls` or `.def` files directly if they appear in the
 working tree. Edit `source/thuthesis3.dtx`, then regenerate through l3build.
+
+## Test Layout
+
+Focused setup-key tests live directly under `testfiles/`. Title-page tests live
+under `testfiles/01-title-page/` and are selected by
+`testfiles/config-title-page.lua`. The imported title-page corpus is broader
+than the default smoke subset, so expanding `includetests` in that config should
+be a deliberate verification step rather than a drive-by change.

@@ -28,7 +28,10 @@ requests before it implements the original class's full feature set.
 - defines module keys under `thu / ...`;
 - uses `xtemplate` page and element instances for layout-sensitive pages;
 - generates covers through LaTeX3 hook phases (`cover/begin`, `cover/body`,
-  `cover/end`) with rule-ordered labels (`main`, `decl-a`, `decl-b`).
+  `cover/end`, `cover/back`) with rule-ordered labels (`main`, `decl-a`,
+  `decl-b`). The back-cover hook is scheduled from `\maketitle` through
+  `enddocument` and executed with `\hook_use_once:n`, so declaration back matter
+  is not generated when `\maketitle` is not used.
 
 ## Strategic Context
 

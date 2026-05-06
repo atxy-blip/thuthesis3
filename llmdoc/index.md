@@ -40,6 +40,10 @@ technology. Local directory names may differ from GitHub repository names; see
 
 - `reference/class-options.md`: class-option inheritance rules, audit scope,
   and documentation/source ordering.
+- `reference/cover-structure-and-todo.md`: cover-page structure in
+  `thuthesis2e` and `thuthesis3`, variant counts, gaps, and TODO list.
+- `reference/cover-xtemplate-dispatch-design.md`: proposed docstrip,
+  `xtemplate`, and generated-control-sequence cover dispatch architecture.
 - `reference/setup-info-keys.md`: `\thusetup` personal-info key inheritance,
   grouped `info` syntax, legacy unprefixed compatibility, and anonymous-mode
   filtering rules.
@@ -53,6 +57,8 @@ technology. Local directory names may differ from GitHub repository names; see
   and when to add `\changes` entries.
 - `reference/latexpagediff-verification.md`: visual-equivalence verification
   when l3build `.tlg` tests fail after internal reordering.
+- `reference/l3build-tests.md`: current local test layout, active l3build
+  configs, and `.tlg` regeneration guidance.
 
 ## Memory
 
@@ -64,6 +70,7 @@ technology. Local directory names may differ from GitHub repository names; see
 - `memory/reflections/2026-05-04-info-key-compatibility.md`: reflection on
   grouped `info` keys, legacy aliases, and avoiding NJUThesis-only docs.
 - `memory/reflections/2026-05-04-cover-hooks.md`: reflection on hook-based cover
-  generation with begin/body/end phases and rule-ordered labels.
+  generation with begin/body/end/back phases, rule-ordered labels, and
+  one-time `enddocument` back-cover scheduling.
 
 Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.

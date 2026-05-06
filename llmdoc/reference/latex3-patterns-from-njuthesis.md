@@ -51,10 +51,16 @@ NJUThesis has hook-based cover generation in recent source:
 - one-shot hook code for document-end cleanup.
 
 Adopted in `thuthesis3` for cover generation (`thuthesis3/cover/begin`,
-`thuthesis3/cover/body`, `thuthesis3/cover/end`).  Hook labels (`main`,
-`decl-a`, `decl-b`) and a rule (`main < decl-a`) control execution order.
-Draft mode is handled by conditionally registering hook code rather than
-branching inside `\maketitle`.
+`thuthesis3/cover/body`, `thuthesis3/cover/end`, and
+`thuthesis3/cover/back`). Hook labels (`main`, `decl-a`, `decl-b`) and a rule
+(`main < decl-a`) control execution order. Draft mode is handled by
+conditionally registering hook code rather than branching inside `\maketitle`.
+
+For back-cover declaration material, prefer the `lthooks` one-time hook model:
+register the material under the semantic hook (`cover/back`), then have
+`\maketitle` add next-code to the dedicated `enddocument` hook that calls
+`\hook_use_once:n { thuthesis3 / cover / back }`. This avoids private boolean
+state while still preventing duplicate back-cover generation.
 
 This pattern remains a candidate for frontmatter transitions, bibliography
 setup, and other begin-document ordering.

@@ -2040,8 +2040,13 @@ To produce the documentation run the original source files ending with
 %
 % \subsection{钩子机制}
 % \changes{v0.1.0}{2026/05/04}{将封面执行逻辑拆解为三个钩子。}
+% \changes{v0.1.0}{2026/05/06}{新增封底钩子。}
 %
-% \begin{macro}{thuthesis3/cover/begin,thuthesis3/cover/body,thuthesis3/cover/end}
+% \begin{macro}{
+%   thuthesis3/cover/begin,
+%   thuthesis3/cover/body,
+%   thuthesis3/cover/end,
+%   thuthesis3/cover/back}
 % 封面流程钩子。由于默认配置文件会向这些钩子添加代码，
 % 需要在载入配置文件前先行声明。
 % 名称中的 |.| 代表本模板名 \cls{thuthesis3}。
@@ -2050,6 +2055,7 @@ To produce the documentation run the original source files ending with
 \hook_new:n { . / cover / begin }
 \hook_new:n { . / cover / body  }
 \hook_new:n { . / cover / end   }
+\hook_new:n { . / cover / back  }
 %    \end{macrocode}
 %
 % 设置标签的默认规则，规定主封面代码始终在承诺书前执行。
@@ -4527,7 +4533,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % 位于封底的声明页面。
 %    \begin{macrocode}
-    \hook_gput_code:nnn { env / document / end } { decl-b }
+    \hook_gput_code:nnn { . / cover / back } { decl-b }
       {
         \cleardoublepage
         \UseInstance { thu } { originality }
@@ -4601,6 +4607,9 @@ To produce the documentation run the original source files ending with
 % 在草稿模式下，封面绘制将被禁用，有助于提升编译速度。
 % 在钩子机制下，这里只需要作为钩子的锚点，
 % 具体需要执行的代码已被预先分发到钩子内。
+% 为避免未调用 \tn{maketitle} 时生成封底，
+% 封底钩子只在标题页生成时挂接到文档结束钩子，
+% 并作为一次性钩子执行，避免重复调用 \tn{maketitle} 时重复生成。
 % \cs{hook_use:n} 不能用 |.| 来简化钩子路径。
 %    \begin{macrocode}
 \RenewDocumentCommand \maketitle { }
@@ -4608,6 +4617,8 @@ To produce the documentation run the original source files ending with
     \hook_use:n { thuthesis3 / cover / begin }
     \hook_use:n { thuthesis3 / cover / body  }
     \hook_use:n { thuthesis3 / cover / end   }
+    \hook_gput_next_code:nn { end document }
+      { \hook_use_once:n { thuthesis3 / cover / back } }
   }
 %    \end{macrocode}
 %

@@ -9,8 +9,9 @@ Goal: make behavior measurable.
 
 - Keep `../thuthesis2e/master` stable and original-compatible.
 - Add missing regression tests there before large migration work.
-- Start a `testfiles/` tree in this repository only when there is a concrete
-  module to exercise.
+- `testfiles/` now exists in this repository for setup-key compatibility and
+  imported title-page fixtures. Keep adding local tests only when there is a
+  concrete module to exercise.
 
 ## Phase 1: Options and Setup Interface
 
@@ -70,12 +71,13 @@ adapting the final design here.
 
 Goal: replace ad hoc execution ordering with named phases.
 
-Status: cover begin/body/end phases implemented (2026-05-04).  Remaining
+Status: cover begin/body/end phases implemented (2026-05-04), with
+`cover/back` added for declaration back matter (2026-05-06). Remaining
 hook-based phases are still planned.
 
 Candidate modules:
 
-- ~~cover begin/body/end phases~~ (implemented);
+- ~~cover begin/body/end/back phases~~ (implemented);
 - frontmatter and mainmatter transitions;
 - delayed bibliography setup;
 - PDF metadata and resource resolution;
