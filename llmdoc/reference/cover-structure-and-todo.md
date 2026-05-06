@@ -252,6 +252,20 @@ The matching `thuthesis3` implementation rules are:
 - `g/cover/secret` is part of the vertical layout even when no secret is
   printed. It must reserve the same fixed box as the oracle:
   `\parbox[t][2cm][t]{\textwidth}{...}`.
+- `g/cover/info` should keep the graduate Chinese cover's fixed wrapper:
+  academic uses `\parbox[t][7.25cm][t]{\textwidth}{...}`; professional uses
+  `\parbox[t][5.25cm][b]{\textwidth}{...}` followed by `62pt`.
+- The info rows can be built from boxes instead of `tabular`, but the boxes
+  must reproduce the old table geometry: `2.3cm` left indent, `6pt`
+  tabular-left padding, `2.85cm` label pad, `2.75cm` stretched label text,
+  `.77cm` colon pad, and `6pt` tabular-right padding. Each row also needs the
+  old array strut, with height/depth `0.7/0.3` of the `31.2bp` row skip, and
+  the rows should form one centered table object rather than separate
+  paragraphs.
+- Graduate Chinese author/supervisor values should follow the old
+  `\thu@name@title` layout: pad the stretched name to `3cm`, then typeset the
+  title in `3em`. The older generic `4em + 1em + 3em` split places the title
+  about `5pt` too far left.
 - The graduate secret mark format should use the explicit oracle metrics
   `\sffamily\fontsize{16bp}{20bp}\selectfont`. The generic
   `\@@_zihao:n { 3 }` selects a different line skip here, which changes the
@@ -260,22 +274,27 @@ The matching `thuthesis3` implementation rules are:
   `\fontsize{16bp}{22bp}\selectfont` plus `\@@_set_ccglue:N \c_@@_bp_dim`.
   The helper should also set the CJK family so the CJK glue is applied in the
   same font context as the legacy `thuthesis2e` code.
+- `g/cover/date` should use a fixed-height top-aligned paragraph box equivalent
+  to the legacy `\parbox[t][1.03cm][t]{\textwidth}{...}` shape. Prefer the
+  local `\@@_box_paragraph:nnn` helper over spelling `\parbox` inside the
+  instance. In the separated `xtemplate` element flow, keep the traced `-6pt`
+  final correction after the date element; it corresponds to the final
+  paragraph/strut behavior visible after the 2e date parbox and restores the
+  page `\vfill` amount.
 
 Do not compensate for a mismatch with a naked magic offset such as
 `top-skip = -9.34pt`. That value can make one overlay look aligned, but it
 only hides the real causes: missing `\null` behavior, wrong rule-based skip
 semantics, or different font line metrics.
 
-After these fixes, the visible title and degree text in
-`01-title-page-doctor-1-1` matches the `thuthesis2e` bbox coordinates exactly.
-The following lower blocks still need separate parity work:
+After these fixes, the visible title, degree, academic info rows, supervisor
+title, and date text in `01-title-page-doctor-1-1` match the `thuthesis2e`
+bbox coordinates. The following lower blocks still need separate parity work:
 
-- the academic info block should be matched against the legacy
-  `\parbox[t][7.25cm][t]{\textwidth}{\fangsong\fontsize{16bp}{31.2bp}...}`;
 - the professional graduate info block has a different vertical contract and
   should be checked separately;
-- the date position should be verified only after the info block is fixed,
-  because the current lower-page mismatch is downstream of that block.
+- proposal and engineering-master rows should be checked separately because
+  they exercise `student-id`, professional-field, and engineering-field data.
 
 For the reproducible overlay, bbox, and shipped-box trace commands, see
 `llmdoc/reference/latexpagediff-verification.md`.

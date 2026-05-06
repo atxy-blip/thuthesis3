@@ -64,6 +64,9 @@ technology. Local directory names may differ from GitHub repository names; see
 
 - `memory/decisions/2026-05-02-thuthesis3-as-destination.md`: decision that
   LaTeX3-native architecture lands here, not in `thuthesis2e/master`.
+- `memory/decisions/2026-05-06-pdf-only-verification.md`: decision that during
+  rapid template development, skip `l3build check` and verify only via PDF
+  visual comparison.
 - `memory/reflections/README.md`: placeholder for future working reflections.
 - `memory/reflections/2026-05-04-class-options.md`: reflection on class-option
   inheritance scope and documentation alignment.

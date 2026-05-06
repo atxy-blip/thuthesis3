@@ -65,6 +65,24 @@ state while still preventing duplicate back-cover generation.
 This pattern remains a candidate for frontmatter transitions, bibliography
 setup, and other begin-document ordering.
 
+## Internal Naming
+
+For internal expl3 helper names, prefer a semantic stem over an abbreviation
+when the helper models a real layout concept. The signature already records
+arity and argument types, so names should explain the operation, not merely
+save characters.
+
+Examples from the cover migration:
+
+- keep `\@@_box_paragraph:nn` and `\@@_box_paragraph:nnn` rather than shortening
+  to `\@@_box_par:nnn`; `paragraph` names the box abstraction, while `par`
+  is easily confused with the primitive paragraph token;
+- keep `\@@_box_pad:nn` separate from `\@@_box_left:nn`; `pad` means "use at
+  least this width, but preserve natural width if content is wider", matching
+  the legacy `\thu@pad` behavior;
+- use abbreviations only when they are already established in the local source
+  and do not obscure the behavior.
+
 ## Caution
 
 NJUThesis patterns solve NJUThesis problems. For `thuthesis3`, keep the

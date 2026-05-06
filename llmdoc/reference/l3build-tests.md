@@ -34,6 +34,13 @@ For ordinary focused changes, use normal l3build commands for the relevant test
 or config. The repository also provides a custom `save-all` target that walks
 the configured test configs and saves the tests discovered in each one.
 
+During the current cover-layout migration phase, do not use `l3build check` as
+the main feedback loop for title-page work. The cover implementation, hook flow,
+and fixture surfaces are all still moving, so `.tlg` differences mostly record
+internal churn rather than the behavior being tuned. For cover pages, compare
+PDF output visually and numerically first; only return to `l3build check` and
+`.tlg` saving after the relevant cover family is considered structurally stable.
+
 When hook or phase refactors only reorder internal execution, `.tlg` output can
 change even when PDFs are identical. For cover-page changes, verify visual
 equivalence before accepting regenerated `.tlg` files; see

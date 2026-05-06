@@ -840,6 +840,19 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_box_pad:nn}
+% 内容不足指定宽度时在右侧补白，否则保持自然宽度。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_pad:nn #1#2
+  {
+    \hbox_set:Nn \l_@@_tmpa_box {#2}
+    \dim_compare:nNnTF { \box_wd:N \l_@@_tmpa_box } < {#1}
+      { \@@_box_left:nn {#1} { \box_use:N \l_@@_tmpa_box } }
+      { \box_use:N \l_@@_tmpa_box }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_box_paragraph:nn}
 % 替代 \tn{parbox} 的功能，生成指定宽度的顶对齐垂直盒子。
 % \tn{@parboxrestore} 用于重置段落参数，保证 \tn{lastbox} 正确。
@@ -862,6 +875,27 @@ To produce the documentation run the original source files ending with
       }
     \tex_par:D
     \dim_set_eq:NN \tex_prevdepth:D \g_@@_prevdepth_dim
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_paragraph:nnn}
+% 固定高度的顶对齐段落盒子。
+% \begin{arguments}
+%   \item 高度，|dim| 型变量
+%   \item 宽度，|dim| 型变量
+%   \item 内容
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_paragraph:nnn #1#2#3
+  {
+    \vbox_to_ht:nn {#1}
+      {
+        \@parboxrestore
+        \dim_set:Nn \tex_hsize:D {#2}
+        #3 \tex_par:D
+        \tex_vfill:D
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1192,6 +1226,130 @@ To produce the documentation run the original source files ending with
         \@@_box_left:nn { \l_@@_tmpb_dim     } { \@@_info:n { ##1 }  }
         \tex_par:D
       }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info:}
+% 研究生中文封面信息栏。这里显式保留 \LaTeXe{} 版中文封面的固定尺寸，
+% 避免通用信息栏自动计算宽度导致页面下半部位置漂移。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info:
+  {
+    \@@_switch_name:
+    \int_compare:nTF { \g_@@_info_dtype_int = 1 }
+      { \@@_g_cover_info_box:nn { 7.25 cm } { t } }
+      {
+        \@@_g_cover_info_box:nn { 5.25 cm } { b }
+        \skip_vertical:n { 62 pt }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_box:nn}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_box:nn #1#2
+  {
+    \parbox [t] [#1] [#2] { \textwidth }
+      { \@@_g_cover_info_body: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_body:}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_body:
+  {
+    \@@_format_supv:
+    \dim_set:Nn \l_@@_tmpa_dim { 7 \tex_baselineskip:D / 10 }
+    \dim_set:Nn \l_@@_tmpb_dim { 3 \tex_baselineskip:D / 10 }
+    \mode_leave_vertical:
+    \skip_horizontal:n { 2.3 cm }
+    \skip_horizontal:n { 6 pt }
+    \c_math_toggle_token
+      \tex_vcenter:D
+        {
+          \offinterlineskip
+          \clist_map_inline:Nn \c_@@_name_coveritem_clist
+            {
+              \tl_if_empty:cF { g_@@_info_ ##1 _tl }
+                { \@@_g_cover_info_item:n { ##1 } }
+            }
+        }
+    \c_math_toggle_token
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_item:n}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_item:n #1
+  {
+    \tex_hbox:D
+      {
+        \tex_vrule:D
+          height \l_@@_tmpa_dim
+          depth  \l_@@_tmpb_dim
+          width  \c_zero_dim
+        \@@_box_left:nn { 2.85 cm }
+          { \@@_box_ss:nn { 2.75 cm } { \@@_name:n {#1} } }
+        \@@_box_left:nn { .77 cm } { \c_@@_name_colon_tl }
+        \@@_g_cover_info_value:n {#1}
+        \skip_horizontal:n { 6 pt }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_value:n}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_value:n #1
+  {
+    \str_case:nnF {#1}
+      {
+        { author } { \@@_g_cover_name_title:Vn \g_@@_info_author_tl { } }
+        { supva  } { \@@_g_cover_supv:n { a } }
+        { supvb  } { \@@_g_cover_supv:n { b } }
+        { supvc  } { \@@_g_cover_supv:n { c } }
+      }
+      { \@@_info:n {#1} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_supv:n}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_supv:n #1
+  {
+    \clist_set_eq:Nc \l_@@_tmp_clist { g_@@_info_supv #1 _clist }
+    \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpa_tl
+    \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpb_tl
+    \@@_g_cover_name_title:VV \l_@@_tmpa_tl \l_@@_tmpb_tl
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_name_title:nn}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_name_title:nn #1#2
+  {
+    \@@_box_pad:nn { 3 cm }
+      { \@@_box_st:nn { 4 em } {#1} }
+    \tl_if_empty:nF {#2}
+      { \@@_box_st:nn { 3 em } {#2} }
+  }
+\cs_generate_variant:Nn \@@_g_cover_name_title:nn { Vn, VV }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_date:}
+% 研究生中文封面日期。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_date:
+  {
+    \@@_box_paragraph:nnn { 1.03 cm } { \textwidth }
+      { \centering \@@_datea:V \g_@@_info_date_tl }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4042,20 +4200,23 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover / info }
   {
-    content     = \@@_switch_name: \@@_cover_info:,
-    format      = \normalfont \fangsong \@@_zihao:n { 3 },
-    bottom-skip = 20 pt
+    content     = \@@_g_cover_info:,
+    format      = \fangsong \fontsize{16bp}{31.2bp}\selectfont,
+    bottom-skip = 0 pt
   }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{g/cover/date}
 % 研究生封面日期实例。
+% 底部修正来自 \LaTeXe{} 版日期 \tn{parbox} 后
+% 可观察到的段落收尾行为。
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover / date }
   {
-    content = \@@_box_to_ht:nn { 1.03 cm } { \@@_datea:V \g_@@_info_date_tl },
-    format  = \songti \@@_zihao:n { 3 } \@@_set_ccglue:N \c_@@_bp_dim
+    content     = \@@_g_cover_date:,
+    format      = \songti \@@_zihao:n { 3 } \@@_set_ccglue:N \c_@@_bp_dim,
+    bottom-skip = -6 pt
   }
 %    \end{macrocode}
 % \end{macro}
