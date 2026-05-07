@@ -1,12 +1,7 @@
 # llmdoc Index
 
-This tree records project memory for agents working on `thuthesis3`.
-
-`thuthesis3` is the LaTeX3-native destination for the ThuThesis rewrite. Use
-the sibling `../thuthesis2e` repository as the legacy behavior oracle and
-`../NJUThesis-njulug` as the main local reference for the adopted LaTeX3
-technology. Local directory names may differ from GitHub repository names; see
-`reference/sibling-repositories.md` for canonical URLs.
+Directory of project documentation — use this to find the right file for your
+task.
 
 ## Startup
 
