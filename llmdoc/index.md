@@ -73,5 +73,8 @@ task.
 - `memory/reflections/2026-05-07-cover-info-block.md`: reflection on the
   graduate cover info block refactor, storage-aware row generation, reusable
   vertical box centering, and PDF-only verification notes.
+- `memory/reflections/2026-05-07-cover-en-title.md`: reflection on the
+  graduate English cover title/supervisor box alignment fixes, rejected
+  template extensions, and the no-`comp.pdf` regeneration boundary.
 
 Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.

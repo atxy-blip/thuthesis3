@@ -890,23 +890,54 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_box_paragraph:nnn}
+% \begin{macro}{\@@_box_paragraph_top:nn}
+% 固定高度的顶对齐段落盒子，匹配 \tn{parbox}|[t][...]| 的行盒行为。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_paragraph_top:nn
+  {
+    \skip_vertical:n { \f@size pt - \baselineskip }
+    \@@_box_paragraph_top_to_ht:nn
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_paragraph_top_to_ht:nn}
+% 固定高度的顶对齐段落盒子，不补偿外部行距。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_paragraph_top_to_ht:nn #1#2
+  {
+    \mode_leave_vertical:
+    \vbox_top_to_ht:nn {#1}
+      {
+        \@parboxrestore
+        \centering
+        \dim_set:Nn \tex_hsize:D { \textwidth }
+        #2 \tex_par:D
+        \tex_vfill:D
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_paragraph_ht:nn}
 % 固定高度的顶对齐段落盒子。
+% 底部修正来自 \LaTeXe{} 版日期 \tn{parbox} 后
+% 可观察到的段落收尾行为。
 % \begin{arguments}
 %   \item 高度，|dim| 型变量
-%   \item 宽度，|dim| 型变量
 %   \item 内容
 % \end{arguments}
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_box_paragraph:nnn #1#2#3
+\cs_new_protected:Npn \@@_box_paragraph_ht:nn #1#2
   {
-    \vbox_to_ht:nn {#1}
+    \@@_box_to_ht:nn {#1}
       {
         \@parboxrestore
-        \dim_set:Nn \tex_hsize:D {#2}
-        #3 \tex_par:D
-        \tex_vfill:D
+        \centering
+        \dim_set:Nn \tex_hsize:D { \textwidth }
+        #2 \tex_par:D
       }
+    \skip_vertical:n { -6 pt }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1367,6 +1398,85 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{
+%   \@@_g_cover_en_supv_item:,
+%   \@@_g_cover_en_supv_dims:NN,
+%   \@@_g_cover_en_supv_label:n,
+%   \@@_g_cover_en_supv_strut:,
+%   \@@_g_cover_en_supv_item:n}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_en_supv_item:
+  {
+    \@@_g_cover_en_supv_dims:NN \l_@@_tmpa_dim \l_@@_tmpb_dim
+    \skip_set_eq:NN \l_@@_tmp_skip \tex_baselineskip:D
+    \hbox_to_wd:nn { \textwidth }
+      {
+        \tex_hss:D
+        \@@_box_vcenter:n
+          {
+            \clist_map_inline:nn { a, b, c }
+              { \@@_g_cover_en_supv_item:n {##1} }
+          }
+        \tex_hss:D
+      }
+  }
+\cs_new_protected:Npn \@@_g_cover_en_supv_dims:NN #1#2
+  {
+    \dim_zero:N #1
+    \dim_zero:N #2
+    \clist_map_inline:nn { a, b, c }
+      {
+        \@@_info_if_empty:nF { supv ##1 _en }
+          {
+            \hbox_set:Nn \l_@@_tmpa_box
+              { \@@_g_cover_en_supv_label:n {##1} }
+            \dim_set:Nn #1 { \dim_max:nn {#1} { \box_wd:N \l_@@_tmpa_box } }
+            \hbox_set:Nn \l_@@_tmpa_box
+              { \@@_info:n { supv ##1 _en } }
+            \dim_set:Nn #2 { \dim_max:nn {#2} { \box_wd:N \l_@@_tmpa_box } }
+          }
+      }
+  }
+\cs_new:Npn \@@_g_cover_en_supv_label:n #1
+  {
+    \str_case:nn {#1}
+      {
+        { a }
+          {
+            \int_compare:nTF { \g_@@_info_type_int = 2 }
+              { Thesis~ Supervisor }
+              { Dissertation~ Supervisor }
+          }
+        { b } { Associate~ Supervisor }
+        { c } { Co-supervisor }
+      }
+  }
+\cs_new_protected:Npn \@@_g_cover_en_supv_strut:
+  {
+    \rule [ - \dim_eval:n { 3 \l_@@_tmp_skip / 10 } ]
+      { \c_zero_dim } { \dim_eval:n { \l_@@_tmp_skip } }
+  }
+\cs_new_protected:Npn \@@_g_cover_en_supv_item:n #1
+  {
+    \@@_info_if_empty:nF { supv #1 _en }
+      {
+        \hbox:n
+          {
+            \@@_g_cover_en_supv_strut:
+            \skip_horizontal:n { 6 pt }
+            \hbox_to_wd:nn { \l_@@_tmpa_dim }
+              { \tex_hss:D \@@_g_cover_en_supv_label:n {#1} }
+            \@@_box_left:nn { 20.5 bp }
+              { \skip_horizontal:n { 2 bp } : }
+            \@@_box_left:nn { \l_@@_tmpb_dim }
+              { \@@_info:n { supv #1 _en } }
+            \skip_horizontal:n { 6 pt }
+          }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_info_if_empty:nF,\@@_supv_if_empty:nF}
 % 判断封面信息是否为空，只有非空才需要输出
 %    \begin{macrocode}
@@ -1474,8 +1584,8 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_date:
   {
-    \@@_box_paragraph:nnn { 1.03 cm } { \textwidth }
-      { \centering \@@_datea:V \g_@@_info_date_tl }
+    \@@_box_paragraph_ht:nn { 1.03 cm }
+      { \@@_datea:V \g_@@_info_date_tl }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2516,16 +2626,16 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{professional-field,professional-field*}
 % 专业学位领域。
 %    \begin{macrocode}
-    professional-field      .tl_set:N = \g_@@_info_pfield_tl        ,
-    professional-field*     .tl_set:N = \g_@@_info_pfield_en_tl     ,
+    professional-field      .tl_set:N = \g_@@_info_pfield_tl         ,
+    professional-field*     .tl_set:N = \g_@@_info_pfield_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{engineering-field,engineering-field*}
 % 工程领域。
 %    \begin{macrocode}
-    engineering-field       .tl_set:N = \g_@@_info_efield_tl        ,
-    engineering-field*      .tl_set:N = \g_@@_info_efield_en_tl     ,
+    engineering-field       .tl_set:N = \g_@@_info_efield_tl         ,
+    engineering-field*      .tl_set:N = \g_@@_info_efield_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4281,10 +4391,10 @@ To produce the documentation run the original source files ending with
 % 研究生封面密级实例。
 %    \begin{macrocode}
 %<*def-g>
-\@@_declare_element:nn { g / cover / secret }
+\@@_declare_element:nn { g / cover-zh / secret }
   {
     content     = \@@_cover_secret:,
-    format      = \sffamily \fontsize { 16bp } { 20bp } \selectfont,
+    format      = \sffamily \@@_fontsize:nn { 16 bp } { 20 bp },
     align       = l,
     bottom-skip = 40.5 pt
   }
@@ -4294,7 +4404,7 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{g/cover/title}
 % 研究生封面标题实例。
 %    \begin{macrocode}
-\@@_declare_element:nn { g / cover / title }
+\@@_declare_element:nn { g / cover-zh / title }
   {
     content     = \g_@@_info_title_tl,
     format      = \sffamily \@@_cover_title_zihao:,
@@ -4308,11 +4418,11 @@ To produce the documentation run the original source files ending with
 % 申请学位的学科门类或专业学位类别: 三号（16bp）宋体字，字距延伸 0.5bp，
 % 所以 \cs{CJKglue} 应该设为 1 bp。
 %    \begin{macrocode}
-\@@_declare_element:nn { g / cover / degree }
+\@@_declare_element:nn { g / cover-zh / degree }
   {
     content     = \@@_cover_degree:,
     format      =
-      \fontsize { 16 bp } { 22 bp } \selectfont
+      \@@_fontsize:nn { 16 bp } { 22 bp }
       \@@_set_ccglue:N \c_@@_bp_dim,
     bottom-skip = 0 pt plus 1 fill
   }
@@ -4322,10 +4432,10 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{g/cover/info}
 % 研究生封面信息栏实例。
 %    \begin{macrocode}
-\@@_declare_element:nn { g / cover / info }
+\@@_declare_element:nn { g / cover-zh / info }
   {
     content     = \@@_g_cover_info:,
-    format      = \fangsong \fontsize{16bp}{31.2bp}\selectfont,
+    format      = \fangsong \@@_fontsize:nn { 16 bp } { 31.2 bp },
     bottom-skip = 0 pt
   }
 %    \end{macrocode}
@@ -4333,14 +4443,11 @@ To produce the documentation run the original source files ending with
 %
 % \begin{macro}{g/cover/date}
 % 研究生封面日期实例。
-% 底部修正来自 \LaTeXe{} 版日期 \tn{parbox} 后
-% 可观察到的段落收尾行为。
 %    \begin{macrocode}
-\@@_declare_element:nn { g / cover / date }
+\@@_declare_element:nn { g / cover-zh / date }
   {
     content     = \@@_g_cover_date:,
-    format      = \songti \@@_zihao:n { 3 } \@@_set_ccglue:N \c_@@_bp_dim,
-    bottom-skip = -6 pt
+    format      = \songti \@@_zihao:n { 3 } \@@_set_ccglue:N \c_@@_bp_dim
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4406,30 +4513,9 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover-en / title }
   {
-    content     = \g_@@_info_title_en_tl,
-    format      = \bfseries \sffamily \@@_zihao:n { 2 },
-    bottom-skip = 2 cm
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{g/cover-en/author}
-% 研究生英文封面顶部信息实例。
-%    \begin{macrocode}
-\@@_declare_element:nn { g / cover-en / author }
-  {
-    content      =
-      { by }
-      \skip_vertical:N \c_zero_skip
-      \textbf { \sffamily \g_@@_info_author_en_tl }
-      \skip_vertical:n { .5 cm }
-      { \g_@@_info_supva_en_tl }
-      \skip_vertical:N \c_zero_skip
-      { \g_@@_info_supvb_en_tl }
-      \skip_vertical:N \c_zero_skip
-      { \g_@@_info_supvc_en_tl },
-    format      = \@@_zihao:n { 4 },
-    bottom-skip = 0 pt plus 1.2 fil
+    content     =
+      \@@_box_paragraph_top:nn { 143 bp } { \g_@@_info_title_en_tl },
+    format      = \sffamily \bfseries \@@_fontsize:nn { 20 bp } { 31.2 bp }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4440,10 +4526,41 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { g / cover-en / degree }
   {
     content     =
-      \c_@@_text_cover_en_tl \@@_vskip:
-      \group_begin: \scshape ??? \group_end:
-      \@@_vskip: { in } \@@_vskip: \g_@@_info_discip_en_tl,
-    bottom-skip = 2 cm
+      \c_@@_text_cover_en_tl \par
+      \group_begin: \sffamily \bfseries \g_@@_info_degree_en_tl \group_end: \par
+      \skip_vertical:n { 3 bp }
+      in \par
+      \skip_vertical:n { 3.5 bp }
+      \group_begin: \sffamily \bfseries \g_@@_info_discip_en_tl \group_end:,
+    format      = \@@_zihao:nn { 1.725 } { 3 },
+    bottom-skip = 0 pt plus 1 fill
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover-en/author}
+% 研究生英文封面顶部信息实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover-en / author }
+  {
+    content     =
+      by \par
+      \skip_vertical:n { 0.24 cm }
+      \textbf { \g_@@_info_author_en_tl },
+    format      = \sffamily \@@_zihao:nn { 1.725 } { 3 },
+    bottom-skip = 0.18 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{g/cover-en/supv}
+% 研究生英文封面顶部信息实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { g / cover-en / supv }
+  {
+    content     =
+      \@@_box_paragraph_top_to_ht:nn { 3.0 cm } { \@@_g_cover_en_supv_item: },
+    format      = \@@_zihao:nn { 2.1 } { -3 }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4453,12 +4570,13 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover-en / date }
   {
-    content = \@@_dateb:V \g_@@_info_date_tl
+    content     = \@@_dateb:V \g_@@_info_date_tl,
+    format      = \sffamily \bfseries \@@_zihao:nn { 1.725 } { 3 },
+    bottom-skip = 0.7 cm
   }
 %</def-g>
 %    \end{macrocode}
 % \end{macro}
-%
 %
 %
 % \paragraph{博士后}
@@ -4744,7 +4862,7 @@ To produce the documentation run the original source files ending with
 \@@_declare_page:nn { cover-g-zh }
   {
     element  = { secret, title, degree, info, date },
-    prefix   = g / cover /,
+    prefix   = g / cover-zh /,
     geometry =
       {
         top     = 2 cm,
@@ -4762,14 +4880,14 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_page:nn { cover-g-en }
   {
-    element  = { title, degree, author, date },
+    element  = { title, degree, author, supv, date },
     prefix   = g / cover-en /,
-    top-skip = 0 pt plus 1.2 fil,
+    top-skip = - 0.31 cm,
     geometry =
       {
-        top     = 5.5cm,
-        bottom  = 5cm,
-        hmargin = 3.6cm
+        top     = 5.5 cm,
+        bottom  = 5   cm,
+        hmargin = 3.4 cm,
       }
   }
 %</def-g>
@@ -5300,11 +5418,6 @@ To produce the documentation run the original source files ending with
 %<def-p>    { report            } { 博士后研究工作报告                 },
 %<def-p>    { secret lv         } { 密级                               },
 %<def-u|def-g>    { stuid             } { 学号                               },
-%<def-u|def-g>    { supv            a } { 指导教师                           },
-%<def-u>    { supv            b } { 辅导教师                           },
-%<def-g>    { supv            b } { 副指导教师                         },
-%<def-u|def-g>    { supv            c } { 联合指导教师                       },
-%<def-g>    { supv            d } { 联合导师                           },
     { tableofcontents   } { 目 \quad{} 录                      },
 %<def-u>    { thesis            } { 综合论文训练                       },
 %<def-p>    { thu bj            } { 清华大学 \quad （北京）            },
@@ -5326,6 +5439,9 @@ To produce the documentation run the original source files ending with
     { colon         } { ：              } { : \c_space_tl         },
     { figure        } { 图              } { figure                },
     { keywords      } { 关键词          } { KEYWORDS              },
+%<def-u|def-g>    { supv        a } { 指导教师     } { Dissertation~ Supervisor },
+%<def-u|def-g>    { supv        b } { 副指导教师      } { Associate~ Supervisor },
+%<def-u|def-g>    { supv        c } { 联合指导教师    } { Co-supervisor         },
     { thu           } { 清华大学        } { Tsinghua~ University  },
     { table         } { 表              } { table                 }
   }
@@ -5383,7 +5499,7 @@ To produce the documentation run the original source files ending with
   {
     Dissertation~ submitted~ to \\
     \textbf { \c_@@_name_thu_en_tl } \\
-    in~ partial~ fulfilment~ of~ the~ requirement~ \\
+    in~ partial~ fulfillment~ of~ the~ requirement~ \\
     for~ the~ degree~ of
   }
 %</def-g>
@@ -5492,7 +5608,7 @@ To produce the documentation run the original source files ending with
     { abslabel      } { \bfseries                         },
     { abslabel_en   } {                                   },
     { chapterintoc  } { \normalfont \sffamily             },
-    { chapter     } { \@@_zihao:n { 4 } \sffamily },
+    { chapter       } { \@@_zihao:n { 4 } \sffamily     },
     { toc title     } { \centering \@@_zihao:n { 3 } \bfseries },
     { header        } { \small \kaishu                    },
     { footer        } { \small \rmfamily                  }

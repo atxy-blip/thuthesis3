@@ -299,6 +299,72 @@ bbox coordinates. The following lower blocks still need separate parity work:
 For the reproducible overlay, bbox, and shipped-box trace commands, see
 `llmdoc/reference/latexpagediff-verification.md`.
 
+## Graduate English Cover Layout Notes
+
+The first graduate English parity target is the doctor academic English cover:
+
+- oracle: `../thuthesis2e/thuthesis.dtx`, `\thu@titlepage@en`;
+- local fixture: `testfiles/01-title-page/01-title-page-doctor-2-1.tex`;
+- local instance: `\UseInstance{thu}{cover-g-en}`.
+
+The legacy title-page skeleton starts with `\null\vskip -0.31cm`, then typesets
+the English title inside `\parbox[t][143bp][t]{\textwidth}{...}\par`. This
+shape matters: the legacy paragraph box is an hbox containing a top-aligned
+vbox, so the following vertical glue is governed by paragraph-line behavior, not
+by a bare vertical-mode vbox.
+
+Keep `g / cover-en / title` as a normal `element` instance. Do not add a
+separate element template for this case, do not add `outer-format`,
+`box-height`, or `box-width` keys to the generic element template, and do not
+put style commands inside the `content` block. The title element should have one
+format owner: `format = \sffamily \bfseries \@@_fontsize:nn { 20 bp } { 31.2 bp }`.
+
+Use a dedicated paragraph-box helper for the title content instead of encoding
+format in the instance body. The helper should default the width to
+`\textwidth`, take only the fixed height and content, and reproduce the
+top-aligned `143bp` parbox behavior. Because the element format has already set
+the active 31.2bp line skip, the helper must compensate with
+`\f@size pt - \baselineskip` before entering horizontal mode and building the
+top-aligned vbox. This preserves the legacy first-line glue while keeping one
+format setting on the element.
+
+Keep the date box separate from the title helper. The graduate cover date still
+uses its own fixed-height helper and the existing final `-6pt` correction; do
+not let that date-specific correction leak into the English title box design.
+
+The English supervisor block should reproduce `\thu@titlepage@en@supervisor`
+without using `tabular`. The old tabular has three important layout effects:
+the label column is right-aligned; the colon column is a fixed `20.5bp` box
+with `2bp` left padding; and all supervisor rows form one centered box object
+inside the outer supervisor parbox. Directly drawing each row as a separate
+paragraph can make the supervisor/date bboxes look close while moving the
+preceding author block, because the old tabular's height/depth and baseline are
+not reproduced.
+
+The clean direct-box implementation should first measure the nonempty English
+supervisor labels and values, then draw rows from explicit hboxes. The rows must
+be collected into one centered vertical box, using cached row strut dimensions
+from the active supervisor line skip before any `\offinterlineskip` or
+`vcenter`-style helper changes `\baselineskip`. The outer supervisor area uses
+the same fixed-height top parbox contract as `thuthesis2e`:
+academic English cover uses `3.0cm`; professional English cover uses `3.37cm`
+with a different line-stretch contract.
+
+Do not reuse the title-specific compensated paragraph-box helper for the
+supervisor parbox. The title helper subtracts `\baselineskip - \f@size pt` to
+match the first title line after `\null\vskip -0.31cm`; applying that same
+compensation to the supervisor parbox shifts the author block relative to the
+supervisor block. Use an uncompensated fixed-height top paragraph-box helper for
+the supervisor area.
+
+When checking this area, do not regenerate `temp/comp.pdf` unless the user
+explicitly asks for it. Use the focused fixture compile, bbox traces, and
+shipped-box traces for investigation. In the doctor academic English fixture,
+the top title word `Research`, first degree word `Dissertation`, `Tsinghua`,
+`Applied`, author block `by` and `Wang Shaoping`, supervisor labels/values, and
+date word `March` should match the `thuthesis2e` bbox coordinates after the
+title and supervisor box fixes.
+
 ## thuthesis3 Gaps Against the Oracle
 
 - Legacy isolated commands are collapsed: `\thu@titlepage` and
@@ -330,54 +396,55 @@ For the reproducible overlay, bbox, and shipped-box trace commands, see
 
 ## Cover TODO
 
-1. Add a cover command compatibility layer:
-   - `\thu@titlepage` should render only the family-appropriate Chinese cover;
-   - `\thu@titlepage@en` should render only the graduate English cover;
-   - `\thu@cover@postdoc` should render only `cover-p-a`;
-   - `\thu@titlepage@postdoc` should render only `cover-p-b`.
-2. Keep `\maketitle` as the public full-flow command, but make the hook body
-   call the same isolated rendering helpers so tests and production behavior use
-   one implementation.
-3. Finish `cover-g-zh` parity:
-   - degree/category sentence for thesis and proposal;
-   - academic/professional label switching;
-   - engineering-master label behavior;
-   - proposal `student-id`;
-   - secret-level and secret-year rendering;
-   - Chinese cover behavior when `language = english`.
-4. Finish `cover-g-en` parity:
-   - master/doctor `Thesis` versus `Dissertation`;
-   - academic versus professional layout;
-   - professional field handling;
-   - supervisor, associate supervisor, and co-supervisor label/content rules;
-   - English date formatting.
-5. Finish `cover-u` parity:
-   - dynamic secret rendering;
-   - logo/name-image dimensions and spacing;
-   - English-major title behavior;
-   - optional co-supervisor label width behavior;
-   - bachelor proposal label if retained from the legacy surface.
-6. Finish postdoc parity:
-   - populate `cover-p-b`;
-   - verify `cover-p-a` against `\thu@cover@postdoc`;
-   - implement postdoc top fields, dates, title/title* behavior, discipline
-     level fields, and organization/date footer exactly as the oracle expects.
-7. Implement spine support:
-   - provide a LaTeX3 `\spine` command or page instance;
-   - honor `include-spine`, `spine-title`, `spine-author`, and `spine-font`;
-   - preserve bachelor versus graduate geometry and font-size defaults.
-8. Decide and document the declaration-page contract:
-   - either preserve separate `\copyrightpage` and `\statement` commands as
-     user-facing compatibility APIs;
-   - or document an intentional `thuthesis3` difference and adjust tests.
-9. Port and enable tests:
-   - import `../thuthesis2e/testfiles/01-title-page-en/`;
-   - add `testfiles/config-title-page-en.lua`;
-   - expand `testfiles/config-title-page.lua` beyond the smoke subset when each
-     family is implemented;
-   - remove the postdoc undefined-command expected failures once compatibility
-     commands exist.
-10. Verify visual parity:
-    - use l3build `.tlg` checks for command/log behavior;
-    - use PDF or `pdfpagediff` comparison for layout-sensitive changes, because
-      hook and template refactors can reorder logs while preserving output.
+- [x] Add a cover command compatibility layer:
+  - `\thu@titlepage` renders only the family-appropriate Chinese cover;
+  - `\thu@titlepage@en` renders only the graduate English cover;
+  - `\thu@cover@postdoc` renders only `cover-p-a`;
+  - `\thu@titlepage@postdoc` renders only `cover-p-b`.
+  - Testfiles now exercise each cover through `\UseInstance` directly.
+- [x] Keep `\maketitle` as the public full-flow command, with the hook body
+  calling the same isolated rendering helpers so tests and production behavior
+  use one implementation.
+- [ ] Finish `cover-g-zh` parity:
+  - degree/category sentence for thesis and proposal;
+  - academic/professional label switching;
+  - engineering-master label behavior;
+  - proposal `student-id`;
+  - secret-level and secret-year rendering;
+  - Chinese cover behavior when `language = english`.
+- [ ] Finish `cover-g-en` parity:
+  - master/doctor `Thesis` versus `Dissertation`;
+  - academic versus professional layout;
+  - professional field handling;
+  - supervisor, associate supervisor, and co-supervisor label/content rules;
+  - English date formatting.
+- [ ] Finish `cover-u` parity:
+  - dynamic secret rendering;
+  - logo/name-image dimensions and spacing;
+  - English-major title behavior;
+  - optional co-supervisor label width behavior;
+  - bachelor proposal label if retained from the legacy surface.
+- [ ] Finish postdoc parity:
+  - populate `cover-p-b`;
+  - verify `cover-p-a` against `\thu@cover@postdoc`;
+  - implement postdoc top fields, dates, title/title* behavior, discipline
+    level fields, and organization/date footer exactly as the oracle expects.
+- [ ] Implement spine support:
+  - provide a LaTeX3 `\spine` command or page instance;
+  - honor `include-spine`, `spine-title`, `spine-author`, and `spine-font`;
+  - preserve bachelor versus graduate geometry and font-size defaults.
+- [ ] Decide and document the declaration-page contract:
+  - either preserve separate `\copyrightpage` and `\statement` commands as
+    user-facing compatibility APIs;
+  - or document an intentional `thuthesis3` difference and adjust tests.
+- [ ] Port and enable tests:
+  - import `../thuthesis2e/testfiles/01-title-page-en/`;
+  - add `testfiles/config-title-page-en.lua`;
+  - expand `testfiles/config-title-page.lua` beyond the smoke subset when each
+    family is implemented;
+  - remove the postdoc undefined-command expected failures once compatibility
+    commands exist.
+- [ ] Verify visual parity:
+  - use l3build `.tlg` checks for command/log behavior;
+  - use PDF or `pdfpagediff` comparison for layout-sensitive changes, because
+    hook and template refactors can reorder logs while preserving output.
