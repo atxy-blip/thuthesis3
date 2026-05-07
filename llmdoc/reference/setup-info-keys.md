@@ -53,8 +53,8 @@ The current compatibility set includes:
 - thesis metadata: `title`, `title*`, `keywords`, `keywords*`;
 - author metadata: `author`, `author*`, `student-id`;
 - organization and degree metadata: `department`, `department*`,
-  `degree-category`, `degree-category*`, `degree-name`, `degree-name*`,
-  `discipline`, `discipline*`, `professional-field`,
+  `degree-category`, `degree-category*`, `discipline`, `discipline*`,
+  `professional-field`,
   `professional-field*`, `engineering-field`, `engineering-field*`;
 - supervisors: `supervisor`, `supervisor*`, `associate-supervisor`,
   `associate-supervisor*`, `co-supervisor`, `co-supervisor*`,

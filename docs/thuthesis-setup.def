@@ -22,8 +22,8 @@
     %      Doctor of Education, Master of Engineering
     %   3. 本科生不需要填写
     %
-    degree-name  = {工学},
-    degree-name* = {Master of Science},
+    degree-category  = {工学},
+    degree-category* = {Master of Science},
     %
     % 培养单位
     %   填写所属院系的全名

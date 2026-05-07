@@ -253,16 +253,18 @@ To produce the documentation run the original source files ending with
 % 中英文题目。中文题目可在内部使用 |\\| 手动断行。
 % \end{function}
 %
-% \begin{function}[added=2026-05-04]{info/degree-category,info/degree-category*,info/degree-name,info/degree-name*}
+% \begin{function}[added=2026-05-04]{info/degree-category,info/degree-category*}
 %   \begin{syntax}
-%     \OPT{info/degree-category}  = \Arg{中文学位名称}
-%     \OPT{info/degree-category*} = \Arg{英文学位名称}
+%     \OPT{info/degree-category}  = \Arg{中文学科门类或专业学位类别}
+%     \OPT{info/degree-category*} = \Arg{英文申请学位名称}
 %   \end{syntax}
-% 申请学位名称。学术型博士需注明所属学科门类，例如哲学、经济学、
-% 法学、教育学、文学、历史学、理学、工学、农学、医学、军事学、
-% 管理学或艺术学；学术型硕士按学科门类填写相应的英文名称；
-% 专业型研究生填写专业学位名称，例如教育博士、工程硕士。
-% \opt{info/degree-name} 和 \opt{info/degree-name*} 是同一信息的别名。
+% 申请学位的学科门类或专业学位类别。学术型研究生中文填写所属学科门类，
+% 例如哲学、经济学、法学、教育学、文学、历史学、理学、工学、农学、
+% 医学、军事学、管理学或艺术学；英文博士填写 Doctor of Philosophy，
+% 英文硕士按学科门类填写 Master of Arts 或 Master of Science。
+% 专业型研究生填写专业学位类别，例如教育博士、工程硕士；
+% 英文填写对应的专业学位名称，例如 Doctor of Education 或
+% Master of Engineering。本科生不需要填写。
 % \end{function}
 %
 % \begin{function}[added=2026-05-04]{info/department,info/department*}
@@ -2469,11 +2471,9 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{degree-name,degree-name*,degree-category,degree-category*}
-% 。
+% \begin{macro}{degree-category,degree-category*}
+% 申请学位的学科门类或专业学位类别。
 %    \begin{macrocode}
-    degree-name             .tl_set:N = \g_@@_info_degree_tl         ,
-    degree-name*            .tl_set:N = \g_@@_info_degree_en_tl      ,
     degree-category         .tl_set:N = \g_@@_info_degree_tl         ,
     degree-category*        .tl_set:N = \g_@@_info_degree_en_tl      ,
 %    \end{macrocode}
@@ -2587,7 +2587,7 @@ To produce the documentation run the original source files ending with
     title, title*, keywords, keywords*,
     author, author*, student-id,
     department, department*,
-    degree-name, degree-name*, degree-category, degree-category*,
+    degree-category, degree-category*,
     discipline, discipline*,
     supervisor, supervisor*,
     associate-supervisor, associate-supervisor*,
