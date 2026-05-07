@@ -18,6 +18,13 @@ regenerating `.tlg` files.
 - `testfiles/config-title-page.lua`: focused title-page config. It currently
   includes a smoke subset rather than every imported title-page fixture.
 
+## Test Conventions
+
+- Cover-page and abstract-only tests should pass the `minimal` class option to
+  skip loading unnecessary packages and speed up the test run:
+  `\documentclass[degree=doctor, minimal]{thuthesis3}`.
+- The `minimal` option is already applied to all existing `testfiles/` fixtures.
+
 ## Build Configuration
 
 `build.lua` currently checks with `xetex` and runs these configs:
