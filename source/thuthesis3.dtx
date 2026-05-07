@@ -1736,7 +1736,7 @@ To produce the documentation run the original source files ending with
 % \subsection{模板选项}
 %
 %    \begin{macrocode}
-\keys_define:nn { thu / opt }
+\keys_define:nn { thu / option }
   {
 %    \end{macrocode}
 %
@@ -1961,7 +1961,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_define_pkg_keys:nnn #1#2#3
   {
-    \keys_define:nn { thu }
+    \keys_define:nn { thu / option }
       {
         #1 .bool_gset:c = { g_@@_opt_load_ #2 _bool },
         #1   .initial:n = #3
@@ -2012,14 +2012,14 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{minimal}
 % 最小化模式，不载入进行功能拓展的额外宏包。
 %    \begin{macrocode}
-\keys_define:nn { thu }
+\keys_define:nn { thu / option }
   {
     minimal .value_forbidden:n = true,
     minimal            .code:n =
       {
         \clist_map_inline:Nn \g_@@_name_optional_pkg_clist
-          { \keys_set:nn { thu } { ##1 = false } }
-        \keys_set:nn { thu } { math-font = none }
+          { \keys_set:nn { thu / option } { ##1 = false } }
+        \keys_set:nn { thu / option } { math-font = none }
       }
   }
 %    \end{macrocode}
@@ -2027,7 +2027,7 @@ To produce the documentation run the original source files ending with
 %
 % 获取输入的文档类选项。
 %    \begin{macrocode}
-\ProcessKeysOptions { thu / opt }
+\ProcessKeysOptions { thu / option }
 %    \end{macrocode}
 %
 % 处理单双面模式选项。

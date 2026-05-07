@@ -19,7 +19,7 @@ Goal: stabilize configuration before migrating layout behavior.
 
 Candidate modules:
 
-- class options under top-level `thu`;
+- class options under `thu / option`;
 - `\thusetup` optional-argument forwarding;
 - module keys such as `info`, `bib`, `image`, `abstract`, `theorem`, `math`,
   `header`, and `footer`;

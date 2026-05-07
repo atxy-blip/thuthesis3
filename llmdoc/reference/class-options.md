@@ -3,6 +3,11 @@
 Use this reference when auditing or extending document-class options in
 `source/thuthesis3.dtx`.
 
+Class options are defined in the `thu / option` key family and processed via
+`\ProcessKeysOptions { thu / option }`. This includes degree, language, output
+mode, font, special-mode, scan-page, and optional-package-toggle keys (including
+`minimal`).
+
 ## Inheritance Rule
 
 `thuthesis3` inherits class option names from `../thuthesis2e/master`.
