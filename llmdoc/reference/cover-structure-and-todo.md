@@ -119,6 +119,58 @@ Current reusable architecture:
   - `thuthesis3/cover/end`;
   - `thuthesis3/cover/back`.
 
+### Docstrip-based academic/professional separation
+
+The graduate definition file is now split into two docstrip targets:
+
+- `thuthesis3-graduate-academic.def` (guards `def-g,def-g-aca`);
+- `thuthesis3-graduate-professional.def` (guards `def-g,def-g-pro`).
+
+The shared graduate code uses only `def-g` guards. Academic-only code uses
+`def-g-aca`; professional-only code uses `def-g-pro`. This eliminates the
+previous runtime `\@@_switch_name:` function and the `\int_compare:nTF`
+conditionals in `\@@_g_cover_info:`, `\@@_g_cover_en_supv_label:n`, and
+`\@@_cover_title_zihao:`.
+
+Design rules for the split:
+
+- Put a name constant or code block under `def-g` when it is identical for
+  both academic and professional;
+- Put it under `def-g-aca` or `def-g-pro` when the two degree types differ;
+- Prefer docstrip-time separation over runtime `\int_compare:nTF` on
+  `\g_@@_info_dtype_tl`.
+
+### Name resolution helpers
+
+`\@@_define_name_grad:nnn` (`source/thuthesis3.dtx`) resolves doctor/master
+name differences:
+
+```tex
+\@@_define_name_grad:nnn {<name>} {<master value>} {<doctor value>}
+```
+
+It uses `\int_compare:nTF { \g_@@_info_type_int = 2 }` internally (type=1 is
+doctor, type=2 is master). For example, the English supervisor label:
+
+```tex
+\@@_define_name_grad:nnn
+  { supv a _en } { Thesis~ Supervisor } { Dissertation~ Supervisor }
+```
+
+This keeps the doctor/master difference local to the name definition rather
+than spreading it through the rendering code.
+
+### CS naming convention: `_thesis` and `_proposal`
+
+Functions that differ between thesis and proposal covers use a suffix:
+
+- `\@@_g_cover_degree_thesis:` — degree/category sentence for thesis covers;
+- `\@@_g_cover_degree_proposal:` — degree/category sentence for proposal covers
+  (planned).
+
+The suffix matches the `thesis-type` option value and makes the dispatch
+explicit in the control-sequence name.
+
 The `cover/back` hook is the semantic home for 封底/back-cover declaration
 material. `decl-b` is registered there. `\maketitle` links it to the dedicated
 `enddocument` hook by adding one next-code chunk that executes
@@ -377,8 +429,9 @@ title and supervisor box fixes.
   `.tlg` files need regeneration after accepting the instance-isolation policy.
 - `cover-p-b` is declared but has an empty element list, so the second postdoc
   page is only a placeholder.
-- `cover-g-en` still has incomplete degree text (`???`) and does not yet encode
-  the academic/professional differences from `thuthesis2e`.
+- `cover-g-en` degree text is now handled through name lookup
+  (`\@@_name:n`), and academic/professional differences are encoded by docstrip
+  guards in the split `.def` files rather than runtime conditionals.
 - `cover-u/secret` currently contains a fixed `机密10年` string instead of using
   the inherited secret-level and secret-year info keys.
 - The hook body selects page instances by docstrip guard (`def-u`, `def-g`,
@@ -405,16 +458,23 @@ title and supervisor box fixes.
 - [x] Keep `\maketitle` as the public full-flow command, with the hook body
   calling the same isolated rendering helpers so tests and production behavior
   use one implementation.
+- [x] Eliminate runtime academic/professional dispatch:
+  - split `graduate.def` into `graduate-academic.def` and
+    `graduate-professional.def`;
+  - remove `\@@_switch_name:`;
+  - resolve label differences (`author`, `discip`, `e field`, `p field`,
+    `pro degree`) through docstrip guards;
+  - resolve info-block shape (`7.25cm`/`5.25cm`) through docstrip guards;
+  - use `\@@_define_name_grad:nnn` for doctor/master name differences
+    (e.g., `Thesis Supervisor` vs `Dissertation Supervisor`).
 - [ ] Finish `cover-g-zh` parity:
-  - degree/category sentence for thesis and proposal;
-  - academic/professional label switching;
+  - degree/category sentence for thesis and proposal (`_thesis` / `_proposal`
+    CS naming convention);
   - engineering-master label behavior;
   - proposal `student-id`;
   - secret-level and secret-year rendering;
   - Chinese cover behavior when `language = english`.
 - [ ] Finish `cover-g-en` parity:
-  - master/doctor `Thesis` versus `Dissertation`;
-  - academic versus professional layout;
   - professional field handling;
   - supervisor, associate supervisor, and co-supervisor label/content rules;
   - English date formatting.

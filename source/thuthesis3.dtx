@@ -23,13 +23,14 @@ To produce the documentation run the original source files ending with
 
 \generate{
   \usedir{tex/latex/thuthesis3}
-    \file{\jobname.cls}               {\from{\jobname.dtx}{class}}
-    \file{\jobname-undergraduate.def} {\from{\jobname.dtx}{def-u}}
-    \file{\jobname-graduate.def}      {\from{\jobname.dtx}{def-g}}
-    \file{\jobname-postdoctoral.def}  {\from{\jobname.dtx}{def-p}}
+    \file{\jobname.cls}                       {\from{\jobname.dtx}{class}}
+    \file{\jobname-undergraduate.def}         {\from{\jobname.dtx}{def-u}}
+    \file{\jobname-graduate-academic.def}     {\from{\jobname.dtx}{def-g,def-g-aca}}
+    \file{\jobname-graduate-professional.def} {\from{\jobname.dtx}{def-g,def-g-pro}}
+    \file{\jobname-postdoctoral.def}          {\from{\jobname.dtx}{def-p}}
 %<*internal>
   \usedir{source/latex/thuthesis3}
-    \file{\jobname.ins}               {\from{\jobname.dtx}{install}}
+    \file{\jobname.ins}                       {\from{\jobname.dtx}{install}}
 %</internal>
 }
 
@@ -48,8 +49,10 @@ To produce the documentation run the original source files ending with
 %<class>\ProvidesExplClass{thuthesis3}
 %<def-u>  {Bachelor definition file for thuthesis3}
 %<def-u>\ProvidesExplFile{thuthesis3-undergraduate.def}
-%<def-g>  {Master and doctor definition file for thuthesis3}
-%<def-g>\ProvidesExplFile{thuthesis3-graduate.def}
+%<def-g-aca>  {Academic-type Master and doctor definition file for thuthesis3}
+%<def-g-aca>\ProvidesExplFile{thuthesis3-graduate-academic.def}
+%<def-g-pro>  {Professional-type Master and doctor definition file for thuthesis3}
+%<def-g-pro>\ProvidesExplFile{thuthesis3-graduate-professional.def}
 %<def-p>  {Postdoctoral definition file for thuthesis3}
 %<def-p>\ProvidesExplFile{thuthesis3-postdoctoral.def}
 %<!driver>  {\ExplFileDate}{\ExplFileVersion}{\ExplFileDescription}
@@ -68,6 +71,8 @@ To produce the documentation run the original source files ending with
 \end{document}
 %</driver>
 % \fi
+%
+% \changes{v0.1.0}{将学术型和专业型学位拆分为两个独立配置文件。}
 %
 % \begin{documentation}
 %
@@ -458,10 +463,10 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_@@_info_dtype_int}
+% \begin{variable}{\g_@@_info_dtype_tl}
 % 用于存储学位类型 \opt{degree-type}的变量。
 %    \begin{macrocode}
-\int_new:N \g_@@_info_dtype_int
+\tl_new:N  \g_@@_info_dtype_tl
 %    \end{macrocode}
 % \end{variable}
 %
@@ -641,17 +646,31 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{\@@_define_name_zh:nn,\@@_define_name_en:nn}
 % 用来定义默认名称的辅助函数。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_define_name_zh:nn #1#2
-  { \tl_const:cn { c_@@_name_ #1    _tl } { #2 } }
-\cs_new_protected:Npn \@@_define_name_en:nn #1#2
-  { \tl_const:cn { c_@@_name_ #1 _en_tl } { #2 } }
+\cs_new_protected:Npn \@@_define_name_zh:nn #1
+  { \tl_const:cn { c_@@_name_ #1 _tl } }
+\cs_new_protected:Npn \@@_define_name_en:nn #1
+  { \@@_define_name_zh:nn { #1 _en } }
 %    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_names:nnn}
 % 同时定义中文和英文名称。
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_define_names:nnn #1#2#3
   {
-    \tl_const:cn { c_@@_name_ #1    _tl } { #2 }
-    \tl_const:cn { c_@@_name_ #1 _en_tl } { #3 }
+    \@@_define_name_zh:nn {#1} {#2}
+    \@@_define_name_en:nn {#1} {#3}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_define_name_grad:nnn}
+% 为硕士和博士定义不同的名称。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_define_name_grad:nnn #1#2#3
+  {
+    \tl_const:ce { c_@@_name_ #1 _tl }
+      { \int_compare:nTF { \g_@@_info_type_int = 2 } {#2} {#3} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1139,37 +1158,6 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_switch_name:}
-% 研究生封面上切换名称常量。
-%    \begin{macrocode}
-\cs_set_protected:Npn \@@_switch_name:
-  {
-%    \end{macrocode}
-% 学术型学位封面为“研究生”，专业型学位封面为“申请人”。
-%    \begin{macrocode}
-    \int_compare:nF { \g_@@_info_dtype_int = 1 }
-      { \@@_name_gset_eq:nn { author } { author a } }
-%    \end{macrocode}
-% 专业型学位硕士封面没有 \opt{info/discip} 项。
-%    \begin{macrocode}
-    \int_compare:nT { \g_@@_info_dtype_int = 2 }
-      { \tl_gclear:N \g_@@_info_discip_tl }
-%    \end{macrocode}
-% 博士封面为“申请人”，硕士封面为“研究生”。
-%    \begin{macrocode}
-    \int_compare:nTF { \g_@@_info_type_int = 1 }
-      { \@@_name_gset_eq:nn { supv c } { supv d } }
-      {
-%    \end{macrocode}
-% 学术型硕士封面为“学科”，工程硕士封面为“工程领域”。
-%    \begin{macrocode}
-        \int_compare:nT { \g_@@_info_dtype_int = 3 }
-          { \@@_name_gset_eq:nn { discip } { discip a } }
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{\@@_format_name:}
 %    \begin{macrocode}
 \cs_set_protected:Npn \@@_format_name:NNn #1#2#3
@@ -1280,16 +1268,16 @@ To produce the documentation run the original source files ending with
 % \cs{vfill} 后的信息栏与日期之间的相对位置，因此不能交给通用信息栏
 % 自动计算。
 %    \begin{macrocode}
+%</class>
+%<*def-g>
 \cs_new_protected:Npn \@@_g_cover_info:
   {
-    \@@_switch_name:
-    \int_compare:nTF { \g_@@_info_dtype_int = 1 }
-      { \@@_g_cover_info_box:nn { 7.25 cm } { t } }
-      {
-        \@@_g_cover_info_box:nn { 5.25 cm } { b }
-        \skip_vertical:n { 62 pt }
-      }
+%<def-g-aca>    \@@_g_cover_info_box:nn { 7.25 cm } { t }
+%<def-g-pro>    \@@_g_cover_info_box:nn { 5.25 cm } { b }
+%<def-g-pro>    \skip_vertical:n { 62 pt }
   }
+%</def-g>
+%<*class>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1368,7 +1356,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_info_item:NN #1#2
   {
-    \clist_map_inline:nn { dept, discip, author, stuid }
+    \clist_map_inline:Nn \c_@@_name_coveritem_clist
       { \@@_g_cover_info_item:NNn #1 #2 {##1} }
   }
 \cs_new_protected:Npn \@@_g_cover_info_item:NNn #1#2#3
@@ -1429,26 +1417,12 @@ To produce the documentation run the original source files ending with
         \@@_info_if_empty:nF { supv ##1 _en }
           {
             \hbox_set:Nn \l_@@_tmpa_box
-              { \@@_g_cover_en_supv_label:n {##1} }
+              { \@@_name:n { supv ##1 _en } }
             \dim_set:Nn #1 { \dim_max:nn {#1} { \box_wd:N \l_@@_tmpa_box } }
             \hbox_set:Nn \l_@@_tmpa_box
               { \@@_info:n { supv ##1 _en } }
             \dim_set:Nn #2 { \dim_max:nn {#2} { \box_wd:N \l_@@_tmpa_box } }
           }
-      }
-  }
-\cs_new:Npn \@@_g_cover_en_supv_label:n #1
-  {
-    \str_case:nn {#1}
-      {
-        { a }
-          {
-            \int_compare:nTF { \g_@@_info_type_int = 2 }
-              { Thesis~ Supervisor }
-              { Dissertation~ Supervisor }
-          }
-        { b } { Associate~ Supervisor }
-        { c } { Co-supervisor }
       }
   }
 \cs_new_protected:Npn \@@_g_cover_en_supv_strut:
@@ -1465,7 +1439,7 @@ To produce the documentation run the original source files ending with
             \@@_g_cover_en_supv_strut:
             \skip_horizontal:n { 6 pt }
             \hbox_to_wd:nn { \l_@@_tmpa_dim }
-              { \tex_hss:D \@@_g_cover_en_supv_label:n {#1} }
+              { \tex_hss:D \@@_name:n { supv #1 _en } }
             \@@_box_left:nn { 20.5 bp }
               { \skip_horizontal:n { 2 bp } : }
             \@@_box_left:nn { \l_@@_tmpb_dim }
@@ -1869,7 +1843,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
     degree-type         .choices:nn =
       { academic, professional }
-      { \int_gset_eq:NN \g_@@_info_dtype_int \l_keys_choice_int },
+      { \tl_set:Nn \g_@@_info_dtype_tl {#1} },
     degree-type             .initial:n  = academic,
 %    \end{macrocode}
 % \end{macro}
@@ -2513,8 +2487,8 @@ To produce the documentation run the original source files ending with
     thuthesis3-
     \int_case:nn { \g_@@_info_type_int }
       {
-        { 1 } { graduate      }
-        { 2 } { graduate      }
+        { 1 } { graduate- \g_@@_info_dtype_tl }
+        { 2 } { graduate- \g_@@_info_dtype_tl }
         { 3 } { undergraduate }
         { 4 } { postdoctoral  }
       }
@@ -4407,7 +4381,7 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { g / cover-zh / title }
   {
     content     = \g_@@_info_title_tl,
-    format      = \sffamily \@@_cover_title_zihao:,
+    format      = \sffamily \@@_zihao:nn { 1.8 } { 1 },
     bottom-skip = 24.1 pt
   }
 %    \end{macrocode}
@@ -4420,7 +4394,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover-zh / degree }
   {
-    content     = \@@_cover_degree:,
+    content     = \@@_g_cover_degree_thesis:,
     format      =
       \@@_fontsize:nn { 16 bp } { 22 bp }
       \@@_set_ccglue:N \c_@@_bp_dim,
@@ -4452,18 +4426,6 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_title_zihao:}
-%
-%    \begin{macrocode}
-\cs_new:Npn \@@_cover_title_zihao:
-  {
-    \@@_zihao:nn
-      {\int_compare:nTF { \g_@@_info_type_int = 1 } { 1.8 } { 1.573 } }
-      { 1 }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{\@@_cover_secret:n}
 % 研究生封面的保密信息。
 %    \begin{macrocode}
@@ -4485,23 +4447,15 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_degree:}
+% \begin{macro}{\@@_g_cover_degree:}
 % 研究生封面的学位信息。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_degree:
+\cs_new_protected:Npn \@@_g_cover_degree_thesis:
   {
-    \c_@@_name_applybegin_tl
-%    \end{macrocode}
-% 工程硕士学位的名称是固定的。
-%    \begin{macrocode}
-    \bool_lazy_and:nnTF
-      { \int_compare_p:n { \g_@@_info_type_int  = 2 } }
-      { \int_compare_p:n { \g_@@_info_dtype_int = 3 } }
-      { \c_@@_name_degreeeng_tl }
-      { \g_@@_info_degree_tl    }
-    %\clist_item:Nn \c_@@_name_type_clist { \g_@@_info_type_int }
-    \int_compare:nF { \g_@@_info_dtype_int = 1 } { \c_@@_name_degreepro_tl }
-    \c_@@_name_applyend_tl
+    \@@_name:n { apply begin }
+    \@@_info:n { degree      }
+    \@@_name:n { pro degree  }
+    \@@_name:n { apply end   }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5387,8 +5341,8 @@ To produce the documentation run the original source files ending with
 %<def-g>    { apply begin       } { (申请清华大学                      },
 %<def-g>    { apply end         } { 学位论文)                          },
 %<def-u>    { author            } { 姓名                               },
-%<def-g>    { author            } { 研究生                             },
-%<def-g>    { author          a } { 申请人                             },
+%<def-g-aca>    { author            } { 研究生                             },
+%<def-g-pro>    { author            } { 申请人                             },
 %<def-p>    { author            } { 博士后姓名                         },
 %<def-p>    { clc               } { 分类号                             },
 %<def-u|def-g>    { copyright         } { 关于学位论文使用授权的说明         },
@@ -5402,10 +5356,10 @@ To produce the documentation run the original source files ending with
 %<def-u>    { dept              } { 系别                               },
 %<def-g>    { dept              } { 培养单位                           },
 %<def-u>    { discip            } { 专业                               },
-%<def-g>    { discip            } { 学科                               },
-%<def-g>    { discip          a } { 工程领域                           },
+%<def-g-aca>    { discip            } { 学科                               },
 %<def-p>    { discip          a } { 流动站       （一级学科）名称      },
 %<def-p>    { discip          b } { 专 \quad{} 业（二级学科）名称      },
+%<def-g-pro>    { e field           } { 工程领域                           },
 %<def-p>    { id                } { 编号                               },
     { listoffigures     } { 插图目录                           },
     { listoftables      } { 表格目录                           },
@@ -5414,10 +5368,14 @@ To produce the documentation run the original source files ending with
     { orig sign         } { 作者签名                           },
     { paper list        } { 发表文章目录                       },
     { pdf creator       } { LaTeX~ with~ thuthesis3~ class     },
-    { preface           } { 前 \qquad{} 言                     },
+%<def-g-pro>    { p field           } { 专业领域                           },
+                { preface           } { 前 \qquad{} 言                     },
+%<def-g-aca>    { pro degree        } {                                    },
+%<def-g-pro>    { pro degree        } { 专业                               },
 %<def-p>    { report            } { 博士后研究工作报告                 },
 %<def-p>    { secret lv         } { 密级                               },
 %<def-u|def-g>    { stuid             } { 学号                               },
+%<def-u|def-g>    { supv        a } { 指导教师        },
     { tableofcontents   } { 目 \quad{} 录                      },
 %<def-u>    { thesis            } { 综合论文训练                       },
 %<def-p>    { thu bj            } { 清华大学 \quad （北京）            },
@@ -5439,13 +5397,20 @@ To produce the documentation run the original source files ending with
     { colon         } { ：              } { : \c_space_tl         },
     { figure        } { 图              } { figure                },
     { keywords      } { 关键词          } { KEYWORDS              },
-%<def-u|def-g>    { supv        a } { 指导教师     } { Dissertation~ Supervisor },
 %<def-u|def-g>    { supv        b } { 副指导教师      } { Associate~ Supervisor },
 %<def-u|def-g>    { supv        c } { 联合指导教师    } { Co-supervisor         },
     { thu           } { 清华大学        } { Tsinghua~ University  },
     { table         } { 表              } { table                 }
   }
   { \@@_define_names:nnn #1 }
+%    \end{macrocode}
+%
+% 硕博名称有所区别的常量。
+%    \begin{macrocode}
+%<*def-g>
+\@@_define_name_grad:nnn
+  { supv a _en } { Thesis~ Supervisor } { Dissertation~ Supervisor }
+%</def-g>
 %    \end{macrocode}
 %
 % \subsubsection{文本}
@@ -5767,8 +5732,8 @@ To produce the documentation run the original source files ending with
 %
 %    \begin{macrocode}
 \clist_const:Nn \c_@@_name_coveritem_clist
-%<def-u>  { dept, discip, author, supva, supvb, supvc }
-%<def-g>  { dept, discip, author, stuid, supva, supvb, supvc }
+%<def-u|def-g-aca>  { dept, discip,         author }
+%<def-g-pro>  { dept, pfield, efield, author }
 %<def-p>  { author, discipa, discipb }
 %    \end{macrocode}
 %

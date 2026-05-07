@@ -8,7 +8,8 @@ Docstrip targets declared in the `.dtx` generate:
 
 - `thuthesis3.cls`;
 - `thuthesis3-undergraduate.def`;
-- `thuthesis3-graduate.def`;
+- `thuthesis3-graduate-academic.def`;
+- `thuthesis3-graduate-professional.def`;
 - `thuthesis3-postdoctoral.def`;
 - `thuthesis3.ins` for internal source extraction.
 

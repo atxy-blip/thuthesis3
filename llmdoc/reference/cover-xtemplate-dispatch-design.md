@@ -11,6 +11,9 @@ Use this together with `llmdoc/reference/cover-structure-and-todo.md`.
 Make cover generation declarative:
 
 - docstrip emits only the family-specific page instances and role registrations;
+- academic/professional differences are resolved at docstrip time through
+  separate `.def` files (`def-g-aca` / `def-g-pro`), not through runtime
+  conditionals;
 - `xtemplate` owns element/page rendering;
 - public commands resolve to named roles;
 - roles resolve through generated control-sequence names;
@@ -33,8 +36,10 @@ Use short, stable slugs:
 - page role: `titlepage`, `titlepage-en`, `postdoc-report`, `postdoc-title`,
   `spine`, `copyright`, `originality`;
 - degree: `doctor`, `master`;
-- degree type: `academic`, `professional`, `engineering`;
-- thesis type: `thesis`, `proposal`;
+- degree type: `academic`, `professional` (used directly from
+  `\g_@@_info_dtype_tl`, no longer mapped through an integer);
+- thesis type: `thesis`, `proposal` (used as CS name suffix, e.g.,
+  `\@@_g_cover_degree_thesis:`);
 - main language: `zh`, `en`;
 - boolean surfaces: `true`, `false`.
 
@@ -47,23 +52,21 @@ constant:
 %<def-p>\tl_const:Nn \c__thu_cover_family_tl { p }
 ```
 
-Runtime integers and booleans should map to slugs through generated names:
+Degree-type values are stored directly as a token list and used as string slugs
+without integer mapping:
 
 ```tex
-\tl_const:cn { c__thu_cover_type_1_tl  } { doctor }
-\tl_const:cn { c__thu_cover_type_2_tl  } { master }
-\tl_const:cn { c__thu_cover_dtype_1_tl } { academic }
-\tl_const:cn { c__thu_cover_dtype_2_tl } { professional }
-\tl_const:cn { c__thu_cover_dtype_3_tl } { engineering }
-
-\cs_new:Npn \__thu_cover_type_slug:
-  { \use:c { c__thu_cover_type_ \int_use:N \g__thu_info_type_int _tl } }
-\cs_new:Npn \__thu_cover_dtype_slug:
-  { \use:c { c__thu_cover_dtype_ \int_use:N \g__thu_info_dtype_int _tl } }
+\tl_new:N  \g_@@_info_dtype_tl           % "academic" or "professional"
+\keys_define:nn { thu / info }
+  {
+    degree-type .choices:nn = { academic, professional }
+      { \tl_set:Nn \g_@@_info_dtype_tl {#1} },
+    degree-type .initial:n  = academic,
+  }
 ```
 
-This still has conditionals at the validity/error boundary if needed, but the
-normal dispatch path is name composition.
+For the academic/professional split, prefer docstrip guards (`def-g-aca` /
+`def-g-pro`) over runtime conditionals on `\g_@@_info_dtype_tl`.
 
 ## Instance Naming
 
@@ -144,7 +147,16 @@ Bachelor:
 %<def-u>  { cover / noop }
 ```
 
-Graduate:
+Graduate academic (`def-g,def-g-aca`):
+
+```tex
+%<def-g>\__thu_cover_role_gset:nn { titlepage }
+%<def-g>  { cover / g / titlepage }
+%<def-g>\__thu_cover_role_gset:nn { titlepage-en }
+%<def-g>  { cover / g / titlepage-en / \__thu_cover_dtype_slug: }
+```
+
+Graduate professional (`def-g,def-g-pro`):
 
 ```tex
 %<def-g>\__thu_cover_role_gset:nn { titlepage }
@@ -285,40 +297,60 @@ This immediately fixes the current structural issue where `\thu@titlepage` and
 ## Variant Data Lookup
 
 Within a shared page instance, avoid conditionals by resolving labels and text
-through composed names.
+through composed names. The `thuthesis3` implementation now uses three
+mechanisms for variant resolution:
 
-Example for graduate author label:
+### 1. Docstrip guards for academic/professional
+
+When an entire layout or label set differs between academic and professional
+degree types, use docstrip guards to emit different code into
+`thuthesis3-graduate-academic.def` and `thuthesis3-graduate-professional.def`:
 
 ```tex
-\tl_const:cn { c__thu_cover_label_g_author_academic_tl     } { 研究生 }
-\tl_const:cn { c__thu_cover_label_g_author_professional_tl } { 申请人 }
-\tl_const:cn { c__thu_cover_label_g_author_engineering_tl  } { 申请人 }
+%<def-g-aca>    \tl_const:cn { c_@@_name_author_tl } { 研究生 }
+%<def-g-pro>    \tl_const:cn { c_@@_name_author_tl } { 申请人 }
+```
 
-\cs_new:Npn \__thu_cover_label_g:n #1
+This replaces the old `\@@_switch_name:` runtime dispatch.
+
+### 2. `\@@_define_name_grad:nnn` for doctor/master
+
+When a name constant differs between doctor (type=1) and master (type=2),
+use the dedicated helper:
+
+```tex
+\cs_new_protected:Npn \@@_define_name_grad:nnn #1#2#3
   {
-    \use:c
-      {
-        c__thu_cover_label_g_ #1 _
-        \__thu_cover_dtype_slug: _tl
-      }
+    \tl_const:ce { c_@@_name_ #1 _tl }
+      { \int_compare:nTF { \g_@@_info_type_int = 2 } {#2} {#3} }
   }
 ```
 
-Example for English graduate page selection:
+Example: English supervisor label varies by degree level:
 
 ```tex
-\@@_declare_page:nn { cover / g / titlepage-en / academic }
-  { element = { title, degree, author, date }, ... }
-
-\@@_declare_page:nn { cover / g / titlepage-en / professional }
-  { element = { title, degree, author, field, date }, ... }
-
-\__thu_cover_role_gset:nn { titlepage-en }
-  { cover / g / titlepage-en / \__thu_cover_dtype_slug: }
+\@@_define_name_grad:nnn
+  { supv a _en } { Thesis~ Supervisor } { Dissertation~ Supervisor }
 ```
 
-This moves layout differences into page instances and text differences into
-data names.
+### 3. `_thesis` / `_proposal` CS naming convention
+
+Functions that differ between thesis and proposal covers carry a suffix:
+
+```tex
+\cs_new_protected:Npn \@@_g_cover_degree_thesis:   { ... }
+\cs_new_protected:Npn \@@_g_cover_degree_proposal: { ... }
+```
+
+The element declaration selects the right variant:
+
+```tex
+content = \@@_g_cover_degree_thesis:,
+```
+
+When the proposal version is added, only the `content` key needs to change
+(or be selected by a guard). This avoids `\bool_if:nTF` on
+`\g_@@_opt_proposal_bool` inside the rendering function.
 
 ## Mapping Table
 
@@ -340,18 +372,22 @@ data names.
 
 ## Implementation Order
 
-1. Add the registry helpers and no-op page/role.
-2. Rename or alias current page instances to semantic names.
-3. Replace the `\thu@titlepage` / `\thu@titlepage@en` aliases with role and
+1. [x] Add the registry helpers and no-op page/role.
+2. [x] Rename or alias current page instances to semantic names.
+3. [x] Replace the `\thu@titlepage` / `\thu@titlepage@en` aliases with role and
    sequence calls.
-4. Move the hook body from direct `\UseInstance` calls to `maketitle` sequence
+4. [x] Move the hook body from direct `\UseInstance` calls to `maketitle` sequence
    calls.
-5. Add postdoc command roles even before `cover / p / titlepage` is complete,
+5. [x] Add postdoc command roles even before `cover / p / titlepage` is complete,
    so tests fail on layout/content rather than undefined commands.
-6. Split `cover / g / titlepage-en` into academic/professional page instances.
-7. Move graduate label differences into data lookup names.
-8. Add `spine-auto` as a sequence selected by key-assigned slug.
-9. Bring in `01-title-page-en` tests and expand enabled configs.
+6. [x] Split graduate academic/professional into separate `.def` files
+   (`thuthesis3-graduate-academic.def` and
+   `thuthesis3-graduate-professional.def`) with docstrip guards
+   (`def-g-aca` / `def-g-pro`).
+7. [x] Move graduate label differences into docstrip-guarded name constants and
+   `\@@_define_name_grad:nnn` for doctor/master split.
+8. [ ] Add `spine-auto` as a sequence selected by key-assigned slug.
+9. [ ] Bring in `01-title-page-en` tests and expand enabled configs.
 
 ## Design Rules
 
