@@ -785,6 +785,15 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 % \end{macro}
 %
+% \begin{macro}{\@@_box_vcenter:n}
+% 垂直居中的盒子。封装了 \cs{vbox_center:n}，并固定关闭行间距插入，
+% 用来承载已经自行设置行支柱的垂直列表。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_vcenter:n #1
+  { \vbox_center:n { \offinterlineskip #1 } }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_box_to_wd:nn}
 % 固定宽度的水平盒子。
 %    \begin{macrocode}
@@ -1231,8 +1240,12 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{\@@_g_cover_info:}
-% 研究生中文封面信息栏。这里显式保留 \LaTeXe{} 版中文封面的固定尺寸，
-% 避免通用信息栏自动计算宽度导致页面下半部位置漂移。
+% 研究生中文封面信息栏的入口。这里复现原 \cls{thuthesis}
+% \cs{thu@titlepage@thesis} 中信息栏外层 \cs{parbox} 的固定尺寸：
+% 学术学位使用 |[t][7.25cm][t]|，专业学位使用 |[t][5.25cm][b]|
+% 并在下方保留 |62pt|。这些尺寸决定了页面下半部
+% \cs{vfill} 后的信息栏与日期之间的相对位置，因此不能交给通用信息栏
+% 自动计算。
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_info:
   {
@@ -1248,70 +1261,181 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{\@@_g_cover_info_box:nn}
+% 信息栏固定高度盒子。两个参数分别对应原 \cls{thuthesis}
+% \cs{parbox} 的高度和内部垂直对齐方式；宽度始终为 \cs{textwidth}。
+% 盒内正文由 \cs{@@_g_cover_info_body:NN} 生成，并显式传入行支柱
+% 的高度、深度寄存器，保证各行共用同一组由当前字号行距计算出的度量。
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_info_box:nn #1#2
   {
     \parbox [t] [#1] [#2] { \textwidth }
-      { \@@_g_cover_info_body: }
+      { \@@_g_cover_info_body:NN \l_@@_tmpa_dim \l_@@_tmpb_dim }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_g_cover_info_body:}
+% \begin{macro}{\@@_g_cover_info_body:NN}
+% 信息栏主体。原 \cls{thuthesis} 的
+% \cs{thu@titlepage@info@tabular} 先插入 |2.3cm| 左缩进，
+% 再进入单列 |tabular|；|tabular| 自身还会在左、右两侧产生
+% |6pt| 的列间距。这里保留左侧 |2.3cm + 6pt|，
+% 右侧 |6pt| 在每一行末尾补回。导师信息在本系列函数中直接从
+% |g_@@_info_supv|\meta{letter}|_clist| 判断和取值，不依赖通用信息栏
+% 的 \cs{@@_format_supv:} 预格式化副作用。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_g_cover_info_body:
+\cs_new_protected:Npn \@@_g_cover_info_body:NN #1#2
   {
-    \@@_format_supv:
-    \dim_set:Nn \l_@@_tmpa_dim { 7 \tex_baselineskip:D / 10 }
-    \dim_set:Nn \l_@@_tmpb_dim { 3 \tex_baselineskip:D / 10 }
+    \@@_g_cover_info_dims:NN #1 #2
     \mode_leave_vertical:
     \skip_horizontal:n { 2.3 cm }
     \skip_horizontal:n { 6 pt }
-    \c_math_toggle_token
-      \tex_vcenter:D
-        {
-          \offinterlineskip
-          \clist_map_inline:Nn \c_@@_name_coveritem_clist
-            {
-              \tl_if_empty:cF { g_@@_info_ ##1 _tl }
-                { \@@_g_cover_info_item:n { ##1 } }
-            }
-        }
-    \c_math_toggle_token
+    \@@_g_cover_info_table:NN #1 #2
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_g_cover_info_item:n}
+% \begin{macro}{\@@_g_cover_info_dims:NN}
+% 设置信息行支柱的高度和深度。原 \cls{thuthesis} 在信息栏中使用
+% |\fangsong\fontsize{16bp}{31.2bp}\selectfont|，并在单列 |tabular|
+% 中将 \cs{arraystretch} 设为 |1|。|array| 的行支柱按行距的
+% |0.7| 和 |0.3| 分配高度、深度，因此这里用当前
+% \cs{baselineskip} 计算出同一组行度量，并通过参数向下传递。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_g_cover_info_item:n #1
+\cs_new_protected:Npn \@@_g_cover_info_dims:NN #1#2
   {
-    \tex_hbox:D
+    \dim_set:Nn #1 { 7 \tex_baselineskip:D / 10 }
+    \dim_set:Nn #2 { 3 \tex_baselineskip:D / 10 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_table:NN}
+% 将各个信息项组织成一个整体表格盒子。原 \cls{thuthesis} 用
+% 单列 |tabular| 让所有非空 \cs{thu@info@item} 形成一个共同的对象；
+% 这里通过通用盒子函数 \cs{@@_box_vcenter:n} 复现该对象的基线和行间
+% 结构，避免在封面绘制代码中直接通过数学模式 \cs{vcenter} 取得同样
+% 效果。项目顺序对应原 \cs{thu@titlepage@info}：
+% 先排培养单位、学科/专业领域、作者、学号等普通信息，再排导师信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_table:NN #1#2
+  {
+    \@@_box_vcenter:n
       {
-        \tex_vrule:D
-          height \l_@@_tmpa_dim
-          depth  \l_@@_tmpb_dim
-          width  \c_zero_dim
+        \@@_g_cover_info_item:NN #1 #2
+        \@@_g_cover_supv_item:NN #1 #2
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_item:NN,\@@_g_cover_info_item:NNn}
+% 普通信息项的生成器。这里的条目使用 |g_@@_info_|\meta{item}|_tl|
+% 存储，按原 \cls{thuthesis} \cs{thu@titlepage@info}
+% 中导师之前的顺序输出。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_item:NN #1#2
+  {
+    \clist_map_inline:nn { dept, discip, author, stuid }
+      { \@@_g_cover_info_item:NNn #1 #2 {##1} }
+  }
+\cs_new_protected:Npn \@@_g_cover_info_item:NNn #1#2#3
+  {
+    \@@_info_if_empty:nF {#3}
+      { \@@_g_cover_info_row:NNn #1 #2 {#3} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_supv_item:NN,\@@_g_cover_supv_item:NNn}
+% 导师信息项的生成器。导师信息来自逗号列表
+% |g_@@_info_supv|\meta{letter}|_clist|。标签名使用
+% |supv a|、|supv b|、|supv c|，对应原 \cls{thuthesis} 的
+% 指导教师、副指导教师、联合指导教师。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_supv_item:NN #1#2
+  {
+    \clist_map_inline:nn { a, b, c }
+      { \@@_g_cover_supv_item:NNn #1 #2 {##1} }
+  }
+\cs_new_protected:Npn \@@_g_cover_supv_item:NNn #1#2#3
+  {
+    \@@_supv_if_empty:nF {#3}
+      { \@@_g_cover_supv_row:NNn #1 #2 {#3} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_info_if_empty:nF,\@@_supv_if_empty:nF}
+% 判断封面信息是否为空，只有非空才需要输出
+%    \begin{macrocode}
+\cs_new:Npn \@@_info_if_empty:nF #1
+  { \tl_if_empty:cF { g_@@_info_ #1 _tl } }
+\cs_new:Npn \@@_supv_if_empty:nF #1
+  { \clist_if_empty:cF { g_@@_info_supv #1 _clist } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_strut:NN}
+% 信息行的零宽支柱。它替代原 \cls{thuthesis} 单列 |tabular|
+% 中由 |array| 机制插入的行支柱；两个参数分别是由
+% \cs{@@_g_cover_info_dims:NN} 计算出的高度和深度。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_strut:NN #1#2
+  { \rule [ - #2 ] { \c_zero_dim } { \dim_eval:n { #1 + #2 } } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_info_row:NNnn}
+% 排版一行信息。原 \cls{thuthesis}
+% \cs{thu@titlepage@info@tabular} 的参数
+% |{2.3cm}{2.85cm}{2.75cm}{0.77cm}| 分别给出左缩进、标签盒宽、
+% 标签文字宽和冒号盒宽。本函数中的 |2.85cm|、|2.75cm| 和
+% |.77cm| 即来自这些参数；标签文字使用分散对齐以对应原
+% \cs{thu@fixed@box}，冒号使用中文冒号常量，值区由调用者给出。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_row:NNnn #1#2#3#4
+  {
+    \hbox:n
+      {
+        \@@_g_cover_info_strut:NN #1 #2
         \@@_box_left:nn { 2.85 cm }
-          { \@@_box_ss:nn { 2.75 cm } { \@@_name:n {#1} } }
+          { \@@_box_ss:nn { 2.75 cm } { \@@_name:n {#3} } }
         \@@_box_left:nn { .77 cm } { \c_@@_name_colon_tl }
-        \@@_g_cover_info_value:n {#1}
+        #4
         \skip_horizontal:n { 6 pt }
       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_g_cover_info_row:NNn,\@@_g_cover_supv_row:NNn}
+% 普通信息行和导师信息行。二者共享行几何，但值来源不同：普通信息读取
+% token list，导师信息读取 supervisor clist。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_info_row:NNn #1#2#3
+  {
+    \@@_g_cover_info_row:NNnn #1 #2 {#3}
+      { \@@_g_cover_info_value:n {#3} }
+  }
+\cs_new_protected:Npn \@@_g_cover_supv_row:NNn #1#2#3
+  {
+    \@@_g_cover_info_row:NNnn #1 #2 { supv #3 }
+      { \@@_g_cover_supv:n {#3} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_g_cover_info_value:n}
+% 信息行右侧取值。普通条目直接读取 |g_@@_info_|\meta{item}|_tl|。
+% 作者条目在原 \cls{thuthesis} 中通过 \cs{thu@name@title}
+% 排版姓名和职称：姓名先补足到 |3cm|，姓名文字按 |4em| 分散，
+% 职称按 |3em| 分散。
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_info_value:n #1
   {
     \str_case:nnF {#1}
       {
         { author } { \@@_g_cover_name_title:Vn \g_@@_info_author_tl { } }
-        { supva  } { \@@_g_cover_supv:n { a } }
-        { supvb  } { \@@_g_cover_supv:n { b } }
-        { supvc  } { \@@_g_cover_supv:n { c } }
       }
       { \@@_info:n {#1} }
   }
@@ -1320,13 +1444,15 @@ To produce the documentation run the original source files ending with
 %
 % \begin{macro}{\@@_g_cover_supv:n}
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_g_cover_supv:n #1
+\cs_new_protected:Npn \@@_g_cover_supv:NNNn #1#2#3#4
   {
-    \clist_set_eq:Nc \l_@@_tmp_clist { g_@@_info_supv #1 _clist }
-    \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpa_tl
-    \clist_pop:NN \l_@@_tmp_clist \l_@@_tmpb_tl
-    \@@_g_cover_name_title:VV \l_@@_tmpa_tl \l_@@_tmpb_tl
+    \clist_set_eq:Nc #1 { g_@@_info_supv #4 _clist }
+    \clist_pop:NN #1 #2
+    \clist_pop:NN #1 #3
+    \@@_g_cover_name_title:VV #2 #3
   }
+\cs_new_protected:Npn \@@_g_cover_supv:n
+  { \@@_g_cover_supv:NNNn \l_@@_tmp_clist \l_@@_tmpa_tl \l_@@_tmpb_tl }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1334,10 +1460,8 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_name_title:nn #1#2
   {
-    \@@_box_pad:nn { 3 cm }
-      { \@@_box_st:nn { 4 em } {#1} }
-    \tl_if_empty:nF {#2}
-      { \@@_box_st:nn { 3 em } {#2} }
+    \@@_box_pad:nn { 3 cm } { \@@_box_st:nn { 4 em } {#1} }
+    \tl_if_empty:nF      {#2} { \@@_box_st:nn { 3 em } {#2} }
   }
 \cs_generate_variant:Nn \@@_g_cover_name_title:nn { Vn, VV }
 %    \end{macrocode}

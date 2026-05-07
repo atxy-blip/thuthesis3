@@ -83,6 +83,25 @@ Examples from the cover migration:
 - use abbreviations only when they are already established in the local source
   and do not obscure the behavior.
 
+## Argument Forwarding
+
+expl3 signatures document the public calling convention, but an implementation
+may intentionally omit formal parameters when it is a thin forwarding wrapper
+and the following input tokens should be consumed by the callee. This idiom also
+appears in LaTeX3 sources.
+
+Use it sparingly and only when the wrapper adds fixed leading arguments or
+selects a backend while preserving the remaining call surface. For example, a
+wrapper named `\@@_g_cover_supv:n` may forward to
+`\@@_g_cover_supv:NNNn <scratch-clist> <scratch-tl-a> <scratch-tl-b>` and let
+the caller's following `{ a }`, `{ b }`, or `{ c }` become the final `n`
+argument. Do not "fix" such wrappers solely because no `#1` appears in the
+definition; check whether the argument is deliberately passed through.
+
+When using this pattern, keep the wrapper body short enough that the forwarding
+is obvious, and document the intent near the macro if future readers are likely
+to mistake it for a missing parameter.
+
 ## Caution
 
 NJUThesis patterns solve NJUThesis problems. For `thuthesis3`, keep the

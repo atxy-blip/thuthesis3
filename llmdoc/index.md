@@ -75,5 +75,8 @@ technology. Local directory names may differ from GitHub repository names; see
 - `memory/reflections/2026-05-04-cover-hooks.md`: reflection on hook-based cover
   generation with begin/body/end/back phases, rule-ordered labels, and
   one-time `enddocument` back-cover scheduling.
+- `memory/reflections/2026-05-07-cover-info-block.md`: reflection on the
+  graduate cover info block refactor, storage-aware row generation, reusable
+  vertical box centering, and PDF-only verification notes.
 
 Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.
