@@ -129,7 +129,7 @@ The graduate definition file is now split into two docstrip targets:
 The shared graduate code uses only `def-g` guards. Academic-only code uses
 `def-g-aca`; professional-only code uses `def-g-pro`. This eliminates the
 previous runtime `\@@_switch_name:` function and the `\int_compare:nTF`
-conditionals in `\@@_g_cover_info:`, `\@@_g_cover_en_supv_label:n`, and
+conditionals in `\@@_g_cover_info:` and English supervisor names, and
 `\@@_cover_title_zihao:`.
 
 Design rules for the split:
@@ -385,22 +385,29 @@ uses its own fixed-height helper and the existing final `-6pt` correction; do
 not let that date-specific correction leak into the English title box design.
 
 The English supervisor block should reproduce `\thu@titlepage@en@supervisor`
-without using `tabular`. The old tabular has three important layout effects:
-the label column is right-aligned; the colon column is a fixed `20.5bp` box
-with `2bp` left padding; and all supervisor rows form one centered box object
-inside the outer supervisor parbox. Directly drawing each row as a separate
+without using LaTeX2e `tabular`. The old tabular has three important layout
+effects: the label column is right-aligned; the colon column is a fixed
+`20.5bp` box with `2bp` left padding; and all supervisor rows form one centered
+box object inside the outer supervisor parbox. Drawing each row as a separate
 paragraph can make the supervisor/date bboxes look close while moving the
 preceding author block, because the old tabular's height/depth and baseline are
 not reproduced.
 
-The clean direct-box implementation should first measure the nonempty English
-supervisor labels and values, then draw rows from explicit hboxes. The rows must
-be collected into one centered vertical box, using cached row strut dimensions
-from the active supervisor line skip before any `\offinterlineskip` or
-`vcenter`-style helper changes `\baselineskip`. The outer supervisor area uses
-the same fixed-height top parbox contract as `thuthesis2e`:
-academic English cover uses `3.0cm`; professional English cover uses `3.37cm`
-with a different line-stretch contract.
+The current direct-box implementation in `source/thuthesis3.dtx`
+(`\@@_g_cover_en_supv:`, `\@@_g_cover_en_supv_table:N`) collects nonempty
+English supervisor rows as a sequence of `{label}{value}` pairs and gives them
+to one private `\halign`. TeX's alignment algorithm then chooses the natural
+label/value column widths. The selector list `a,b,c` remains a simple `clist`
+because it only names the three inherited fields; the structured row data uses
+a `seq`. Rows are prebuilt into a token list before the alignment body is
+scanned, keeping the mapping logic outside `\halign`.
+
+Each aligned row uses `\strut` to recover the height/depth behavior that matters
+for bbox parity. The outer supervisor area uses the same fixed-height top parbox
+contract as `thuthesis2e`: academic English cover uses `3.0cm`; professional
+English cover uses `3.37cm` with a different line-stretch contract. The doctor
+academic English fixture matches the oracle bboxes for `Wang`, the supervisor
+label/value rows, and `March` with this alignment shape.
 
 Do not reuse the title-specific compensated paragraph-box helper for the
 supervisor parbox. The title helper subtracts `\baselineskip - \f@size pt` to

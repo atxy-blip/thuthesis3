@@ -439,7 +439,7 @@ To produce the documentation run the original source files ending with
 % \begin{variable}{
 %   \l_@@_tmpa_box,\l_@@_tmpb_box,\l_@@_tmpc_box,\l_@@_tmp_clist,
 %   \l_@@_tmpa_dim,\l_@@_tmpb_dim,\l_@@_tmpa_int,\l_@@_tmpb_int,
-%   \l_@@_tmp_skip,\l_@@_tmpa_tl,\l_@@_tmpb_tl}
+%   \l_@@_tmp_skip,\l_@@_tmpa_seq,\l_@@_tmpa_tl,\l_@@_tmpb_tl}
 % 临时变量。
 %    \begin{macrocode}
 \box_new:N   \l_@@_tmpa_box
@@ -451,6 +451,7 @@ To produce the documentation run the original source files ending with
 \int_new:N   \l_@@_tmpa_int
 \int_new:N   \l_@@_tmpb_int
 \skip_new:N  \l_@@_tmp_skip
+\seq_new:N   \l_@@_tmpa_seq
 \tl_new:N    \l_@@_tmpa_tl
 \tl_new:N    \l_@@_tmpb_tl
 %    \end{macrocode}
@@ -715,6 +716,16 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 %\cs_new:Npn \@@_name:nn #1#2
 %  { \group_begin: \@@_fmt:n {#1} \@@_name:n {#2} \group_end: }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_info_if_empty:nF,\@@_supv_if_empty:nF}
+% 用于封面，判断信息是否为空，只有非空才需要输出。
+%    \begin{macrocode}
+\cs_new:Npn \@@_info_if_empty:nF #1
+  { \tl_if_empty:cF { g_@@_info_ #1 _tl } }
+\cs_new:Npn \@@_supv_if_empty:nF #1
+  { \clist_if_empty:cF { g_@@_info_supv #1 _clist } }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1386,78 +1397,67 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{
-%   \@@_g_cover_en_supv_item:,
-%   \@@_g_cover_en_supv_dims:NN,
-%   \@@_g_cover_en_supv_label:n,
-%   \@@_g_cover_en_supv_strut:,
-%   \@@_g_cover_en_supv_item:n}
+% \begin{macro}{\@@_g_cover_en_supv:}
+% 研究生英文封面的导师信息。这里用一个自然宽度的对齐盒子承载所有导师
+% 行，由 \TeX{} 对齐算法决定标签和值的列宽；外层只负责把整个对象居中。
+% 字母列表只表示三个继承字段的名字，不承载结构化内容，因此用
+% |clist| 即可；真正的行数据存入序列，每个元素是一组 |{<label>}{<value>}|。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_g_cover_en_supv_item:
+\cs_new_protected:Npn \@@_g_cover_en_supv:
   {
-    \@@_g_cover_en_supv_dims:NN \l_@@_tmpa_dim \l_@@_tmpb_dim
-    \skip_set_eq:NN \l_@@_tmp_skip \tex_baselineskip:D
-    \hbox_to_wd:nn { \textwidth }
-      {
-        \tex_hss:D
-        \@@_box_vcenter:n
-          {
-            \clist_map_inline:nn { a, b, c }
-              { \@@_g_cover_en_supv_item:n {##1} }
-          }
-        \tex_hss:D
-      }
-  }
-\cs_new_protected:Npn \@@_g_cover_en_supv_dims:NN #1#2
-  {
-    \dim_zero:N #1
-    \dim_zero:N #2
+    \seq_clear:N \l_@@_tmpa_seq
     \clist_map_inline:nn { a, b, c }
-      {
-        \@@_info_if_empty:nF { supv ##1 _en }
-          {
-            \hbox_set:Nn \l_@@_tmpa_box
-              { \@@_name:n { supv ##1 _en } }
-            \dim_set:Nn #1 { \dim_max:nn {#1} { \box_wd:N \l_@@_tmpa_box } }
-            \hbox_set:Nn \l_@@_tmpa_box
-              { \@@_info:n { supv ##1 _en } }
-            \dim_set:Nn #2 { \dim_max:nn {#2} { \box_wd:N \l_@@_tmpa_box } }
-          }
-      }
+      { \@@_g_cover_en_supv_item:Nn \l_@@_tmpa_seq {##1} }
+    \@@_box_center:nn { \textwidth }
+      { \@@_g_cover_en_supv_table:N \l_@@_tmpa_seq }
   }
-\cs_new_protected:Npn \@@_g_cover_en_supv_strut:
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_en_supv_table:N}
+% 先把各行展开为记号列表，再交给一个私有的 \tn{halign}。
+% 这样保留 \TeX{} 对齐算法的自然列宽，
+% 同时避免在 \tn{halign} 扫描正文时执行映射函数。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_en_supv_table:N #1
   {
-    \rule [ - \dim_eval:n { 3 \l_@@_tmp_skip / 10 } ]
-      { \c_zero_dim } { \dim_eval:n { \l_@@_tmp_skip } }
-  }
-\cs_new_protected:Npn \@@_g_cover_en_supv_item:n #1
-  {
-    \@@_info_if_empty:nF { supv #1 _en }
+    \tl_clear:N \l_@@_tmpa_tl
+    \seq_map_inline:Nn #1
+      { \tl_put_right:Nn \l_@@_tmpa_tl { \@@_g_cover_en_supv_row:nn ##1 } }
+    \vbox:n
       {
-        \hbox:n
+        \tex_halign:D
           {
-            \@@_g_cover_en_supv_strut:
-            \skip_horizontal:n { 6 pt }
-            \hbox_to_wd:nn { \l_@@_tmpa_dim }
-              { \tex_hss:D \@@_name:n { supv #1 _en } }
-            \@@_box_left:nn { 20.5 bp }
-              { \skip_horizontal:n { 2 bp } : }
-            \@@_box_left:nn { \l_@@_tmpb_dim }
-              { \@@_info:n { supv #1 _en } }
-            \skip_horizontal:n { 6 pt }
+            \tex_hfil:D ## \@@_box_left:nn { 20.5 bp }
+              { \skip_horizontal:n { 2 bp } \@@_name:n { colon _en } }
+            & ## \tex_hfil:D \tex_cr:D
+            \l_@@_tmpa_tl
           }
       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_info_if_empty:nF,\@@_supv_if_empty:nF}
-% 判断封面信息是否为空，只有非空才需要输出
+% \begin{macro}{\@@_g_cover_en_supv_row:nn}
+% 只负责生成一行：第一列右对齐，其后接固定 |20.5bp| 的冒号盒子；
+% 第二列左对齐。行首的 \tn{strut} 保留原 |tabular| 行的高度和深度。
 %    \begin{macrocode}
-\cs_new:Npn \@@_info_if_empty:nF #1
-  { \tl_if_empty:cF { g_@@_info_ #1 _tl } }
-\cs_new:Npn \@@_supv_if_empty:nF #1
-  { \clist_if_empty:cF { g_@@_info_supv #1 _clist } }
+\cs_new_protected:Npn \@@_g_cover_en_supv_row:nn #1#2
+  { \strut #1 & #2 \tex_cr:D }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_en_supv_item:Nn}
+% 构造导师信息项，只包含实际需要输出的导师行。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_en_supv_item:Nn #1#2
+  {
+    \@@_info_if_empty:nF { supv #2 _en }
+      {
+        \seq_put_right:Nn #1
+          { { \@@_name:n { supv #2 _en } } { \@@_info:n { supv #2 _en } } }
+      }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4513,7 +4513,7 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { g / cover-en / supv }
   {
     content     =
-      \@@_box_paragraph_top_to_ht:nn { 3.0 cm } { \@@_g_cover_en_supv_item: },
+      \@@_box_paragraph_top_to_ht:nn { 3.0 cm } { \@@_g_cover_en_supv: },
     format      = \@@_zihao:nn { 2.1 } { -3 }
   }
 %    \end{macrocode}
