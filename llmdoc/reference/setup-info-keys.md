@@ -65,6 +65,19 @@ The current compatibility set includes:
   `discipline-level-2`;
 - spine fields: `include-spine`, `spine-title`, `spine-author`, `spine-font`.
 
+## Assignment Convention
+
+Global variables must use global assignment variants (`\tl_gset:N`,
+`\bool_gset:N`, `\clist_gset:N`, `\tl_gset_eq:NN`). Never use local `_set:N`
+variants for global variable declarations.
+
+This applies to all key handlers under `\thusetup`, both option keys
+(`thesis-type`, `language`, `anonymous`, `fontset`, `math-font`, `originality`,
+`copyright`, `config`, `include-spine`) and info keys (title, keywords, author,
+student-id, department, degree-category, discipline, all supervisor variants,
+professional-field, engineering-field, dates, secret-level, secret-year, postdoc
+fields, spine fields).
+
 ## Anonymous Mode
 
 Anonymous filtering must cover both the canonical grouped keys and the legacy

@@ -8,6 +8,8 @@ includetests = {
     "01-title-page-doctor-2-1",
     "01-title-page-master-1-1",
     "01-title-page-master-1-3",
-    "01-title-page-master-1-5"
+    "01-title-page-master-1-5",
+    "01-title-page-master-1-6",
+    "01-title-page-proposal"
 }
 excludetests = {}

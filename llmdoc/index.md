@@ -76,5 +76,10 @@ task.
 - `memory/reflections/2026-05-07-cover-en-title.md`: reflection on the
   graduate English cover title/supervisor box alignment fixes, rejected
   template extensions, and the no-`comp.pdf` regeneration boundary.
+- `memory/reflections/2026-05-08-proposal-cover.md`: reflection on the
+  graduate proposal cover implementation, the pivot from `_thesis`/`_proposal`
+  CS naming to bool dispatch, and the English cover name-token split.
+- `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
+  reference pages.
 
 Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.

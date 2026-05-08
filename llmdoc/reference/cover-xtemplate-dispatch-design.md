@@ -38,8 +38,9 @@ Use short, stable slugs:
 - degree: `doctor`, `master`;
 - degree type: `academic`, `professional` (used directly from
   `\g_@@_info_dtype_tl`, no longer mapped through an integer);
-- thesis type: `thesis`, `proposal` (used as CS name suffix, e.g.,
-  `\@@_g_cover_degree_thesis:`);
+- thesis type: `thesis`, `proposal` (stored as `\g_@@_opt_proposal_bool`;
+  used for inline `\bool_if:NTF` dispatch within shared functions rather than
+  CS name suffixes);
 - main language: `zh`, `en`;
 - boolean surfaces: `true`, `false`.
 
@@ -333,24 +334,27 @@ Example: English supervisor label varies by degree level:
   { supv a _en } { Thesis~ Supervisor } { Dissertation~ Supervisor }
 ```
 
-### 3. `_thesis` / `_proposal` CS naming convention
+### 3. `\bool_if:NTF` dispatch on thesis-type
 
-Functions that differ between thesis and proposal covers carry a suffix:
-
-```tex
-\cs_new_protected:Npn \@@_g_cover_degree_thesis:   { ... }
-\cs_new_protected:Npn \@@_g_cover_degree_proposal: { ... }
-```
-
-The element declaration selects the right variant:
+Thesis/proposal variants within a shared rendering function use
+`\bool_if:NTF \g_@@_opt_proposal_bool` for inline dispatch. A single function
+handles both branches:
 
 ```tex
-content = \@@_g_cover_degree_thesis:,
+\cs_new_protected:Npn \@@_g_cover_degree:
+  {
+    \@@_parens:n
+      {
+        \bool_if:NTF \g_@@_opt_proposal_bool
+          { ... proposal text ... }
+          { ... thesis text ... }
+      }
+  }
 ```
 
-When the proposal version is added, only the `content` key needs to change
-(or be selected by a guard). This avoids `\bool_if:nTF` on
-`\g_@@_opt_proposal_bool` inside the rendering function.
+This keeps the thesis/proposal difference visible in one place and works when
+the two branches only vary in which name tokens they compose, not in the
+rendering structure.
 
 ## Mapping Table
 

@@ -1046,6 +1046,15 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 %
+% \begin{macro}{\@@_parens:n}
+% 生成括号。目前只用于研究生封面的学位信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_parens:n #1
+  { \@@_name:n { paren l } #1 \@@_name:n { paren r } }
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % \begin{macro}{\@@_datea:n,\@@_dateb:n}
 % 从 ISO 格式的日期字符串生成中英文日期文本。
 % 对于每种类型的模板，实际上只有两种日期格式。我们利用 DocStrip 进行分别定义。
@@ -1549,7 +1558,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
     degree-type         .choices:nn =
       { academic, professional }
-      { \tl_set:Nn \g_@@_info_dtype_tl {#1} },
+      { \tl_gset:Nn \g_@@_info_dtype_tl {#1} },
     degree-type             .initial:n  = academic,
 %    \end{macrocode}
 % \end{macro}
@@ -1560,9 +1569,9 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
     thesis-type              .choice:,
     thesis-type / thesis       .code:n  =
-      { \bool_set_false:N \g_@@_opt_proposal_bool },
+      { \bool_gset_false:N \g_@@_opt_proposal_bool },
     thesis-type / proposal .code:n  =
-      { \bool_set_true:N  \g_@@_opt_proposal_bool },
+      { \bool_gset_true:N  \g_@@_opt_proposal_bool },
     thesis-type             .initial:n  = thesis,
 %    \end{macrocode}
 % \end{macro}
@@ -1573,9 +1582,9 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
     language              .choice:,
     language / chinese     .code:n  =
-      { \bool_set_true:N  \g_@@_opt_chinese_bool },
+      { \bool_gset_true:N  \g_@@_opt_chinese_bool },
     language / english      .code:n  =
-      { \bool_set_false:N \g_@@_opt_chinese_bool },
+      { \bool_gset_false:N \g_@@_opt_chinese_bool },
     language             .initial:n  = chinese,
 %    \end{macrocode}
 % \end{macro}
@@ -1586,9 +1595,9 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
     main-language              .choice:,
     main-language / chinese     .code:n  =
-      { \bool_set_true:N  \g_@@_opt_chinese_bool },
+      { \bool_gset_true:N  \g_@@_opt_chinese_bool },
     main-language / english      .code:n  =
-      { \bool_set_false:N \g_@@_opt_chinese_bool },
+      { \bool_gset_false:N \g_@@_opt_chinese_bool },
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1660,7 +1669,7 @@ To produce the documentation run the original source files ending with
 % \changes{v0.1.0}{2025/05/04}{新增盲审模式选项。}
 % 盲审模式。
 %    \begin{macrocode}
-    anonymous         .bool_set:N  = \g_@@_opt_anon_bool,
+    anonymous        .bool_gset:N  = \g_@@_opt_anon_bool,
     anonymous          .initial:n  = false,
 %    \end{macrocode}
 % \end{macro}
@@ -1686,7 +1695,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
     fontset         .choices:nn =
       { windows, mac, fandol, ubuntu, none }
-      { \tl_set_eq:NN \g_@@_info_fontset_tl \l_keys_choice_tl },
+      { \tl_gset_eq:NN \g_@@_info_fontset_tl \l_keys_choice_tl },
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1708,7 +1717,7 @@ To produce the documentation run the original source files ending with
         asana, cambria, fira, garamond, lm, libertinus, newcm,
         stix, bonum, dejavu, pagella, schola, termes, xits, none
       }
-      { \tl_set_eq:NN \g_@@_font_math_tl  \l_keys_choice_tl },
+      { \tl_gset_eq:NN \g_@@_font_math_tl \l_keys_choice_tl },
     math-font          .initial:n  = xits,
 %    \end{macrocode}
 % \end{macro}
@@ -1717,7 +1726,7 @@ To produce the documentation run the original source files ending with
 % \changes{v0.1.0}{2025/05/04}{新增原创性声明路径选项。}
 % 原创性声明扫描文件路径。
 %    \begin{macrocode}
-    originality         .tl_set:N  = \g_@@_path_originality_tl,
+    originality        .tl_gset:N  = \g_@@_path_originality_tl,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1725,14 +1734,14 @@ To produce the documentation run the original source files ending with
 % \changes{v0.1.0}{2025/05/04}{新增授权书路径选项。}
 % 授权书扫描文件路径。
 %    \begin{macrocode}
-    copyright           .tl_set:N  = \g_@@_path_copyright_tl,
+    copyright          .tl_gset:N  = \g_@@_path_copyright_tl,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{config}
 % 配置文件路径。
 %    \begin{macrocode}
-    config           .clist_set:N  = \g_@@_config_clist
+    config          .clist_gset:N  = \g_@@_config_clist
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2223,125 +2232,125 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{title,title*}
 % 题目。中文题目可使用 |\\| 手动断行。以下标注星号（|*|）的皆为对应的英文字段。
 %    \begin{macrocode}
-    title                   .tl_set:N = \g_@@_info_title_tl          ,
-    title                  .initial:n = { 空 }                       ,
-    title*                  .tl_set:N = \g_@@_info_title_en_tl       ,
-    title*                 .initial:n = { Empty }                    ,
+    title                   .tl_gset:N = \g_@@_info_title_tl          ,
+    title                   .initial:n = { 空 }                       ,
+    title*                  .tl_gset:N = \g_@@_info_title_en_tl       ,
+    title*                  .initial:n = { Empty }                    ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{keywords,keywords*}
 % 关键词列表。
 %    \begin{macrocode}
-    keywords             .clist_set:N = \g_@@_info_keywords_clist    ,
-    keywords*            .clist_set:N = \g_@@_info_keywords_en_clist ,
+    keywords             .clist_gset:N = \g_@@_info_keywords_clist    ,
+    keywords*            .clist_gset:N = \g_@@_info_keywords_en_clist ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{author,author*}
 % 年级、学号、姓名。
 %    \begin{macrocode}
-    author                  .tl_set:N = \g_@@_info_author_tl        ,
-    author*                 .tl_set:N = \g_@@_info_author_en_tl     ,
+    author                  .tl_gset:N = \g_@@_info_author_tl         ,
+    author*                 .tl_gset:N = \g_@@_info_author_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{student-id,author,author*}
 % 学号。
 %    \begin{macrocode}
-    student-id              .tl_set:N = \g_@@_info_stuid_tl          ,
+    student-id              .tl_gset:N = \g_@@_info_stuid_tl          ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{department,department*}
 % 院系、专业、方向。
 %    \begin{macrocode}
-    department              .tl_set:N = \g_@@_info_dept_tl           ,
-    department*             .tl_set:N = \g_@@_info_dept_en_tl        ,
+    department              .tl_gset:N = \g_@@_info_dept_tl           ,
+    department*             .tl_gset:N = \g_@@_info_dept_en_tl        ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{degree-category,degree-category*}
 % 申请学位的学科门类或专业学位类别。
 %    \begin{macrocode}
-    degree-category         .tl_set:N = \g_@@_info_degree_tl         ,
-    degree-category*        .tl_set:N = \g_@@_info_degree_en_tl      ,
+    degree-category         .tl_gset:N = \g_@@_info_degree_tl         ,
+    degree-category*        .tl_gset:N = \g_@@_info_degree_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{discipline,discipline*}
 % 专业方向。
 %    \begin{macrocode}
-    discipline              .tl_set:N = \g_@@_info_discip_tl         ,
-    discipline*             .tl_set:N = \g_@@_info_discip_en_tl      ,
+    discipline              .tl_gset:N = \g_@@_info_discip_tl         ,
+    discipline*             .tl_gset:N = \g_@@_info_discip_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{supervisor,supervisor*}
 % 导师信息。中文导师全称使用 |clist| 存储，便于进行分割。
 %    \begin{macrocode}
-    supervisor           .clist_set:N = \g_@@_info_supva_clist       ,
-    supervisor*             .tl_set:N = \g_@@_info_supva_en_tl       ,
+    supervisor           .clist_gset:N = \g_@@_info_supva_clist       ,
+    supervisor*             .tl_gset:N = \g_@@_info_supva_en_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{associate-supervisor,associate-supervisor*}
 % 导师信息。
 %    \begin{macrocode}
-    associate-supervisor .clist_set:N = \g_@@_info_supvb_clist       ,
-    associate-supervisor*   .tl_set:N = \g_@@_info_supvb_en_tl       ,
+    associate-supervisor .clist_gset:N = \g_@@_info_supvb_clist       ,
+    associate-supervisor*   .tl_gset:N = \g_@@_info_supvb_en_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{co-supervisor,co-supervisor*}
 % 导师信息。
 %    \begin{macrocode}
-    co-supervisor        .clist_set:N = \g_@@_info_supvc_clist       ,
-    co-supervisor*          .tl_set:N = \g_@@_info_supvc_en_tl       ,
-    joint-supervisor     .clist_set:N = \g_@@_info_supvc_clist       ,
-    joint-supervisor*       .tl_set:N = \g_@@_info_supvc_en_tl       ,
+    co-supervisor        .clist_gset:N = \g_@@_info_supvc_clist       ,
+    co-supervisor*          .tl_gset:N = \g_@@_info_supvc_en_tl       ,
+    joint-supervisor     .clist_gset:N = \g_@@_info_supvc_clist       ,
+    joint-supervisor*       .tl_gset:N = \g_@@_info_supvc_en_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{professional-field,professional-field*}
 % 专业学位领域。
 %    \begin{macrocode}
-    professional-field      .tl_set:N = \g_@@_info_pfield_tl         ,
-    professional-field*     .tl_set:N = \g_@@_info_pfield_en_tl      ,
+    professional-field      .tl_gset:N = \g_@@_info_pfield_tl         ,
+    professional-field*     .tl_gset:N = \g_@@_info_pfield_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{engineering-field,engineering-field*}
 % 工程领域。
 %    \begin{macrocode}
-    engineering-field       .tl_set:N = \g_@@_info_efield_tl         ,
-    engineering-field*      .tl_set:N = \g_@@_info_efield_en_tl      ,
+    engineering-field       .tl_gset:N = \g_@@_info_efield_tl         ,
+    engineering-field*      .tl_gset:N = \g_@@_info_efield_en_tl      ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{date}
 % 提交日期，初始值为编译当天日期。
 %    \begin{macrocode}
-    date                    .tl_set:N = \g_@@_info_date_tl           ,
-    date                   .initial:V = \c_@@_today_tl               ,
+    date                    .tl_gset:N = \g_@@_info_date_tl           ,
+    date                    .initial:V = \c_@@_today_tl               ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{start-date,end-date}
 % 博士后课题开始日期和结束日期。
 %    \begin{macrocode}
-    start-date              .tl_set:N = \g_@@_info_startdate_tl      ,
-    start-date             .initial:V = \c_@@_today_tl               ,
-    end-date                .tl_set:N = \g_@@_info_enddate_tl        ,
-    end-date               .initial:V = \c_@@_today_tl               ,
+    start-date              .tl_gset:N = \g_@@_info_startdate_tl      ,
+    start-date              .initial:V = \c_@@_today_tl               ,
+    end-date                .tl_gset:N = \g_@@_info_enddate_tl        ,
+    end-date                .initial:V = \c_@@_today_tl               ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{secret-level,secret-level}
 % 。
 %    \begin{macrocode}
-    secret-level            .tl_set:N = \g_@@_info_secretlv_tl       ,
-    secret-year             .tl_set:N = \g_@@_info_secretyr_tl       ,
+    secret-level            .tl_gset:N = \g_@@_info_secretlv_tl       ,
+    secret-year             .tl_gset:N = \g_@@_info_secretyr_tl       ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2350,22 +2359,22 @@ To produce the documentation run the original source files ending with
 % 博士后封面相关信息，包括中国图书资料分类法》的类号、《国际十进制分类法
 % UDC》的类号、论文编号、一级学科名称、二级学科名称。
 %    \begin{macrocode}
-    clc                     .tl_set:N = \g_@@_info_clc_tl            ,
-    udc                     .tl_set:N = \g_@@_info_udc_tl            ,
-    id                      .tl_set:N = \g_@@_info_id_tl             ,
-    discipline-level-1      .tl_set:N = \g_@@_info_discipa_tl        ,
-    discipline-level-2      .tl_set:N = \g_@@_info_discipb_tl        ,
+    clc                     .tl_gset:N = \g_@@_info_clc_tl            ,
+    udc                     .tl_gset:N = \g_@@_info_udc_tl            ,
+    id                      .tl_gset:N = \g_@@_info_id_tl             ,
+    discipline-level-1      .tl_gset:N = \g_@@_info_discipa_tl        ,
+    discipline-level-2      .tl_gset:N = \g_@@_info_discipb_tl        ,
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{include-spine,spine-title,spine-author,spine-font}
 % 书脊相关信息。
 %    \begin{macrocode}
-    include-spine         .bool_set:N = \g_@@_opt_spine_bool         ,
-    include-spine          .initial:n = false                        ,
-    spine-title             .tl_set:N = \g_@@_info_spine_title_tl    ,
-    spine-author            .tl_set:N = \g_@@_info_spine_author_tl   ,
-    spine-font              .tl_set:N = \g_@@_info_spine_font_tl
+    include-spine         .bool_gset:N = \g_@@_opt_spine_bool         ,
+    include-spine           .initial:n = false                        ,
+    spine-title             .tl_gset:N = \g_@@_info_spine_title_tl    ,
+    spine-author            .tl_gset:N = \g_@@_info_spine_author_tl   ,
+    spine-font              .tl_gset:N = \g_@@_info_spine_font_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4100,7 +4109,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { g / cover-zh / degree }
   {
-    content     = \@@_g_cover_degree_thesis:,
+    content     = \@@_g_cover_degree:,
     format      =
       \@@_fontsize:nn { 16 bp } { 22 bp }
       \@@_set_ccglue:N \c_@@_bp_dim,
@@ -4155,13 +4164,25 @@ To produce the documentation run the original source files ending with
 %
 % \begin{macro}{\@@_g_cover_degree:}
 % 研究生封面的学位信息。
+% 分为学位论文和选题报告两种字样。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_g_cover_degree_thesis:
+\cs_new_protected:Npn \@@_g_cover_degree:
   {
-    \@@_name:n { apply begin }
-    \@@_info:n { degree      }
-    \@@_name:n { pro degree  }
-    \@@_name:n { apply end   }
+    \@@_parens:n
+      {
+        \bool_if:NTF \g_@@_opt_proposal_bool
+          {
+            \@@_name:n { thu         }
+            \clist_item:Nn \c_@@_name_type_clist { \g_@@_info_type_int }
+            \@@_name:n { proposal    }
+          }
+          {
+            \@@_name:n { apply begin }
+            \@@_info:n { degree      }
+            \@@_name:n { pro degree  }
+            \@@_name:n { apply end   }
+          }
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4202,9 +4223,7 @@ To produce the documentation run the original source files ending with
 % \cs{thu@titlepage@info@tabular} 先插入 |2.3cm| 左缩进，
 % 再进入单列 |tabular|；|tabular| 自身还会在左、右两侧产生
 % |6pt| 的列间距。这里保留左侧 |2.3cm + 6pt|，
-% 右侧 |6pt| 在每一行末尾补回。导师信息在本系列函数中直接从
-% |g_@@_info_supv|\meta{letter}|_clist| 判断和取值，不依赖通用信息栏
-% 的 \cs{@@_format_supv:} 预格式化副作用。
+% 右侧 |6pt| 在每一行末尾补回。
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_info_body:NN #1#2
   {
@@ -4246,6 +4265,7 @@ To produce the documentation run the original source files ending with
       {
         \@@_g_cover_info_item:NN   #1 #2
         \@@_g_cover_author_item:NN #1 #2
+        \@@_g_cover_stuid_item:NN  #1 #2
         \@@_g_cover_supv_item:NN   #1 #2
       }
   }
@@ -4276,6 +4296,17 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_g_cover_author_item:NN
   { \@@_g_cover_author_row:NN }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_g_cover_stuid_item:NN}
+% 学号信息项的生成器。只用于研究生选题报告封面。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_g_cover_stuid_item:NN #1#2
+  {
+    \bool_if:NT \g_@@_opt_proposal_bool
+      { \@@_g_cover_info_row:NNn #1 #2 { stuid } }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5339,8 +5370,8 @@ To produce the documentation run the original source files ending with
   {
     { acknowledgement   } { 致 \qquad{} 谢                     },
     { acknowledgement a } { 致谢（盲审阶段，暂时隐去）         },
-%<def-g>    { apply begin       } { (申请清华大学                      },
-%<def-g>    { apply end         } { 学位论文)                          },
+%<def-g>    { apply begin       } { 申请清华大学                       },
+%<def-g>    { apply end         } { 学位论文                           },
 %<def-u>    { author            } { 姓名                               },
 %<def-g-aca>    { author            } { 研究生                             },
 %<def-g-pro>    { author            } { 申请人                             },
@@ -5368,11 +5399,14 @@ To produce the documentation run the original source files ending with
     { originality       } { 声 \qquad{} 明                     },
     { orig sign         } { 作者签名                           },
     { paper list        } { 发表文章目录                       },
+    { paren l           } { (                                  },
+    { paren r           } { )                                  },
     { pdf creator       } { LaTeX~ with~ thuthesis3~ class     },
 %<def-g-pro>    { p field           } { 专业领域                           },
                 { preface           } { 前 \qquad{} 言                     },
 %<def-g-aca>    { pro degree        } {                                    },
 %<def-g-pro>    { pro degree        } { 专业                               },
+    { proposal          } { 学位论文选题报告                   },
 %<def-p>    { report            } { 博士后研究工作报告                 },
 %<def-p>    { secret lv         } { 密级                               },
 %<def-u|def-g>    { stuid             } { 学号                               },
@@ -5410,7 +5444,9 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 %<*def-g>
 \@@_define_name_grad:nnn
-  { supv a _en } { Thesis~ Supervisor } { Dissertation~ Supervisor }
+  { thesis _en } { Thesis } { Dissertation \c_space_tl }
+\@@_define_name_en:nn
+  { supv a } { \c_@@_name_thesis_en_tl Supervisor }
 %</def-g>
 %    \end{macrocode}
 %
@@ -5463,7 +5499,7 @@ To produce the documentation run the original source files ending with
 %<*def-g>
 \tl_const:Nn \c_@@_text_cover_en_tl
   {
-    Dissertation~ submitted~ to \\
+    \c_@@_name_thesis_en_tl submitted~ to \\
     \textbf { \c_@@_name_thu_en_tl } \\
     in~ partial~ fulfillment~ of~ the~ requirement~ \\
     for~ the~ degree~ of
