@@ -1,7 +1,8 @@
 # Cover Structure and TODO
 
 This note organizes cover-related behavior from `../thuthesis2e` and the
-current `thuthesis3` implementation, as inspected on 2026-05-06.
+current `thuthesis3` implementation, as inspected on 2026-05-06 and updated
+for local cover-helper organization on 2026-05-08.
 
 Use `../thuthesis2e/master` as the behavior oracle. Use this file to keep the
 LaTeX3 cover migration focused on reusable structure, variant counts, and gaps.
@@ -212,6 +213,21 @@ taxonomy. Also avoid `cover-g-a`/`cover-g-b` for graduate pages: the graduate
 split is a language split, so `cover-g-zh`/`cover-g-en` records more meaning
 than an ordered pair.
 
+### Cover helper locality
+
+Cover-specific helper functions live next to the element or page instances that
+call them in `source/thuthesis3.dtx`, rather than in the earlier generic helper
+section. Treat this as an organization rule for layout contracts: helpers for
+`g / cover-zh / ...` stay with the graduate Chinese cover instances, and helpers
+for `g / cover-en / ...` stay with the graduate English cover instances. Keep
+only genuinely shared box, name, date, and setup utilities in the generic helper
+area.
+
+This locality makes the `xtemplate` instance body and its private formatting
+helpers readable as one unit. It is especially useful for cover parity work,
+where a helper often encodes one legacy page metric and is not a reusable
+document-wide primitive.
+
 ## Local Title-Page Fixture Mapping
 
 The imported `testfiles/01-title-page/*.tex` files are best understood as a
@@ -318,6 +334,15 @@ The matching `thuthesis3` implementation rules are:
   `\thu@name@title` layout: pad the stretched name to `3cm`, then typeset the
   title in `3em`. The older generic `4em + 1em + 3em` split places the title
   about `5pt` too far left.
+- In `cover-g-zh`, author output is a fixed row between ordinary information
+  rows and supervisor rows. Keep it as an explicit graduate author row rather
+  than routing it through a case branch in the ordinary info-value formatter.
+  This keeps the common row geometry shared while making the special value
+  treatment local to the graduate cover.
+- Be careful when removing `author` from a cover item list: the historical
+  `\c_@@_name_coveritem_clist` is shared by docstrip branches. Graduate Chinese
+  can emit author separately, but undergraduate `u / cover / info` still relies
+  on the generic cover-info list to include its author row.
 - The graduate secret mark format should use the explicit oracle metrics
   `\sffamily\fontsize{16bp}{20bp}\selectfont`. The generic
   `\@@_zihao:n { 3 }` selects a different line skip here, which changes the
