@@ -237,6 +237,23 @@ helpers readable as one unit. It is especially useful for cover parity work,
 where a helper often encodes one legacy page metric and is not a reusable
 document-wide primitive.
 
+### Shared supervisor formatting helpers
+
+`\@@_cover_format_name:n` and `\@@_cover_format_title:n` (`source/thuthesis3.dtx`)
+are class-level shared helpers used by both graduate and undergraduate covers:
+
+- `\@@_cover_format_name:n`: pads the name to `3cm` width then stretches text
+  over `4em`.
+- `\@@_cover_format_title:n`: stretches title text over `3em`.
+- `\@@_cover_format_supv:NNNn` / `\@@_cover_format_supv:n`: pop a supervisor
+  clist, extract name and title tokens, and format them through the shared
+  name/title helpers.
+
+These were originally graduate-only (`\@@_g_cover_format_*`) and were promoted
+to class-level when the undergraduate cover needed the same `3cm`+`4em`/`3em`
+layout contract. Graduate call sites (`\@@_g_cover_author_row:NN`,
+`\@@_g_cover_supv_row:NNn`) were updated to use the shared names.
+
 ## Local Title-Page Fixture Mapping
 
 The imported `testfiles/01-title-page/*.tex` files are best understood as a
@@ -491,8 +508,10 @@ title and supervisor box fixes.
 - `cover-g-en` degree text is now handled through name lookup
   (`\@@_name:n`), and academic/professional differences are encoded by docstrip
   guards in the split `.def` files rather than runtime conditionals.
-- `cover-u/secret` currently contains a fixed `机密10年` string instead of using
-  the inherited secret-level and secret-year info keys.
+- `cover-u/secret` now uses the dynamic `\g_@@_info_secretlv_tl` and
+  `\g_@@_info_secretyr_tl` info keys, matching the graduate Chinese cover pattern.
+  The element uses `\parbox[t][0cm][t]{\textwidth}{...}` with right-flushed
+  content and `19bp` bottom-skip.
 - The hook body selects page instances by docstrip guard (`def-u`, `def-g`,
   `def-p`), but it does not yet express all legacy runtime distinctions such as
   proposal versus thesis, optional spine, scan-file replacement, or isolated
@@ -539,12 +558,20 @@ title and supervisor box fixes.
   - professional field handling;
   - supervisor, associate supervisor, and co-supervisor label/content rules;
   - English date formatting.
-- [ ] Finish `cover-u` parity:
-  - dynamic secret rendering;
-  - logo/name-image dimensions and spacing;
-  - English-major title behavior;
-  - optional co-supervisor label width behavior;
-  - bachelor proposal label if retained from the legacy surface.
+- [x] Finish `cover-u` parity (bulk layout complete, see below):
+  - [x] dynamic secret rendering (`\g_@@_info_secretlv_tl` + `\g_@@_info_secretyr_tl`);
+  - [x] logo/name-image dimensions and spacing (two-file system:
+    `thu-fig-logo.pdf` at 50.4bp + `thu-text-logo.pdf` at 117bp raised 7bp,
+    10bp gap, -5bp left shift);
+  - [x] thesis label (`\ziju{0.3}`, `48bp` bottom-skip);
+  - [x] title element (centered `\parbox[t][136bp]{\linewidth}`,
+    `\fontsize{26bp}{32.5bp}`, removed `题目：` label);
+  - [x] date element (`\fontsize{16bp}{24bp}`, `\ziju{0.03}`, `60bp` bottom-skip,
+    year-month format matching graduate);
+  - [x] page geometry (`top=3.8cm, bottom=3.2cm, left=3.2cm, right=3cm`);
+  - [ ] English-major title behavior (English title below Chinese title);
+  - [ ] optional co-supervisor label width behavior;
+  - [ ] bachelor proposal label if retained from the legacy surface.
 - [ ] Finish postdoc parity:
   - populate `cover-p-b`;
   - verify `cover-p-a` against `\thu@cover@postdoc`;

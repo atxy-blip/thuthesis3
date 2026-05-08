@@ -24,13 +24,13 @@ excludetests = {"info-anonymous-compat"}
 textfiles     = {"LICENSE", "README*.md", "CHANGELOG.md", "*.ins"}
 ctanreadme    = "README-CTAN.md"
 
-thunamefile    = "tsinghua-name-bachelor.pdf"
+thulogofiles  = {"thu-fig-logo.pdf", "thu-text-logo.pdf"}
 
 sourcefiledir = "source"
-sourcefiles   = {"*.dtx", thunamefile}
-installfiles  = {"*.cls", "*.def", thunamefile}
+sourcefiles   = {"*.dtx", table.unpack(thulogofiles)}
+installfiles  = {"*.cls", "*.def", table.unpack(thulogofiles)}
 
-binaryfiles   = {thunamefile}
+binaryfiles   = {table.unpack(thulogofiles)}
 
 typesetexe    = "xelatex"
 typesetfiles  = {"thuthesis3.dtx"}

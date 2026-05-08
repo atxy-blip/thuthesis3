@@ -79,6 +79,9 @@ task.
 - `memory/reflections/2026-05-08-proposal-cover.md`: reflection on the
   graduate proposal cover implementation, the pivot from `_thesis`/`_proposal`
   CS naming to bool dispatch, and the English cover name-token split.
+- `memory/reflections/2026-05-08-undergraduate-cover.md`: reflection on the
+  undergraduate cover layout update, shared supervisor formatting helpers,
+  two-logo system, and dynamic secret rendering.
 - `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
   reference pages.
 

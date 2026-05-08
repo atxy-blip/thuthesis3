@@ -1068,8 +1068,8 @@ To produce the documentation run the original source files ending with
 %<*(def-u|def-g|def-p)>
 \cs_new:Npn \@@_datea:n #1
   {
-%<def-u|def-p>    \@@_date_ymd_zh:www #1 \q_stop
-%<def-g>    \@@_date_ym_zh:www  #1 \q_stop
+%<def-p>    \@@_date_ymd_zh:www #1 \q_stop
+%<def-u|def-g>    \@@_date_ym_zh:www  #1 \q_stop
   }
 \cs_new:Npn \@@_dateb:n #1
   {
@@ -1088,13 +1088,9 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{\@@_zhdigits:nn}
 % 输出数字加年月日。
 %    \begin{macrocode}
-%<*(def-g|def-p)>
+%<*class>
 \cs_new:Npn \@@_zhdigits:nn #1#2
-  {
-%<def-g>    \zhnum_digits_null:n
-      { \int_to_arabic:n { #1 } } \zhnum_output:n { #2 }
-  }
-%</(def-g|def-p)>
+  { \int_to_arabic:n { #1 } \zhnum_output:n { #2 } }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1112,11 +1108,12 @@ To produce the documentation run the original source files ending with
 % 英文日期字样用于研究生英文封面，格式为 \meta{月份缩写}~\meta{日},~\meta{年}。
 % 其中，变量类型 |w| 表明参数符合特定语法格式，其参数必须经过完全展开。
 %    \begin{macrocode}
-%<*class>
 \cs_new:Npn \@@_date_ym_zh:www #1-#2-#3 \q_stop
   {
-    \@@_zhdigits:nn { #1 } { year  }
-    \@@_zhdigits:nn { #2 } { month }
+    \zhnum_digits_null:n { \int_to_arabic:n { #1 } }
+    \zhnum_output:n { year  }
+    \zhnum_number:n      { \int_to_arabic:n { #2 } }
+    \zhnum_output:n { month }
   }
 \cs_new:Npn \@@_date_ymd_zh:www #1-#2-#3 \q_stop
   { \__zhnum_date_aux:nnn { #1 } { #2 } { #3 } }
@@ -1224,6 +1221,37 @@ To produce the documentation run the original source files ending with
           }
       }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_format_supv:NNNn,\@@_cover_format_supv:n}
+% 将导师信息拆解为姓名和职称。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_format_supv:NNNn #1#2#3#4
+  {
+    \clist_set_eq:Nc #1 { g_@@_info_supv #4 _clist }
+    \clist_pop:NN #1 #2
+    \clist_pop:NN #1 #3
+    \@@_cover_format_name:V  #2
+    \@@_cover_format_title:V #3
+  }
+\cs_new_protected:Npn \@@_cover_format_supv:n
+  { \@@_cover_format_supv:NNNn \l_@@_tmp_clist \l_@@_tmpa_tl \l_@@_tmpb_tl }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_format_name:n,\@@_cover_format_name:V,
+%  \@@_cover_format_title:n,\@@_cover_format_title:V}
+% 导师条目在原 \cls{thuthesis} 中通过 \cs{thu@name@title}
+% 排版姓名和职称：姓名先补足到 |3cm|，姓名文字按 |4em| 分散，
+% 职称按 |3em| 分散。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cover_format_name:n #1
+  { \@@_box_pad:nn { 3 cm } { \@@_box_st:nn { 4 em } {#1} } }
+\cs_new_protected:Npn \@@_cover_format_title:n #1
+  { \@@_box_st:nn { 3 em } {#1} }
+\cs_generate_variant:Nn \@@_cover_format_name:n  { V }
+\cs_generate_variant:Nn \@@_cover_format_title:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4004,9 +4032,14 @@ To produce the documentation run the original source files ending with
 %<*def-u>
 \@@_declare_element:nn { u / cover / secret }
   {
-    content     = \@@_null: \hfill 机密10年,
+    content     =
+    \parbox[t][0cm][t]{\textwidth}{%
+      \hfill
+      \tl_if_empty:NF \g_@@_info_secretlv_tl
+        { \g_@@_info_secretlv_tl \c_space_tl \g_@@_info_secretyr_tl \zhnum_output:n { year } }
+    },
     format      = \@@_zihao:n { -4 },
-    bottom-skip = 0 pt plus 1 fill
+    bottom-skip = 19 bp
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4014,10 +4047,17 @@ To produce the documentation run the original source files ending with
 % \begin{macro}{u/cover/name-img}
 % 本科生封面校名图片实例。
 %    \begin{macrocode}
+\cs_new_protected:Npn \@@_include_graphics:nn #1
+  { \includegraphics [ width=#1] }
+\cs_generate_variant:Nn \@@_include_graphics:nn { nV }
 \@@_declare_element:nn { u / cover / name-img }
   {
-    content     = \exp_args:NV \includegraphics \c_@@_name_thunamefile_tl,
-    bottom-skip = 0.94 cm,
+    content     =
+    \hspace*{-5bp}
+    \@@_include_graphics:nV { 50.4 bp } \c_@@_name_thufiglogo_tl
+    \skip_horizontal:n { 10 bp }
+    \raisebox{7bp}{\@@_include_graphics:nV { 117 bp } \c_@@_name_thutextlogo_tl },
+    bottom-skip = 17 bp,
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4028,8 +4068,8 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { u / cover / thesis }
   {
     content     = \@@_name:n { thesis },
-    format      = \sffamily \bfseries \@@_zihao:n { -0 } \ziju { 0.5 },
-    bottom-skip = 1.8 cm
+    format      = \sffamily \bfseries \@@_zihao:n { -0 } \ziju { 0.3 },
+    bottom-skip = 48 bp
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4039,9 +4079,8 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { u / cover / title }
   {
-    content     = \hspace{1em}\makebox[54bp]{ \@@_zihao:nn { 1.2 } { -2 }题目：}
-    \parbox[t]{347bp}{ \@@_zihao:nn { 1.56 } { 1 } \@@_info:n { title } },
-    format      = \sffamily,
+    content     = \parbox[t][136bp]{\linewidth}{ \centering\@@_info:n { title } },
+    format      = \sffamily \fontsize{26bp}{32.5bp}\selectfont,
     bottom-skip = 1.9 cm
   }
 %    \end{macrocode}
@@ -4065,8 +4104,8 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { u / cover / date }
   {
     content = \@@_datea:V \g_@@_info_date_tl,
-    format  = \songti \@@_zihao:n { -4 },
-    bottom-skip = 0 pt plus 1 fill
+    format  = \fontsize{16bp}{24bp}\selectfont \ziju { 0.03 },
+    bottom-skip = 60 bp
   }
 %</def-u>
 %    \end{macrocode}
@@ -4375,44 +4414,13 @@ To produce the documentation run the original source files ending with
 \cs_new_protected:Npn \@@_g_cover_author_row:NN #1#2
   {
     \@@_g_cover_info_row:NNnn #1 #2 { author }
-      { \@@_g_cover_format_name:V \g_@@_info_author_tl }
+      { \@@_cover_format_name:V \g_@@_info_author_tl }
   }
 \cs_new_protected:Npn \@@_g_cover_supv_row:NNn #1#2#3
   {
     \@@_g_cover_info_row:NNnn #1 #2 { supv #3 }
-      { \@@_g_cover_format_supv:n {#3} }
+      { \@@_cover_format_supv:n {#3} }
   }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_g_cover_format_supv:NNNn,\@@_g_cover_format_supv:n}
-% 将导师信息拆解为姓名和职称。
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_g_cover_format_supv:NNNn #1#2#3#4
-  {
-    \clist_set_eq:Nc #1 { g_@@_info_supv #4 _clist }
-    \clist_pop:NN #1 #2
-    \clist_pop:NN #1 #3
-    \@@_g_cover_format_name:V  #2
-    \@@_g_cover_format_title:V #3
-  }
-\cs_new_protected:Npn \@@_g_cover_format_supv:n
-  { \@@_g_cover_format_supv:NNNn \l_@@_tmp_clist \l_@@_tmpa_tl \l_@@_tmpb_tl }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_g_cover_format_name:n,\@@_g_cover_format_name:V,
-%  \@@_g_cover_format_title:n,\@@_g_cover_format_title:V}
-% 导师条目在原 \cls{thuthesis} 中通过 \cs{thu@name@title}
-% 排版姓名和职称：姓名先补足到 |3cm|，姓名文字按 |4em| 分散，
-% 职称按 |3em| 分散。
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_g_cover_format_name:n #1
-  { \@@_box_pad:nn { 3 cm } { \@@_box_st:nn { 4 em } {#1} } }
-\cs_new_protected:Npn \@@_g_cover_format_title:n #1
-  { \@@_box_st:nn { 3 em } {#1} }
-\cs_generate_variant:Nn \@@_g_cover_format_name:n  { V }
-\cs_generate_variant:Nn \@@_g_cover_format_title:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4828,6 +4836,7 @@ To produce the documentation run the original source files ending with
 %
 % \begin{macro}{cover-u}
 % 默认本科生封面实例。
+% 装订线靠左 0.2 cm。
 %    \begin{macrocode}
 %<*def-u>
 \@@_declare_page:nn { cover-u }
@@ -4835,7 +4844,13 @@ To produce the documentation run the original source files ending with
     element     = { secret, name-img, thesis, title, info, date },
     prefix      = u / cover /,
     bottom-skip = 0 pt plus 1 fill,
-    geometry    = { vmargin = 1 in, hmargin = 1.25 in }
+    geometry    =
+      {
+        top    = 3.8cm,
+        bottom = 3.2cm,
+        left   = 3.2cm,
+        right  = 3cm,
+      }
   }
 %</def-u>
 %    \end{macrocode}
@@ -5415,7 +5430,8 @@ To produce the documentation run the original source files ending with
 %<def-u>    { thesis            } { 综合论文训练                       },
 %<def-p>    { thu bj            } { 清华大学 \quad （北京）            },
 %<def-p>    { thu hr            } { 清华大学人事处 （北京）            },
-    { thu name file     } { tsinghua-name-bachelor.pdf         },
+    { thu fig  logo     } { thu-fig-logo.pdf                   },
+    { thu text logo     } { thu-text-logo.pdf                  },
 %<def-u>    { title             } { 题目                               }
 %<def-p>    { udc               } { U \hfil D \hfil C                  }
   }
