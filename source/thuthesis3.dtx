@@ -1237,7 +1237,7 @@ To produce the documentation run the original source files ending with
 % |0.7| 和 |0.3| 分配高度、深度，因此这里用当前
 % \cs{baselineskip} 计算出同一组行度量，并通过参数向下传递。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_info_dims:
+\cs_new_protected:Npn \@@_cover_info_dims:NNNN #1#2#3#4
   {
     \dim_set:Nn \l_@@_strutheight_dim { 7 \tex_baselineskip:D / 10 }
     \dim_set:Nn \l_@@_strutdepth_dim  { 3 \tex_baselineskip:D / 10 }
@@ -1247,44 +1247,48 @@ To produce the documentation run the original source files ending with
 %<*def-u>
     \clist_if_empty:NTF \g_@@_info_supvc_clist
       {
-        \dim_set:Nn \l_@@_coverlabel_dim { 2.5 cm }
-        \dim_set:Nn \l_@@_covertext_dim  { 4   em }
+        \@@_dim_set_eq:Nn #3 { c label wd }
+        \@@_dim_set_eq:Nn #4 { c text  wd }
       }
       {
-        \dim_set:Nn \l_@@_coverlabel_dim { 86  bp }
-        \dim_set:Nn \l_@@_covertext_dim  { 5   em }
+        \@@_dim_set_eq:Nn #3 { c label wd a }
+        \@@_dim_set_eq:Nn #4 { c text  wd a }
       }
 %</def-u>
 %<*def-g>
-    \dim_set:Nn \l_@@_coverlabel_dim { 2.85 cm }
-    \dim_set:Nn \l_@@_covertext_dim  { 2.75 cm }
+    \@@_dim_set_eq:Nn #3 { c label wd }
+    \@@_dim_set_eq:Nn #4 { c text  wd }
 %</def-g>
   }
 %</(def-u|def-g)>
+%<*class>
+\cs_new_protected:Npn \@@_cover_info_dims:
+  {
+    \@@_cover_info_dims:NNNN \l_@@_strutheight_dim \l_@@_strutdepth_dim
+      \l_@@_coverlabel_dim \l_@@_covertext_dim
+  }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\@@_cover_info_body:NN}
 % 信息栏主体。原 \cls{thuthesis} 的
-% \cs{thu@titlepage@info@tabular} 先插入 |2.3cm| 左缩进，
+% \cs{thu@titlepage@info@tabular} 先插入左缩进，
 % 再进入单列 |tabular|；|tabular| 自身还会在左、右两侧产生
-% |6pt| 的列间距。这里保留左侧 |2.3cm + 6pt|，
-% 右侧 |6pt| 在每一行末尾补回。
+% |6pt| 的列间距。这里保留左侧间距加 |6pt|，
+% 右侧间距经过测试并不影响输出。
 %    \begin{macrocode}
-%<*class>
 \cs_new_protected:Npn \@@_cover_info_body:
   {
     \@@_cover_info_dims:
     \mode_leave_vertical:
     \skip_horizontal:n { \c_@@_cleftwd_dim }
     \skip_horizontal:n { 6 pt }
-    \@@_u_cover_info_table:
-    % \skip_horizontal:n { 6 pt }
+    \@@_cover_info_table:
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_u_cover_info_table:}
+% \begin{macro}{\@@_cover_info_table:}
 % 将各个信息项组织成一个整体表格盒子。原 \cls{thuthesis} 用
 % 单列 |tabular| 让所有非空 \cs{thu@info@item} 形成一个共同的对象；
 % 这里通过通用盒子函数 \cs{@@_box_vcenter:n} 复现该对象的基线和行间
@@ -1292,7 +1296,7 @@ To produce the documentation run the original source files ending with
 % 效果。项目顺序对应原 \cs{thu@titlepage@info}：
 % 先排培养单位、学科/专业领域、作者、学号等普通信息，再排导师信息。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_u_cover_info_table:
+\cs_new_protected:Npn \@@_cover_info_table:
   {
     \@@_box_vcenter:n
       {
@@ -1377,7 +1381,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_row_info:NNnn}
+% \begin{macro}{\@@_cover_row_info:nn}
 % 排版一行信息。原 \cls{thuthesis} \cs{thu@titlepage@info@tabular}
 % 的 4 个参数分别给出左缩进、标签盒宽、标签文字宽和冒号盒宽。
 % 标签文字使用分散对齐以对应原 \cs{thu@fixed@box}，
@@ -5506,11 +5510,19 @@ To produce the documentation run the original source files ending with
 %<def-u>    { c left wd      } { 81    bp },
 %<def-g>    { c left wd      } { 2.3   cm },
 %    \end{macrocode}
-% 封面信息栏标签的宽度。
+% 封面信息栏标签的宽度。本科生有两种。
 %    \begin{macrocode}
-%<def-u|def-g>    { c label wd     } { 88.33 pt },
-%<def-u|def-g>    { c label wd   a } { 64.24 pt },
+%<def-u>    { c label wd     } { 2.5   cm },
+%<def-u>    { c label wd   a } { 86    bp },
+%<def-g>    { c label wd     } { 2.85  cm },
 %<def-p>    { c label wd     } { 50    pt },
+%    \end{macrocode}
+% 封面信息栏文字的宽度。本科生有两种。
+% 由于 em 和当前字号相关，按照 1em=16bp 做了转换。
+%    \begin{macrocode}
+%<def-u>    { c text wd      } { 64    bp },
+%<def-u>    { c text wd    a } { 80    bp },
+%<def-g>    { c text wd      } { 2.75  cm },
 %    \end{macrocode}
 % 封面信息栏人名的宽度。
 %    \begin{macrocode}

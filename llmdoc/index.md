@@ -94,6 +94,9 @@ task.
   the `_u_`/`_g_` info systems into a unified class-level architecture,
   `NN`→class-variable dimension state, `c left wd` constant, naming convention
   change (`_item_<type>`/`_row_<type>`), and dead-code removal.
+- `memory/reflections/2026-05-10-cover-info-absolute-widths.md`: reflection on
+  undergraduate cover info absolute width constants, `em` evaluation timing,
+  and the rejected row-end `6pt` padding hypothesis.
 - `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
   reference pages.
 
