@@ -86,6 +86,10 @@ task.
   undergraduate cover spacing refinements, `top-anchor` mechanism, `thulogo`
   rename, title box construction with `\prevdepth` compensation, info fill
   interim, and `include_graphics` promotion to class-level.
+- `memory/reflections/2026-05-09-undergraduate-cover-info-fork.md`: reflection on
+  forking the graduate info-drawing mechanism to undergraduate, docstrip-split
+  supervisor formatting helpers, old `\@@_cover_info:` removal, and the
+  merge path for unifying the two parameterized info systems.
 - `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
   reference pages.
 

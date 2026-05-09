@@ -1246,6 +1246,7 @@ To produce the documentation run the original source files ending with
   }
 \cs_new_protected:Npn \@@_cover_format_supv:n
   { \@@_cover_format_supv:NNNn \l_@@_tmp_clist \l_@@_tmpa_tl \l_@@_tmpb_tl }
+%</class>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1255,72 +1256,26 @@ To produce the documentation run the original source files ending with
 % 排版姓名和职称：姓名先补足到 |3cm|，姓名文字按 |4em| 分散，
 % 职称按 |3em| 分散。
 %    \begin{macrocode}
+%<*(def-u|def-g)>
 \cs_new_protected:Npn \@@_cover_format_name:n #1
-  { \@@_box_pad:nn { 3 cm } { \@@_box_st:nn { 4 em } {#1} } }
-\cs_new_protected:Npn \@@_cover_format_title:n #1
-  { \@@_box_st:nn { 3 em } {#1} }
+%<def-u>  { \@@_box_st:nn { 4 em } {#1} \skip_horizontal:n { 1.5 em } }
+%<def-g>  { \@@_box_pad:nn { 3 cm } { \@@_box_st:nn { 4 em } {#1} } }
+\cs_new_protected:Npn \@@_cover_format_title:n
+%<def-u>  { \@@_box_st:nn { 2.5 em } }
+%<def-g>  { \@@_box_st:nn { 3   em } }
 \cs_generate_variant:Nn \@@_cover_format_name:n  { V }
 \cs_generate_variant:Nn \@@_cover_format_title:n { V }
+%</(def-u|def-g)>
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_info:}
-% 封面信息栏。
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_info:
-  { \@@_cover_info_aux:NN \c_@@_name_coveritem_clist \l_@@_tmp_clist }
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{\@@_cover_info_aux:NN}
-% 更新封面信息栏的条目列表。
-% \begin{arguments}
-%   \item 原有的条目列表
-%   \item 更新的条目列表
-% \end{arguments}
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_info_aux:NN #1#2
-  {
-    \@@_format_author:
-    \@@_format_supv:
-    \clist_clear:N #2
-    \clist_map_inline:Nn #1
-      {
-        \tl_if_empty:cF { g_@@_info_ ##1 _tl }
-          { \clist_put_right:Nn #2 { ##1 } }
-      }
-    \@@_cover_info_aux:N #2
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_cover_info_aux:N}
-% 绘制封面信息栏的辅助函数。
-% \begin{arguments}
-%   \item 条目列表
-% \end{arguments}
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_info_aux:N #1
-  {
-    \clist_if_in:NnF #1 { supvc }
-      { \dim_gset_eq:NN \c_@@_clabelwd_dim \c_@@_clabelwda_dim }
-    \@@_get_max_info_width:NN \l_@@_tmpb_dim #1
-    \dim_set_eq:NN \tex_baselineskip:D \c_@@_clineskip_dim
-    \clist_map_inline:Nn #1
-      {
-        \@@_box_ss:nn   { \c_@@_clabelwd_dim } { \@@_name:n { ##1 }  }
-        \@@_box_left:nn { \c_@@_ccolonwd_dim } { \c_@@_name_colon_tl }
-        \@@_box_left:nn { \l_@@_tmpb_dim     } { \@@_info:n { ##1 }  }
-        \tex_par:D
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
 % \subsubsection{摘要相关}
 %
 % \begin{macro}{\@@_abs_bookmark:nn,\@@_abs_bookmark:Vn}
 % 生成摘要的目录条目。
 %    \begin{macrocode}
+%<*class>
 \cs_new_protected:Npn \@@_abs_bookmark:nn #1#2
   {
     \phantomsection
@@ -4100,12 +4055,211 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { u / cover / info }
   {
-    content = \@@_cover_info:,
-    format  = \fangsong \@@_zihao:nn { 2.32 } { 3 },
+    content = \@@_u_cover_info:,
+    format  = \fangsong \@@_fontsize:nn { 16 bp }{ 30.96 bp },
+    align       = l,
     bottom-skip = 0 pt plus 1 fill
   }
 %    \end{macrocode}
 % \end{macro}
+% \begin{macro}{\@@_u_cover_info:}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info:
+  {
+    \@@_u_cover_info_box:
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_box:}
+% 信息栏固定高度盒子。两个参数分别对应原 \cls{thuthesis}
+% \cs{parbox} 的高度和内部垂直对齐方式；宽度始终为 \cs{textwidth}。
+% 盒内正文由 \cs{@@_u_cover_info_body:NN} 生成，并显式传入行支柱
+% 的高度、深度寄存器，保证各行共用同一组由当前字号行距计算出的度量。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info_box:
+  { \@@_u_cover_info_body:NN \l_@@_tmpa_dim \l_@@_tmpb_dim }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_body:NN}
+% 信息栏主体。原 \cls{thuthesis} 的
+% \cs{thu@titlepage@info@tabular} 先插入 |2.3cm| 左缩进，
+% 再进入单列 |tabular|；|tabular| 自身还会在左、右两侧产生
+% |6pt| 的列间距。这里保留左侧 |2.3cm + 6pt|，
+% 右侧 |6pt| 在每一行末尾补回。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info_body:NN #1#2
+  {
+    \@@_u_cover_info_dims:NN #1 #2
+    \mode_leave_vertical:
+    \skip_horizontal:n { 81 bp }
+    \skip_horizontal:n { 6 pt }
+    \@@_u_cover_info_table:NN #1 #2
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_dims:NN}
+% 设置信息行支柱的高度和深度。原 \cls{thuthesis} 在信息栏中使用
+% |\fangsong\fontsize{16bp}{31.2bp}\selectfont|，并在单列 |tabular|
+% 中将 \cs{arraystretch} 设为 |1|。|array| 的行支柱按行距的
+% |0.7| 和 |0.3| 分配高度、深度，因此这里用当前
+% \cs{baselineskip} 计算出同一组行度量，并通过参数向下传递。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info_dims:NN #1#2
+  {
+    \dim_set:Nn #1 { 7 \tex_baselineskip:D / 10 }
+    \dim_set:Nn #2 { 3 \tex_baselineskip:D / 10 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_table:NN}
+% 将各个信息项组织成一个整体表格盒子。原 \cls{thuthesis} 用
+% 单列 |tabular| 让所有非空 \cs{thu@info@item} 形成一个共同的对象；
+% 这里通过通用盒子函数 \cs{@@_box_vcenter:n} 复现该对象的基线和行间
+% 结构，避免在封面绘制代码中直接通过数学模式 \cs{vcenter} 取得同样
+% 效果。项目顺序对应原 \cs{thu@titlepage@info}：
+% 先排培养单位、学科/专业领域、作者、学号等普通信息，再排导师信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info_table:NN #1#2
+  {
+    \@@_box_vcenter:n
+      {
+        \@@_u_cover_info_item:NN   #1 #2
+        \@@_u_cover_author_item:NN #1 #2
+        \@@_u_cover_stuid_item:NN  #1 #2
+        \@@_u_cover_supv_item:NN   #1 #2
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_item:NN,\@@_u_cover_info_item:NNn}
+% 普通信息项的生成器。这里的条目使用 |g_@@_info_|\meta{item}|_tl|
+% 存储，按原 \cls{thuthesis} \cs{thu@titlepage@info}
+% 中导师之前的顺序输出。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info_item:NN #1#2
+  {
+    \clist_map_inline:Nn \c_@@_name_coveritem_clist
+      { \@@_u_cover_info_item:NNn #1 #2 {##1} }
+  }
+\cs_new_protected:Npn \@@_u_cover_info_item:NNn #1#2#3
+  {
+    \@@_info_if_empty:nF {#3}
+      { \@@_u_cover_info_row:NNn #1 #2 {#3} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_author_item:NN}
+% 作者信息项的生成器。
+% 由于不可能没有作者，这里只和其他函数保持命名一致。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_author_item:NN
+  { \@@_u_cover_author_row:NN }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_stuid_item:NN}
+% 学号信息项的生成器。只用于研究生选题报告封面。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_stuid_item:NN #1#2
+  {
+    \bool_if:NT \g_@@_opt_proposal_bool
+      { \@@_u_cover_info_row:NNn #1 #2 { stuid } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_supv_item:NN,\@@_u_cover_supv_item:NNn}
+% 导师信息项的生成器。导师信息来自逗号列表
+% |g_@@_info_supv|\meta{letter}|_clist|。标签名使用
+% |supv a|、|supv b|、|supv c|，对应原 \cls{thuthesis} 的
+% 指导教师、副指导教师、联合指导教师。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_supv_item:NN #1#2
+  {
+    \clist_map_inline:nn { a, b, c }
+      { \@@_u_cover_supv_item:NNn #1 #2 {##1} }
+  }
+\cs_new_protected:Npn \@@_u_cover_supv_item:NNn #1#2#3
+  {
+    \@@_supv_if_empty:nF {#3}
+      { \@@_u_cover_supv_row:NNn #1 #2 {#3} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_strut:NN}
+% 信息行的零宽支柱。它替代原 \cls{thuthesis} 单列 |tabular|
+% 中由 |array| 机制插入的行支柱；两个参数分别是由
+% \cs{@@_u_cover_info_dims:NN} 计算出的高度和深度。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info_strut:NN #1#2
+  { \rule [ - #2 ] { \c_zero_dim } { \dim_eval:n { #1 + #2 } } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_row:NNnn}
+% 排版一行信息。原 \cls{thuthesis}
+% \cs{thu@titlepage@info@tabular} 的参数
+% |{2.3cm}{2.85cm}{2.75cm}{0.77cm}| 分别给出左缩进、标签盒宽、
+% 标签文字宽和冒号盒宽。本函数中的 |2.85cm|、|2.75cm| 和
+% |.77cm| 即来自这些参数；标签文字使用分散对齐以对应原
+% \cs{thu@fixed@box}，冒号使用中文冒号常量，值区由调用者给出。
+%    \begin{macrocode}
+\dim_new:N \l_@@_coverlabel_dim
+\dim_new:N \l_@@_covertext_dim
+\cs_new_protected:Npn \@@_u_cover_info_row:NNnn #1#2#3#4
+  {
+    \clist_if_empty:NTF \g_@@_info_supvc_clist
+      {
+        \dim_set:Nn \l_@@_coverlabel_dim { 2.5 cm }
+        \dim_set:Nn \l_@@_covertext_dim  { 4   em }
+      }
+      {
+        \dim_set:Nn \l_@@_coverlabel_dim { 86  bp }
+        \dim_set:Nn \l_@@_covertext_dim  { 5   em }
+      }
+    \hbox:n
+      {
+        \@@_u_cover_info_strut:NN #1 #2
+        \@@_box_left:nn { \l_@@_coverlabel_dim }
+          { \@@_box_ss:nn { \l_@@_covertext_dim } { \@@_name:n {#3} } }
+        \@@_box_left:nn { \c_@@_ccolonwd_dim } { \c_@@_name_colon_tl }
+        #4
+        \skip_horizontal:n { 6 pt }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_info_row:NNn,
+%   \@@_u_cover_author_row:NN,\@@_u_cover_supv_row:NNn}
+% 普通信息行、作者信息行和导师信息行。
+% 三者共享行几何，但值的处理方式不同。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_info_row:NNn #1#2#3
+  {
+    \@@_u_cover_info_row:NNnn #1 #2 {#3}
+      { \@@_info:n {#3} }
+  }
+\cs_new_protected:Npn \@@_u_cover_author_row:NN #1#2
+  {
+    \@@_u_cover_info_row:NNnn #1 #2 { author }
+      { \@@_cover_format_name:V \g_@@_info_author_tl }
+  }
+\cs_new_protected:Npn \@@_u_cover_supv_row:NNn #1#2#3
+  {
+    \@@_u_cover_info_row:NNnn #1 #2 { supv #3 }
+      { \@@_cover_format_supv:n {#3} }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{g/cover/date}
 % 研究生封面日期实例。
@@ -5603,8 +5757,8 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % 封面信息栏冒号的宽度。
 %    \begin{macrocode}
-%<def-u>    { c colon wd     } { 16.06 pt },
-%<def-g>    { c colon wd     } {   .82 cm },
+%<def-u>    { c colon wd     } {   .82 cm },
+%<def-g>    { c colon wd     } {   .77 cm },
 %    \end{macrocode}
 % 校名图片的宽度。
 %    \begin{macrocode}
