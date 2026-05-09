@@ -276,36 +276,45 @@ parameters than graduate. Graduate call sites (`\@@_g_cover_author_row:NN`,
 `\@@_g_cover_supv_row:NNn`) use the shared names, as do the undergraduate
 counterparts (`\@@_u_cover_author_row:NN`, `\@@_u_cover_supv_row:NNn`).
 
-### Undergraduate info-system fork
+### Unified cover info system
 
-The undergraduate cover info section (`\@@_u_cover_info:*`) was forked from the
-graduate Chinese cover info system (`\@@_g_cover_info:*`). Both share the same
-architectural decomposition:
+The undergraduate and graduate Chinese cover info sections now share a single
+parameterized info-drawing system at class level. The old `_u_`/`_g_` fork
+was merged (2026-05-09).
 
-1. `_info:` → `_info_box:` (fixed-height box wrapper)
-2. `_info_body:NN` → left indent + `_info_table:NN`
-3. `_info_dims:NN` → strut height/depth = `0.7/0.3` of `\baselineskip`
-4. `_info_table:NN` → `\@@_box_vcenter:n { items }`
-5. Item generators: `info_item` (maps `\c_@@_name_coveritem_clist`),
-   `author_item`, `stuid_item` (conditional on `\g_@@_opt_proposal_bool`),
-   `supv_item` (maps `a, b, c`)
-6. `_info_row:NNnn` → shared row geometry (`label → colon → value → 6pt`)
-7. Three value-formatting paths: `_info_row:NNn` (plain `\@@_info:n`),
-   `_author_row:NN` (`\@@_cover_format_name:V`),
-   `_supv_row:NNn` (`\@@_cover_format_supv:n`)
+Architecture:
 
-The undergraduate variant differs from graduate only in:
-- Left indent: `81bp + 6pt` vs `83bp + 6pt`
-- Label width: `2.5cm` (no supvc) / `86bp` (with supvc) vs graduate's
-  `2.85cm`/`2.75cm` label/colon layout
-- `\@@_cover_format_name:n` / `\@@_cover_format_title:n` docstrip variants
-- Info element format: `\@@_fontsize:nn { 16 bp }{ 30.96 bp }` vs graduate's
-  `\@@_fontsize:nn { 15.04 bp }{ 31.2 bp }`
+1. `\@@_cover_info_dims:` — sets class-level dimension state:
+   - `\l_@@_strutheight_dim` / `\l_@@_strutdepth_dim` = `0.7/0.3` of
+     `\baselineskip` (matches `array` strut distribution with
+     `\arraystretch=1`).
+   - `\l_@@_coverlabel_dim` / `\l_@@_covertext_dim` — per-family docstrip
+     splits: `def-u` adapts when co-supervisor exists (`2.5cm`/`4em` without,
+     `86bp`/`5em` with); `def-g` uses fixed `2.85cm`/`2.75cm`.
+2. `\@@_cover_info_body:` — unified body: left indent via
+   `\c_@@_cleftwd_dim` + `6pt`, then `\@@_u_cover_info_table:`.
+3. `\@@_u_cover_info_table:` — `\@@_box_vcenter:n` containing item generators
+   (note: retains `_u_` prefix, should be renamed to `\@@_cover_info_table:`).
+4. Item generators (`\@@_cover_item_info:`, `\@@_cover_item_author:`,
+   `\@@_cover_item_stuid:`, `\@@_cover_item_supv:`) — each calls the
+   appropriate row generator with the right value-formatting path.
+5. Row dispatchers (`\@@_cover_row_info:n`, `\@@_cover_row_author:`,
+   `\@@_cover_row_supv:n`) — three value-formatting paths sharing
+   `\@@_cover_row_info:nn`.
+6. `\@@_cover_row_info:nn` — unified row geometry: label box → colon → value.
+   Uses `\l_@@_coverlabel_dim`/`\l_@@_covertext_dim` (set by dims setup) and
+   `\@@_cover_info_strut:` (zero-width strut from class-level dims).
 
-The old generic `\@@_cover_info:` (which used `\clist_map_inline:Nn` with
-`\@@_get_max_info_width:NN`) and its helpers (`\@@_cover_info_aux:NN`,
-`\@@_cover_info_aux:N`) were removed — no call site uses them after both
-undergraduate and graduate have dedicated info systems.
+Per-family differences are isolated to:
+- `c left wd`: `81bp` (`def-u`) vs `2.3cm` (`def-g`)
+- Label/text dims in `\@@_cover_info_dims:` (docstrip-split)
+- `\@@_cover_format_name:n` / `\@@_cover_format_title:n` (docstrip-split)
+- Outer box shape: `\@@_g_cover_info_box:nn` (graduate, with `\parbox`)
+  vs direct `\@@_cover_info_body:` (undergraduate)
+
+The old dead-code helpers `\@@_name_gset_eq:nn`, `\@@_format_name:NNn`,
+`\@@_format_author:`, and `\@@_format_supv:` / `\@@_format_supv_aux:n`
+were removed — they had no remaining call sites after the merge.
 
 ### Shared graphics helper
 
@@ -657,11 +666,17 @@ title and supervisor box fixes.
   - [ ] English-major title behavior (English title below Chinese title);
   - [ ] optional co-supervisor label width behavior;
   - [ ] bachelor proposal label if retained from the legacy surface.
-- [ ] Merge `\@@_u_cover_info:*` and `\@@_g_cover_info:*` into one
-  parameterized info-drawing system. The two are structurally identical
-  (same `\@@_box_vcenter:n`, same `0.7/0.3` strut dims, same item/row
-  decomposition, same three value-formatting paths). Only the left indent,
-  label widths, and name/title stretch parameters differ.
+- [x] Merge `\@@_u_cover_info:*` and `\@@_g_cover_info:*` into one
+  parameterized info-drawing system. Dimension state moved from threaded
+  `NN` parameters to class-level variables (`\l_@@_strutheight_dim`,
+  `\l_@@_strutdepth_dim`, `\l_@@_coverlabel_dim`, `\l_@@_covertext_dim`).
+  Left indent extracted to `c left wd` constant. Naming convention:
+  `\@@_cover_item_<type>:` / `\@@_cover_row_<type>:`. Old dead-code
+  helpers (`\@@_name_gset_eq:nn`, `\@@_format_*`, `\@@_format_supv:*`)
+  removed.
+  - [ ] Rename `\@@_u_cover_info_table:` to `\@@_cover_info_table:` (the
+    `_u_` prefix is a leftover from the fork; the function is now shared
+    by both undergraduate and graduate call sites).
 - [ ] Finish postdoc parity:
   - populate `cover-p-b`;
   - verify `cover-p-a` against `\thu@cover@postdoc`;

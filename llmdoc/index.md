@@ -90,6 +90,10 @@ task.
   forking the graduate info-drawing mechanism to undergraduate, docstrip-split
   supervisor formatting helpers, old `\@@_cover_info:` removal, and the
   merge path for unifying the two parameterized info systems.
+- `memory/reflections/2026-05-09-cover-info-merge.md`: reflection on merging
+  the `_u_`/`_g_` info systems into a unified class-level architecture,
+  `NN`→class-variable dimension state, `c left wd` constant, naming convention
+  change (`_item_<type>`/`_row_<type>`), and dead-code removal.
 - `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
   reference pages.
 
