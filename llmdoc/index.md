@@ -82,6 +82,10 @@ task.
 - `memory/reflections/2026-05-08-undergraduate-cover.md`: reflection on the
   undergraduate cover layout update, shared supervisor formatting helpers,
   two-logo system, and dynamic secret rendering.
+- `memory/reflections/2026-05-09-undergraduate-cover-spacing.md`: reflection on
+  undergraduate cover spacing refinements, `top-anchor` mechanism, `thulogo`
+  rename, title box construction with `\prevdepth` compensation, info fill
+  interim, and `include_graphics` promotion to class-level.
 - `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
   reference pages.
 

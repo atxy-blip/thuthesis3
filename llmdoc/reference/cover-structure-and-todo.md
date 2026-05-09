@@ -105,7 +105,8 @@ Current reusable architecture:
 - generic `element` template with `content`, `format`, `bottom-skip`, and
   `align`;
 - generic `page` template with `element`, `prefix`, `geometry`, `format`,
-  `top-skip`, `bottom-skip`, bookmark fields, and page-level rendering;
+  `top-anchor`, `top-skip`, `bottom-skip`, bookmark fields, and page-level
+  rendering;
 - declarative page instances:
   - `cover-u`;
   - `cover-g-zh`;
@@ -119,6 +120,22 @@ Current reusable architecture:
   - `thuthesis3/cover/body`;
   - `thuthesis3/cover/end`;
   - `thuthesis3/cover/back`.
+
+### Page template `top-anchor` key
+
+The `top-anchor` key (`null` / `none`, default `null`) controls whether the
+generic page template inserts an empty `\hbox:n{}` before applying `top-skip`:
+
+- `null`: inserts `\hbox:n{}` → reproduces legacy `\null\vskip` behavior; used
+  by graduate and postdoc cover pages.
+- `none`: no anchor box → the page starts directly from the first element;
+  used by `cover-u`.
+
+Graduate covers need the `\null` anchor because the legacy `thuthesis2e` code
+starts with `\null\vskip 8.1pt`, and a rule-based `\vspace*` substitute would
+change the baseline glue and shift the entire title/degree block. Undergraduate
+covers start from a `\parbox[t][0cm][t]{\textwidth}{...}` secret box whose
+top edge is the page reference point, so no anchor is needed.
 
 ### Docstrip-based academic/professional separation
 
@@ -254,6 +271,15 @@ to class-level when the undergraduate cover needed the same `3cm`+`4em`/`3em`
 layout contract. Graduate call sites (`\@@_g_cover_author_row:NN`,
 `\@@_g_cover_supv_row:NNn`) were updated to use the shared names.
 
+### Shared graphics helper
+
+`\@@_include_graphics:nn` and its `nV` variant (`source/thuthesis3.dtx`) are
+class-level shared helpers wrapping `\includegraphics[width=#1]{#2}`. Originally
+defined in the undergraduate-only (`def-u`) section, they were promoted to the
+generic helper area when the two-logo system needed the `nV` variant for file
+name token-list expansion. They are used by `\@@_u_cover_thulogo:` and available
+for future cover graphics.
+
 ## Local Title-Page Fixture Mapping
 
 The imported `testfiles/01-title-page/*.tex` files are best understood as a
@@ -337,9 +363,10 @@ The relevant `thuthesis2e` vertical skeleton is:
 The matching `thuthesis3` implementation rules are:
 
 - Page `top-skip` must reproduce legacy `\null\vskip`, not a rule-based
-  `\vspace*` substitute. In the generic page template, place an empty hbox and
-  then the requested skip. A zero-height rule suppresses the later baseline
-  glue and moves the whole title/degree block.
+  `\vspace*` substitute. The page template's `top-anchor = null` inserts an
+  empty `\hbox:n{}` before applying `top-skip`. This reproduces the legacy
+  `\null` anchor; a `\vspace*` substitute would suppress the later baseline
+  glue and move the whole title/degree block.
 - Element `bottom-skip` must be ordinary vertical glue. Between declared cover
   elements, use plain `\skip_vertical:N` so `bottom-skip = 24.1pt` behaves like
   the legacy `\vskip 24.1pt`.
@@ -512,6 +539,19 @@ title and supervisor box fixes.
   `\g_@@_info_secretyr_tl` info keys, matching the graduate Chinese cover pattern.
   The element uses `\parbox[t][0cm][t]{\textwidth}{...}` with right-flushed
   content and `19bp` bottom-skip.
+- `cover-u` uses `top-anchor = none` (no `\null` anchor box before the first
+  element), while graduate and postdoc pages use the default `top-anchor = null`
+  to reproduce legacy `\null\vskip` positioning.
+- `u/cover/name-img` was renamed to `u/cover/thulogo` and its inline content
+  extracted into `\@@_u_cover_thulogo:`.
+- `u/cover/title` uses `\@@_u_cover_title:` with `\@@_box_paragraph_top_to_ht:nn`
+  for the `136bp` fixed-height parbox, plus explicit `\prevdepth` preservation
+  and `\baselineskip`/`\lineskiplimit` compensation to match the legacy
+  `\parbox` line-spacing contract.
+- `u/cover/info` uses `bottom-skip = 0pt plus 1 fill`, reproducing the
+  oracle's `\vfill` at `thuthesis2e/thuthesis.dtx` line 5187.
+- `\@@_include_graphics:nn` (and its `nV` variant) was promoted from the
+  `def-u` section to a shared class-level helper.
 - The hook body selects page instances by docstrip guard (`def-u`, `def-g`,
   `def-p`), but it does not yet express all legacy runtime distinctions such as
   proposal versus thesis, optional spine, scan-file replacement, or isolated
@@ -558,17 +598,23 @@ title and supervisor box fixes.
   - professional field handling;
   - supervisor, associate supervisor, and co-supervisor label/content rules;
   - English date formatting.
-- [x] Finish `cover-u` parity (bulk layout complete, see below):
+- [x] Finish `cover-u` parity (bulk layout complete with spacing refinements, see below):
   - [x] dynamic secret rendering (`\g_@@_info_secretlv_tl` + `\g_@@_info_secretyr_tl`);
   - [x] logo/name-image dimensions and spacing (two-file system:
     `thu-fig-logo.pdf` at 50.4bp + `thu-text-logo.pdf` at 117bp raised 7bp,
     10bp gap, -5bp left shift);
   - [x] thesis label (`\ziju{0.3}`, `48bp` bottom-skip);
-  - [x] title element (centered `\parbox[t][136bp]{\linewidth}`,
-    `\fontsize{26bp}{32.5bp}`, removed `题目：` label);
+  - [x] title element (centered `\parbox[t][136bp]{\linewidth}` via
+    `\@@_box_paragraph_top_to_ht:nn` with `\prevdepth` preservation and
+    `\baselineskip`/`\lineskiplimit` compensation, `\fontsize{26bp}{32.5bp}`);
   - [x] date element (`\fontsize{16bp}{24bp}`, `\ziju{0.03}`, `60bp` bottom-skip,
     year-month format matching graduate);
   - [x] page geometry (`top=3.8cm, bottom=3.2cm, left=3.2cm, right=3cm`);
+  - [x] `top-anchor = none` for the `cover-u` page instance (no `\null` anchor);
+  - [x] `u/cover/name-img` renamed to `u/cover/thulogo`, content extracted to
+    `\@@_u_cover_thulogo:`;
+  - [x] info element: `bottom-skip = 0pt plus 1 fill` matches the
+    oracle's `\vfill` (line 5187);
   - [ ] English-major title behavior (English title below Chinese title);
   - [ ] optional co-supervisor label width behavior;
   - [ ] bachelor proposal label if retained from the legacy surface.

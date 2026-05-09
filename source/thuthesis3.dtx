@@ -740,6 +740,15 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_include_graphics:nn,\@@_include_graphics:nV}
+% 封装载入图片接口。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_include_graphics:nn #1
+  { \includegraphics [ width = #1 ] }
+\cs_generate_variant:Nn \@@_include_graphics:nn { nV }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\normalsize}
 % 正文小四号（12bp）字，行距为固定值 20 bp。
 % 其他字号的行距按照相同的比例设置。
@@ -1414,6 +1423,7 @@ To produce the documentation run the original source files ending with
 %   \item[\opt{geometry}] 页面尺寸
 %   \item[\opt{format}] 格式，例如行距
 %   \item[\opt{top-skip}] 上间距，即与页面顶部的距离
+%   \item[\opt{top-anchor}] 顶部锚点，控制是否先放置空盒子
 %   \item[\opt{bottom-skip}] 下间距，即与页面底部的距离
 %   \item[\opt{bm-text}] PDF 书签名称
 %   \item[\opt{bm-name}] PDF 书签锚点名
@@ -1429,6 +1439,7 @@ To produce the documentation run the original source files ending with
     bm-text     : tokenlist = { },
     bm-name     : tokenlist = { },
     bookmark    : choice { toc, pdf, none } = none,
+    top-anchor  : choice { null, none } = null,
     top-skip    : skip      = \c_zero_skip,
     bottom-skip : skip      = \c_zero_skip
   }
@@ -1450,6 +1461,11 @@ To produce the documentation run the original source files ending with
         pdf  = { \cs_set_eq:NN \@@_bookmark:nn \__thu_bookmark_pdf:nn },
         none = { \cs_set:Nn    \@@_bookmark:nn { } }
       },
+    top-anchor =
+      {
+        null = { \cs_set:Nn \@@_top_anchor: { \hbox:n { } } },
+        none = { \cs_set:Nn \@@_top_anchor: { } }
+      },
     top-skip    = \l_@@_top_skip,
     bottom-skip = \l_@@_bottom_skip
   }
@@ -1460,9 +1476,10 @@ To produce the documentation run the original source files ending with
       { \exp_args:NV \newgeometry \l_@@_geometry_tl }
     \thispagestyle { empty }
 %    \end{macrocode}
-% 先放置一个空盒子，使页面顶部留白与 \LaTeXe{} 的 |\null\vskip| 行为一致。
+% 按页面实例需要放置顶部锚点。研究生封面需要复现 \LaTeXe{} 的
+% |\null\vskip| 行为，本科生封面则直接从首个盒子开始。
 %    \begin{macrocode}
-    \hbox:n { }
+    \@@_top_anchor:
     \skip_vertical:N \l_@@_top_skip
     \exp_args:NVV \@@_bookmark:nn
       \l_@@_bm_text_tl \l_@@_bm_name_tl
@@ -4044,19 +4061,12 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{u/cover/name-img}
+% \begin{macro}{u/cover/thulogo}
 % 本科生封面校名图片实例。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_include_graphics:nn #1
-  { \includegraphics [ width=#1] }
-\cs_generate_variant:Nn \@@_include_graphics:nn { nV }
-\@@_declare_element:nn { u / cover / name-img }
+\@@_declare_element:nn { u / cover / thulogo }
   {
-    content     =
-    \hspace*{-5bp}
-    \@@_include_graphics:nV { 50.4 bp } \c_@@_name_thufiglogo_tl
-    \skip_horizontal:n { 10 bp }
-    \raisebox{7bp}{\@@_include_graphics:nV { 117 bp } \c_@@_name_thutextlogo_tl },
+    content     = \@@_u_cover_thulogo:,
     bottom-skip = 17 bp,
   }
 %    \end{macrocode}
@@ -4079,9 +4089,8 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { u / cover / title }
   {
-    content     = \parbox[t][136bp]{\linewidth}{ \centering\@@_info:n { title } },
-    format      = \sffamily \fontsize{26bp}{32.5bp}\selectfont,
-    bottom-skip = 1.9 cm
+    content     = \@@_u_cover_title:,
+    format      = \sffamily \@@_fontsize:nn { 26 bp } { 32.5 bp }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4093,7 +4102,7 @@ To produce the documentation run the original source files ending with
   {
     content = \@@_cover_info:,
     format  = \fangsong \@@_zihao:nn { 2.32 } { 3 },
-    bottom-skip = 1.4 cm
+    bottom-skip = 0 pt plus 1 fill
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4104,8 +4113,41 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { u / cover / date }
   {
     content = \@@_datea:V \g_@@_info_date_tl,
-    format  = \fontsize{16bp}{24bp}\selectfont \ziju { 0.03 },
+    format  = \@@_fontsize:nn { 16 bp } { 24 bp } \ziju { 0.03 },
     bottom-skip = 60 bp
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_thulogo:}
+% 本科生封面的校名校徽图片。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_thulogo:
+  {
+    \skip_horizontal:n { -5 bp }
+    \@@_include_graphics:nV { 50.4 bp } \c_@@_name_thufiglogo_tl
+    \skip_horizontal:n { 10 bp }
+    \raisebox { 7 bp }
+      { \@@_include_graphics:nV { 117 bp } \c_@@_name_thutextlogo_tl }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_u_cover_title:}
+% 本科生封面的标题栏信息。
+% 为了复刻原版在 \cs{parbox} 内放置格式的行距行为，
+% 做了一些额外的处理。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_u_cover_title:
+  {
+    \dim_set_eq:NN \l_@@_tmpa_dim \tex_prevdepth:D
+    \hbox_set:Nn \l_@@_tmpa_box
+      { \@@_box_paragraph_top_to_ht:nn { 136 bp } { \@@_info:n { title } } }
+    \dim_set:Nn \l_@@_tmpb_dim
+      { \baselineskip - \l_@@_tmpa_dim - \box_ht:N \l_@@_tmpa_box }
+    \dim_compare:nNnT { \l_@@_tmpb_dim } > { \lineskiplimit }
+      { \skip_vertical:n { \lineskip - \l_@@_tmpb_dim } }
+    \box_use:N \l_@@_tmpa_box
   }
 %</def-u>
 %    \end{macrocode}
@@ -4841,8 +4883,9 @@ To produce the documentation run the original source files ending with
 %<*def-u>
 \@@_declare_page:nn { cover-u }
   {
-    element     = { secret, name-img, thesis, title, info, date },
+    element     = { secret, thulogo, thesis, title, info, date },
     prefix      = u / cover /,
+    top-anchor  = none,
     bottom-skip = 0 pt plus 1 fill,
     geometry    =
       {
