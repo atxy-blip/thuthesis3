@@ -21,6 +21,8 @@ Candidate modules:
 
 - class options under `thu / option`;
 - `\thusetup` optional-argument forwarding;
+- local language declarations such as `\thusetchinese` and `\thusetenglish`
+  with feature-list dispatch;
 - module keys such as `info`, `bib`, `image`, `abstract`, `theorem`, `math`,
   `header`, and `footer`;
 - grouped key filtering for modes such as anonymous review or disabled feature

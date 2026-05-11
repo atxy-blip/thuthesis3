@@ -54,6 +54,11 @@ task.
   when l3build `.tlg` tests fail after internal reordering.
 - `reference/l3build-tests.md`: current local test layout, active l3build
   configs, and `.tlg` regeneration guidance.
+- `reference/language-interface.md`: current and intended handling for
+  `language`, `main-language`, and local `\thusetchinese`/`\thusetenglish`
+  feature declarations.
+- `reference/tex-parameter-nesting.md`: TeX `#` doubling rules for nested
+  definitions and inline functions in LaTeX3 code generation.
 
 ## Memory
 
@@ -62,6 +67,9 @@ task.
 - `memory/decisions/2026-05-06-pdf-only-verification.md`: decision that during
   rapid template development, skip `l3build check` and verify only via PDF
   visual comparison.
+- `memory/decisions/2026-05-10-language-refactoring.md`: decision and current
+  implementation status for moving local language switching away from
+  `\thusetup{language=...}` toward feature-list declarations.
 - `memory/reflections/README.md`: placeholder for future working reflections.
 - `memory/reflections/2026-05-04-class-options.md`: reflection on class-option
   inheritance scope and documentation alignment.
@@ -97,6 +105,13 @@ task.
 - `memory/reflections/2026-05-10-cover-info-absolute-widths.md`: reflection on
   undergraduate cover info absolute width constants, `em` evaluation timing,
   and the rejected row-end `6pt` padding hypothesis.
+- `memory/reflections/2026-05-10-local-language-interface.md`: reflection on
+  replacing content-level `\thusetup{language=...}` with a feature-list local
+  language declaration and recording the undergraduate cover English title font
+  cause.
+- `memory/reflections/2026-05-10-tex-parameter-nesting.md`: reflection on
+  `#` doubling in nested LaTeX3 code generation, illegal parameter number
+  diagnosis, and the 2^N rule for definition boundaries.
 - `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
   reference pages.
 

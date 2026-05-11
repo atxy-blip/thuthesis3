@@ -14,6 +14,7 @@
 - 使用 LaTeX 钩子机制构架封面页执行逻辑
 - 使用 `xtemplate` 面向对象构建封面页绘制框架
 - 将学术型和专业型学位拆分为两个独立配置文件
+- 新增局部语言选项 `\thusetenglish` `\thusetchinese`
 
 ### 变动
 

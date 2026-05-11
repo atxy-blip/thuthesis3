@@ -8,6 +8,11 @@ Class options are defined in the `thu / option` key family and processed via
 mode, font, special-mode, scan-page, and optional-package-toggle keys (including
 `minimal`).
 
+The current source also exposes `language` and `main-language` as top-level
+`\thusetup` aliases to the `option` key family. Treat that as transitional
+implementation state. For the local language declaration design, see
+`llmdoc/reference/language-interface.md`.
+
 ## Inheritance Rule
 
 `thuthesis3` inherits class option names from `../thuthesis2e/master`.
@@ -54,4 +59,3 @@ same conceptual order. The current class-option documentation groups options as:
 When adding an option, update the manual section, the variable declarations,
 the key definition, `CHANGELOG.md`, and relevant `\changes` entries together
 when the change is user-visible.
-
