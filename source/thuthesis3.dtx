@@ -72,7 +72,7 @@ To produce the documentation run the original source files ending with
 %</driver>
 % \fi
 %
-% \changes{v0.1.0}{将学术型和专业型学位拆分为两个独立配置文件。}
+% \changes{v0.1.0}{2026/05/07}{将学术型和专业型学位拆分为两个独立配置文件。}
 %
 % \begin{documentation}
 %
@@ -490,6 +490,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \tl_new:N \g_@@_opt_language_tl
 %    \end{macrocode}
+% \end{variable}
 %
 % \begin{variable}{\g_@@_info_output_tl}
 % 保存输出模式。
@@ -1090,7 +1091,7 @@ To produce the documentation run the original source files ending with
 %<*(def-u|def-g|def-p)>
 \cs_new:Npn \@@_datea:n #1
   {
-%<def-p>    \@@_date_ymd_zh:www #1 \q_stop
+%<def-p>    \@@_date_ym_zh_arabic:www #1 \q_stop
 %<def-u|def-g>    \@@_date_ym_zh:www  #1 \q_stop
   }
 \cs_new:Npn \@@_dateb:n #1
@@ -1116,10 +1117,11 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_date_ym_zh:www,\@@_date_ymd_zh:www,\@@_date_ym_en:www}
+% \begin{macro}{\@@_date_ym_zh:www,\@@_date_ym_zh_arabic:www,\@@_date_ymd_zh:www,\@@_date_ym_en:www}
 % 将形如 |yyyy-mm-dd| 的 ISO 日期格式字符串转化为日期表示。
 % 该格式符合国际标准 ISO 8601 以及国内标准 GB/T 7408--2005
 % 《数据元和交换格式 信息交换 日期和时间表示法》。
+% 其中，变量类型 |w| 表明参数符合特定语法格式，其参数必须经过完全展开。
 % \begin{arguments}
 %   \item 年份
 %   \item 月份
@@ -1127,8 +1129,6 @@ To produce the documentation run the original source files ending with
 % \end{arguments}
 % 中文日期字样通过封装 \pkg{zhnumber} 的内部函数实现，默认使用阿拉伯数字表示，
 % 可以通过该宏包提供的 |\zhnumsetup{time=Chinese}| 来使用中文数字；
-% 英文日期字样用于研究生英文封面，格式为 \meta{月份缩写}~\meta{日},~\meta{年}。
-% 其中，变量类型 |w| 表明参数符合特定语法格式，其参数必须经过完全展开。
 %    \begin{macrocode}
 \cs_new:Npn \@@_date_ym_zh:www #1-#2-#3 \q_stop
   {
@@ -1137,8 +1137,18 @@ To produce the documentation run the original source files ending with
     \zhnum_number:n      { \int_to_arabic:n {#2} }
     \zhnum_output:n { month }
   }
+\cs_new:Npn \@@_date_ym_zh_arabic:www #1-#2-#3 \q_stop
+  {
+    \int_to_arabic:n {#1}
+    \zhnum_output:n { year  }
+    \int_to_arabic:n {#2}
+    \zhnum_output:n { month }
+  }
 \cs_new:Npn \@@_date_ymd_zh:www #1-#2-#3 \q_stop
   { \__zhnum_date_aux:nnn {#1} {#2} {#3} }
+%    \end{macrocode}
+% 英文日期字样用于研究生英文封面，格式为 \meta{月份缩写}~\meta{日},~\meta{年}。
+%    \begin{macrocode}
 \cs_new:Npn \@@_date_ym_en:www #1-#2-#3 \q_stop
   { \clist_item:Nn \c_@@_name_month_en_clist {#2} , ~#1  }
 %    \end{macrocode}
@@ -1425,7 +1435,7 @@ To produce the documentation run the original source files ending with
 %
 %
 % \subsection{页面对象}
-% \changes{v0.1.0}{使用 \pkg{xtemplate} 面向对象构建封面页绘制框架。}
+% \changes{v0.1.0}{2023/01/20}{使用 \pkg{xtemplate} 面向对象构建封面页绘制框架。}
 %
 % 本模板使用 \pkg{xtemplate} 提供的面向对象方法简化封面和摘要的绘制过程。
 %
@@ -2009,6 +2019,7 @@ To produce the documentation run the original source files ending with
       }
   }
 %    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\@@_chinese_siunitx:,\@@_english_siunitx:}
 % 对应 \cs{thu@set@siunitx@language}。
@@ -2320,7 +2331,7 @@ To produce the documentation run the original source files ending with
   { \RequirePackage { pdfpages } }
 %    \end{macrocode}
 %
-% 载入 \plg{siunitx} 和 \pkg{minted} 后设置语言。
+% 载入 \pkg{siunitx} 和 \pkg{minted} 后设置语言。
 %    \begin{macrocode}
 \clist_map_inline:nn { siunitx, minted }
   {
@@ -4299,11 +4310,8 @@ To produce the documentation run the original source files ending with
 \cs_new_protected:Npn \@@_u_cover_info: { \@@_cover_info_body: }
 %    \end{macrocode}
 % \end{macro}
-%    \end{macrocode}
-% \end{macro}
 %
-%
-% \begin{macro}{g/cover/date}
+% \begin{macro}{u/cover/date}
 % 研究生封面日期实例。
 %    \begin{macrocode}
 \@@_declare_element:nn { u / cover / date }
@@ -4371,6 +4379,7 @@ To produce the documentation run the original source files ending with
 %</def-u>
 %    \end{macrocode}
 % \end{macro}
+%
 %
 % \paragraph{研究生}
 %
@@ -4671,7 +4680,7 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { p / cover-a / top }
   {
     content     = \@@_cover_top:nn { 3.1 em } { 3.7 cm },
-    format      = \@@_zihao:n { 4 },
+    format      = \@@_zihao:nn { 2.6 } { 4 },
     bottom-skip = 3.15 cm
   }
 %    \end{macrocode}
@@ -4685,7 +4694,7 @@ To produce the documentation run the original source files ending with
     content     =
       \ziju { 1.5 } \@@_name:n { thu } \par
       \ziju {  .5 } \@@_name:n { report },
-    format      = \@@_zihao:n { -2 } \sffamily \bfseries,
+    format      = \@@_zihao:nn { 2.6 } { -2 } \sffamily \bfseries,
     bottom-skip = .2 cm
   }
 %    \end{macrocode}
@@ -4696,8 +4705,8 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { p / cover-a / title }
   {
-    content     = \g_@@_info_title_tl,
-    format      = \@@_zihao:n { 4 },
+    content     = \parbox[t][4.0cm][c]{\textwidth}{\centering\g_@@_info_title_tl},
+    format      = \@@_zihao:nn { 3.46 } { 4 },
     bottom-skip = .4 cm
   }
 %    \end{macrocode}
@@ -4733,7 +4742,7 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { p / cover-a / thu }
   {
     content     = \@@_name:n { thubj },
-    format      = \@@_zihao:nn { 2 } { -4 } \ziju { 1 },
+    format      = \@@_zihao:nn { 2 } { -4 },
     bottom-skip = .45 cm
   }
 %    \end{macrocode}
@@ -4756,22 +4765,41 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cover_top:nn #1#2
   {
-    \@@_cover_top_aux:nnn {#1} {#2} { clc      } \tex_hfill:D
-    \@@_cover_top_aux:nnn {#1} {#2} { secretlv } \tex_par:D
-    \@@_cover_top_aux:nnn {#1} {#2} { udc      } \tex_hfill:D
-    \@@_cover_top_aux:nnn {#1} {#2} { id       } \tex_par:D
+    \@@_cover_top_aux:nnnn {#1} {#2} { clc      }  { secretlv }
+    \@@_cover_top_aux:nnnn {#1} {#2} { udc      }  { id       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_top_aux:nnn}
+% \begin{macro}{\@@_cover_top_aux:nnnn}
 % 单条封面顶部信息。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_top_aux:nnn #1#2#3
+\cs_new_protected:Npn \@@_cover_top_aux:nnnn #1#2#3#4
   {
-    \@@_box_ss:nv     {#1} { c_@@_name_ #3 _tl } \@@_hskip:
-    \@@_box_ulined:nv {#2} { g_@@_info_ #3 _tl }
+    \@@_cover_top_label:nn  {#1} {#3}
+    \@@_cover_top_ulined:nv {#2} { g_@@_info_ #3 _tl } \tex_hfill:D
+    \tl_use:c { c_@@_name_ #4 _tl }
+    \@@_cover_top_ulined:nv {#2} { g_@@_info_ #4 _tl } \tex_par:D
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cover_top_label:nn,\@@_cover_top_ulined:nn}
+% 博士后封面顶部标签和下划线。
+%    \begin{macrocode}
+\cs_new:Npn \@@_cover_top_label:nn #1#2
+  {
+    \str_if_eq:nnTF {#2} { udc }
+      { \@@_box_pad:nn {#1} { \@@_name:n {#2} } }
+      { \@@_box_ss:nv {#1} { c_@@_name_ #2 _tl } }
+  }
+\cs_new:Npn \@@_cover_top_ulined:nn #1#2
+  {
+    \skip_horizontal:n { 1 pt }
+    \@@_box_ulined:nn {#1} {#2}
+    \skip_horizontal:n { 3 pt }
+  }
+\cs_generate_variant:Nn \@@_cover_top_ulined:nn { nv }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4782,10 +4810,10 @@ To produce the documentation run the original source files ending with
   {
     \c_@@_name_dates_tl \@@_hskip:
     \@@_box_ulined:nn {#1}
-      { \g_@@_info_startdate_tl -- \g_@@_info_enddate_tl }
+      { \@@_datea:V \g_@@_info_startdate_tl — \@@_datea:V \g_@@_info_enddate_tl }
     \skip_vertical:n { .55 cm }
     \c_@@_name_date_tl \@@_hskip:
-    \@@_box_ulined:nn {#1} { \g_@@_info_date_tl } \tex_par:D
+    \@@_box_ulined:nn {#1} { \@@_datea:V \g_@@_info_date_tl } \tex_par:D
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4992,7 +5020,8 @@ To produce the documentation run the original source files ending with
 \@@_declare_page:nn { cover-p-a }
   {
     element     = { top, report, title, author, info, thu, date },
-    prefix      = p / cover-a /
+    prefix      = p / cover-a /,
+    top-skip    = 0.35 cm
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5519,12 +5548,12 @@ To produce the documentation run the original source files ending with
 %<def-u|def-g>    { supv        a } { 指导教师        },
     { tableofcontents   } { 目 \quad{} 录                      },
 %<def-u>    { thesis            } { 综合论文训练                       },
-%<def-p>    { thu bj            } { 清华大学 \quad （北京）            },
+%<def-p>    { thu bj            } { {\ziju{1} 清华大学} \quad （北京） },
 %<def-p>    { thu hr            } { 清华大学人事处 （北京）            },
     { thu fig  logo     } { thu-fig-logo.pdf                   },
     { thu text logo     } { thu-text-logo.pdf                  },
 %<def-u>    { title             } { 题目                               }
-%<def-p>    { udc               } { U \hfil D \hfil C                  }
+%<def-p>    { udc               } { U~D~C                              }
   }
   { \@@_define_name_zh:nn #1 }
 %    \end{macrocode}
@@ -5824,7 +5853,7 @@ To produce the documentation run the original source files ending with
 % \end{variable}
 %
 % \subsubsection{页面设置}
-% \label{subsubsec:const-section}
+% \label{subsubsec:const-geometry}
 %
 % 本科生《写作指南》：
 % 页边距：上：3.8 厘米，下：3.2 厘米，左右：3 厘米，装订线：左 0.2 厘米。
@@ -5879,7 +5908,7 @@ To produce the documentation run the original source files ending with
   }
 %</def-u>
 %<*(def-g|def-p)>
-\tl_gset_eq:NN \c_@@_geo_electronic_tl \c_@@_geo_print_tl
+\tl_const:NV \c_@@_geo_electronic_tl \c_@@_geo_print_tl
 %</(def-g|def-p)>
 %    \end{macrocode}
 % \end{variable}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "ThuThesis Cover Compare"
+  short_description: "Compare thuthesis3 cover PDFs against the thuthesis2e oracle."
+  default_prompt: "Compare a ThuThesis cover fixture against the thuthesis2e oracle."

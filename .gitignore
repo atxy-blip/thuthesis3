@@ -48,7 +48,9 @@ mythesis/
 
 # LLM
 .claude
-.codex
+.codex/*
+!.codex/skills/
+!.codex/skills/**
 .llmdoc-tmp/
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
