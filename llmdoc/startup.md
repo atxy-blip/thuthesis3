@@ -1,26 +1,15 @@
-# Startup
+# 启动阅读清单
 
-Read this file first in every new session. It is the entry point into llmdoc.
+1. `llmdoc/overview/project-overview.md`
+2. `llmdoc/must/repo-role-and-migration-policy.md`
+3. `llmdoc/must/testing-and-oracle-policy.md`
+4. `llmdoc/architecture/source-and-build.md`
+5. `llmdoc/architecture/latex3-module-roadmap.md`
 
-## Immediate Reading
+然后按 `llmdoc/index.md` 选择任务相关的 architecture、reference、guide
+和 memory 文件。
 
-1. `llmdoc/must/repo-role-and-migration-policy.md` — which repository does what
-2. `llmdoc/must/testing-and-oracle-policy.md` — how to prove behavior before porting
-3. `llmdoc/architecture/source-and-build.md` — source layout, l3build, generated files
-4. `llmdoc/architecture/latex3-module-roadmap.md` — module map and migration ordering
-5. Task-specific files from the index
+修改 llmdoc 前补读 `llmdoc/reference/llmdoc-writing-conventions.md`。
 
-## Before Committing
-
-- `llmdoc/reference/git-commit-style.md`
-- `llmdoc/reference/versioning-and-changes.md`
-
-## Repository Paths
-
-Local clone paths are documented in `llmdoc/reference/sibling-repositories.md`.
-Do not assume paths from repository names.
-
-## Documentation Rule
-
-Stable project memory belongs in `llmdoc/`. Temporary notes and investigations
-belong in `.llmdoc-tmp/`.
+提交前补读 `llmdoc/reference/git-commit-style.md` 与
+`llmdoc/reference/versioning-and-changes.md`。

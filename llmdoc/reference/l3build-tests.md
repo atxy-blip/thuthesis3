@@ -12,7 +12,7 @@ regenerating `.tlg` files.
   default check run.
 - `testfiles/01-title-page/`: 29 title-page fixtures imported from upstream
   ThuThesis and regenerated for `thuthesis3`. Their cover-category and input
-  matrix is documented in `llmdoc/reference/cover-structure-and-todo.md`.
+  matrix is documented in `llmdoc/reference/cover-oracles-and-fixtures.md`.
   These fixtures call concrete `xtemplate` cover instances directly; legacy
   command compatibility needs separate tests.
 - `testfiles/config-title-page.lua`: focused title-page config. It currently
@@ -51,4 +51,4 @@ PDF output visually and numerically first; only return to `l3build check` and
 When hook or phase refactors only reorder internal execution, `.tlg` output can
 change even when PDFs are identical. For cover-page changes, verify visual
 equivalence before accepting regenerated `.tlg` files; see
-`llmdoc/reference/latexpagediff-verification.md`.
+`llmdoc/guides/cover-visual-parity.md`.

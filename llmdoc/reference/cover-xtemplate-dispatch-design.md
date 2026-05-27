@@ -4,7 +4,10 @@ This is a structural design sketch for mapping every `thuthesis2e` cover surface
 onto the `thuthesis3` `xtemplate` implementation without rebuilding the old
 tree of nested `if...else` switches.
 
-Use this together with `llmdoc/reference/cover-structure-and-todo.md`.
+Use this with `llmdoc/architecture/cover-system.md` for the stable architecture
+view and `llmdoc/reference/cover-migration-status.md` for the current completion
+state. Do not add layout metrics here; use
+`llmdoc/reference/cover-layout-contracts.md` for those.
 
 ## Goal
 

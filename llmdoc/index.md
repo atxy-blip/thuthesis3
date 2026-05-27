@@ -1,118 +1,64 @@
 # llmdoc Index
 
-Directory of project documentation — use this to find the right file for your
-task.
+全局文档地图。`startup.md` 只保存启动阅读顺序；本文件负责按任务路由。
 
-## Startup
+## Must
 
-- `startup.md`: first file to read in a new session.
-
-## Must Read
-
-- `must/repo-role-and-migration-policy.md`: role of this repository and how it
-  relates to `thuthesis2e` and `NJUThesis-njulug`.
-- `must/testing-and-oracle-policy.md`: how to prove behavior before porting or
-  accepting LaTeX3 modules.
+- `must/repo-role-and-migration-policy.md`: 本仓库、`thuthesis2e` 与
+  `NJUThesis-njulug` 的分工。
+- `must/testing-and-oracle-policy.md`: 移植或接受 LaTeX3 模块前如何证明
+  行为。
 
 ## Overview
 
-- `overview/project-overview.md`: current repository purpose, top-level files,
-  and known status.
+- `overview/project-overview.md`: 仓库目的、顶层结构与当前状态。
 
 ## Architecture
 
-- `architecture/source-and-build.md`: source layout, l3build configuration, and
-  generated files.
-- `architecture/latex3-module-roadmap.md`: migration module map and recommended
-  ordering for LaTeX3 feature work.
+- `architecture/source-and-build.md`: 源码入口、l3build、生成文件与禁止
+  直接编辑的文件。
+- `architecture/latex3-module-roadmap.md`: LaTeX3 模块地图与迁移顺序。
+- `architecture/cover-system.md`: 封面系统的 page/element 模型、实例分类、
+  docstrip 分层、角色/命令边界和布局不变量。
 
 ## Guides
 
-- `guides/module-migration-workflow.md`: practical workflow for testing a
-  module in `thuthesis2e` and adapting it into `thuthesis3`.
+- `guides/module-migration-workflow.md`: 在 `thuthesis2e` 验证模块并迁移到
+  `thuthesis3` 的流程。
+- `guides/cover-visual-parity.md`: 用 2e/3 fixture、`pdfpagediff` 叠图和
+  PDF bbox HTML 检查封面绝对坐标一致性的流程。
 
 ## Reference
 
-- `reference/class-options.md`: class-option inheritance rules, audit scope,
-  and documentation/source ordering.
-- `reference/cover-structure-and-todo.md`: cover-page structure in
-  `thuthesis2e` and `thuthesis3`, variant counts, gaps, and TODO list.
-- `reference/cover-xtemplate-dispatch-design.md`: proposed docstrip,
-  `xtemplate`, and generated-control-sequence cover dispatch architecture.
-- `reference/setup-info-keys.md`: `\thusetup` personal-info key inheritance,
-  grouped `info` syntax, legacy unprefixed compatibility, and anonymous-mode
-  filtering rules.
-- `reference/sibling-repositories.md`: local paths, canonical GitHub URLs,
-  roles, and llmdoc locations for related repositories.
-- `reference/latex3-patterns-from-njuthesis.md`: local LaTeX3 patterns to
-  reuse or evaluate.
-- `reference/git-commit-style.md`: commit subject labels, issue-reference
-  suffixes, and language rules for commits and `.dtx` documentation.
-- `reference/versioning-and-changes.md`: pre-1.0 versioning, changelog format,
-  and when to add `\changes` entries.
-- `reference/latexpagediff-verification.md`: visual-equivalence verification
-  when l3build `.tlg` tests fail after internal reordering.
-- `reference/l3build-tests.md`: current local test layout, active l3build
-  configs, and `.tlg` regeneration guidance.
-- `reference/language-interface.md`: current and intended handling for
-  `language`, `main-language`, and local `\thusetchinese`/`\thusetenglish`
-  feature declarations.
-- `reference/tex-parameter-nesting.md`: TeX `#` doubling rules for nested
-  definitions and inline functions in LaTeX3 code generation.
+- `reference/class-options.md`: class option 继承规则与审计范围。
+- `reference/setup-info-keys.md`: `\thusetup` 信息键、兼容别名和匿名过滤。
+- `reference/language-interface.md`: `language`、`main-language` 和局部语言
+  声明的现状。
+- `reference/l3build-tests.md`: 本地测试配置与 `.tlg` 保存规则。
+- `reference/llmdoc-writing-conventions.md`: llmdoc 的职责边界、拆分粒度、
+  memory 写法和封面文档维护约定。
+- `reference/latexpagediff-verification.md`: 通用 PDF 可视等价检查；封面
+  专项使用 `guides/cover-visual-parity.md`。
+- `reference/cover-oracles-and-fixtures.md`: 2e/3 封面 oracle 路径、fixture
+  覆盖矩阵与当前测试入口。
+- `reference/cover-layout-contracts.md`: 封面页面几何、字体、行距、bbox
+  与 shipped-box 约束。
+- `reference/cover-migration-status.md`: 封面迁移完成项、缺口和后续顺序。
+- `reference/cover-xtemplate-dispatch-design.md`: cover role/sequence/instance
+  dispatch 设计草案与剩余实现项。
+- `reference/cover-structure-and-todo.md`: 历史封面总览文件；已拆分为上面
+  的 cover architecture/reference/guide 文档。
+- `reference/sibling-repositories.md`: 本地相关仓库路径与上游角色。
+- `reference/latex3-patterns-from-njuthesis.md`: 可复用或需评估的 LaTeX3
+  模式。
+- `reference/tex-parameter-nesting.md`: 嵌套定义中的 TeX `#` 翻倍规则。
+- `reference/git-commit-style.md`: 提交标题、issue suffix 与文档语言规则。
+- `reference/versioning-and-changes.md`: pre-1.0 版本与 `\changes` 规则。
 
 ## Memory
 
-- `memory/decisions/2026-05-02-thuthesis3-as-destination.md`: decision that
-  LaTeX3-native architecture lands here, not in `thuthesis2e/master`.
-- `memory/decisions/2026-05-06-pdf-only-verification.md`: decision that during
-  rapid template development, skip `l3build check` and verify only via PDF
-  visual comparison.
-- `memory/decisions/2026-05-10-language-refactoring.md`: decision and current
-  implementation status for moving local language switching away from
-  `\thusetup{language=...}` toward feature-list declarations.
-- `memory/reflections/README.md`: placeholder for future working reflections.
-- `memory/reflections/2026-05-04-class-options.md`: reflection on class-option
-  inheritance scope and documentation alignment.
-- `memory/reflections/2026-05-04-info-key-compatibility.md`: reflection on
-  grouped `info` keys, legacy aliases, and avoiding NJUThesis-only docs.
-- `memory/reflections/2026-05-04-cover-hooks.md`: reflection on hook-based cover
-  generation with begin/body/end/back phases, rule-ordered labels, and
-  one-time `enddocument` back-cover scheduling.
-- `memory/reflections/2026-05-07-cover-info-block.md`: reflection on the
-  graduate cover info block refactor, storage-aware row generation, reusable
-  vertical box centering, and PDF-only verification notes.
-- `memory/reflections/2026-05-07-cover-en-title.md`: reflection on the
-  graduate English cover title/supervisor box alignment fixes, rejected
-  template extensions, and the no-`comp.pdf` regeneration boundary.
-- `memory/reflections/2026-05-08-proposal-cover.md`: reflection on the
-  graduate proposal cover implementation, the pivot from `_thesis`/`_proposal`
-  CS naming to bool dispatch, and the English cover name-token split.
-- `memory/reflections/2026-05-08-undergraduate-cover.md`: reflection on the
-  undergraduate cover layout update, shared supervisor formatting helpers,
-  two-logo system, and dynamic secret rendering.
-- `memory/reflections/2026-05-09-undergraduate-cover-spacing.md`: reflection on
-  undergraduate cover spacing refinements, `top-anchor` mechanism, `thulogo`
-  rename, title box construction with `\prevdepth` compensation, info fill
-  interim, and `include_graphics` promotion to class-level.
-- `memory/reflections/2026-05-09-undergraduate-cover-info-fork.md`: reflection on
-  forking the graduate info-drawing mechanism to undergraduate, docstrip-split
-  supervisor formatting helpers, old `\@@_cover_info:` removal, and the
-  merge path for unifying the two parameterized info systems.
-- `memory/reflections/2026-05-09-cover-info-merge.md`: reflection on merging
-  the `_u_`/`_g_` info systems into a unified class-level architecture,
-  `NN`→class-variable dimension state, `c left wd` constant, naming convention
-  change (`_item_<type>`/`_row_<type>`), and dead-code removal.
-- `memory/reflections/2026-05-10-cover-info-absolute-widths.md`: reflection on
-  undergraduate cover info absolute width constants, `em` evaluation timing,
-  and the rejected row-end `6pt` padding hypothesis.
-- `memory/reflections/2026-05-10-local-language-interface.md`: reflection on
-  replacing content-level `\thusetup{language=...}` with a feature-list local
-  language declaration and recording the undergraduate cover English title font
-  cause.
-- `memory/reflections/2026-05-10-tex-parameter-nesting.md`: reflection on
-  `#` doubling in nested LaTeX3 code generation, illegal parameter number
-  diagnosis, and the 2^N rule for definition boundaries.
-- `memory/doc-gaps.md`: tracked gaps between the codebase and llmdoc
-  reference pages.
+- `memory/decisions/`: 稳定设计或流程决策。
+- `memory/reflections/`: 任务后的反思、失败原因和可复用教训。
+- `memory/doc-gaps.md`: 已知文档缺口。
 
-Scratch investigations belong under `.llmdoc-tmp/`, not in this tree.
+临时调查材料放在 `.llmdoc-tmp/`，不要写入 `llmdoc/memory/`。
