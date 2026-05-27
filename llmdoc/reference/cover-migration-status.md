@@ -27,7 +27,9 @@
 - shared info system: `\@@_u_cover_info_table:` 仍应重命名为
   `\@@_cover_info_table:`。
 - postdoc: `cover-p-b` 仍是 placeholder；`cover-p-a` 和 postdoc 顶部栏
-  需要完整 parity 验证。
+  需要完整 parity 验证。`cover-p-a` 的顶部栏、报告字样、标题和作者在
+  `01-title-page-postdoc-1` 前 20 个 text elements 上已可 bbox match；
+  日期信息栏、页脚日期和 `01-title-page-postdoc-2` 仍需继续对齐。
 - spine: `include-spine`、`spine-title`、`spine-author`、`spine-font` 有 key，
   但 LaTeX3 `\spine` page/command 仍未完成。
 - declaration pages: 需要决定是否保持 `\copyrightpage` 和 `\statement`
@@ -37,8 +39,8 @@
 
 ## 推荐顺序
 
-1. 先用 `guides/cover-visual-parity.md` 建立 postdoc `cover-p-a` 顶部栏
-   bbox parity。
+1. 继续用 `guides/cover-visual-parity.md` 对齐 postdoc `cover-p-a` 的日期
+   信息栏和页脚日期。
 2. 填充并验证 `cover-p-b`。
 3. 补 graduate Chinese 剩余 variants，再补 graduate English professional
    variants。

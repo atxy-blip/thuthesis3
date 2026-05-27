@@ -46,6 +46,23 @@ content、format、bottom-skip 和 align；通用 `page` template 负责 element
 `a`/`b` 因为轴是固定页面槽位。避免 `cover-a-p`、`cover-b-p` 这类隐藏
 family 轴的旧拼法。
 
+## Element 粒度
+
+`xtemplate` 是内部布局 DSL，不是用户自定义封面元素的 public API。用户层面
+不需要、也不应依赖 `p / cover-a / title` 这类元素实例名。
+
+拆成 element/page instance 的收益应来自内部维护：
+
+- page sequence、role dispatch 和 docstrip-time family split 更清晰；
+- family、degree、language variants 可以作为数据或实例选择表达；
+- 共享的 content/format/bottom-skip/align 渲染逻辑集中在模板中；
+- bbox/overlay 验证可以定位到页面槽位或重复元素。
+
+不要为了“更 LaTeX3”把每个一次性视觉片段都对象化。适合成为 element 的
+片段通常有 variant 轴、复用形状、页面排序意义或独立验证价值。仅服务一个
+legacy metric 的内容应优先做成局部 helper，例如 `\@@_p_cover_title:`。
+这种 helper 可以被 element 调用，但不必把内部每个排版细节再拆成对象。
+
 ## Dispatch 边界
 
 长期目标是 public command -> cover sequence -> cover role -> page instance。

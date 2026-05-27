@@ -917,6 +917,39 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_box_linefix:nn}
+% 将固定高度盒子作为一行输出时，补偿外层行距对盒子位置的影响。
+% \LaTeXe{} 的 \tn{parbox} 常把字号设置放在盒子内部；
+% 当前封面 element 则要求字号放在盒子外部的 |format| 中。
+% 这样同一个固定高度盒子会按外层字号触发不同的行间 glue，
+% 进而改变盒子和后续内容的绝对位置。
+% 本函数先量出当前字号会在盒子前插入的正常行间 glue，
+% 再按给定基准行距重新计算目标 glue，并插入两者之差。
+% 如果当前情况本来会走 \tn{lineskip} 分支，则不做补偿。
+% \begin{arguments}
+%   \item 目标基准行距，|dim| 型表达式
+%   \item 固定高度盒子内容
+% \end{arguments}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_linefix:nn #1#2
+  {
+    \dim_set_eq:NN \l_@@_tmpa_dim \tex_prevdepth:D
+    \hbox_set:Nn \l_@@_tmpa_box {#2}
+    \dim_set:Nn \l_@@_tmpb_dim
+      { \tex_baselineskip:D - \l_@@_tmpa_dim - \box_ht:N \l_@@_tmpa_box }
+    \dim_compare:nNnT { \l_@@_tmpb_dim } > { \tex_lineskiplimit:D }
+      {
+        \dim_set:Nn \l_@@_tmpa_dim
+          { #1 - \tex_prevdepth:D - \box_ht:N \l_@@_tmpa_box }
+        \dim_compare:nNnF { \l_@@_tmpa_dim } > { \tex_lineskiplimit:D }
+          { \dim_set:Nn \l_@@_tmpa_dim { \tex_lineskip:D } }
+        \skip_vertical:n { \l_@@_tmpa_dim - \l_@@_tmpb_dim }
+      }
+    \box_use:N \l_@@_tmpa_box
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_box_paragraph:nn}
 % 替代 \tn{parbox} 的功能，生成指定宽度的顶对齐垂直盒子。
 % \tn{@parboxrestore} 用于重置段落参数，保证 \tn{lastbox} 正确。
@@ -969,6 +1002,14 @@ To produce the documentation run the original source files ending with
         \tex_vfill:D
       }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_box_paragraph_center_to_ht:nn}
+% 固定高度的居中段落盒子。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_box_paragraph_center_to_ht:nn #1#2
+  { \@@_box_paragraph_top_to_ht:nn {#1} { \tex_vfill:D #2 } }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4355,8 +4396,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_u_cover_title:
   {
-    \dim_set_eq:NN \l_@@_tmpa_dim \tex_prevdepth:D
-    \hbox_set:Nn \l_@@_tmpa_box
+    \@@_box_linefix:nn { 0 pt }
       {
         \@@_box_paragraph_top_to_ht:nn { 136 bp }
           {
@@ -4370,11 +4410,6 @@ To produce the documentation run the original source files ending with
               }
           }
       }
-    \dim_set:Nn \l_@@_tmpb_dim
-      { \baselineskip - \l_@@_tmpa_dim - \box_ht:N \l_@@_tmpa_box }
-    \dim_compare:nNnT { \l_@@_tmpb_dim } > { \lineskiplimit }
-      { \skip_vertical:n { \lineskip - \l_@@_tmpb_dim } }
-    \box_use:N \l_@@_tmpa_box
   }
 %</def-u>
 %    \end{macrocode}
@@ -4705,7 +4740,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { p / cover-a / title }
   {
-    content     = \parbox[t][4.0cm][c]{\textwidth}{\centering\g_@@_info_title_tl},
+    content     = \@@_p_cover_title:,
     format      = \@@_zihao:nn { 3.46 } { 4 },
     bottom-skip = .4 cm
   }
@@ -4756,6 +4791,34 @@ To produce the documentation run the original source files ending with
     content     = \@@_datea:V \g_@@_info_date_tl,
     format      = \@@_zihao:nn { 2 } { -4 },
     bottom-skip = .25 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_p_cover_title:}
+% 博士后报告封面标题。
+% 20 bp 是 \LaTeXe{} 版在标题 \tn{parbox} 外部使用的普通正文行距。
+% 标题内部的四号字行距仍由元素对象 |format| 设置。
+% XeTeX 分支直接使用 \pkg{xeCJKfntef} 载入的 \tn{uline}，
+% 复现 \LaTeXe{} 版的下划线盒子高度。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_p_cover_title:
+  {
+    \@@_box_linefix:nn { 20 bp }
+      {
+        \@@_box_paragraph_center_to_ht:nn { 4.0 cm }
+          {
+            \group_begin:
+              \sys_if_engine_xetex:TF
+                {
+                  \renewcommand \ULthickness { 0.7 pt }
+                  \renewcommand \ULdepth { 1 em }
+                  \exp_args:NV \uline \g_@@_info_title_tl
+                }
+                { \exp_args:NV \thuline \g_@@_info_title_tl }
+            \group_end:
+          }
+      }
   }
 %    \end{macrocode}
 % \end{macro}

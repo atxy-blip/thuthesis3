@@ -10,6 +10,30 @@ bbox HTML 验证，而不只看 `.tlg`。
 `page` template 的 `top-anchor=null` 复现 `\null\vskip`；`top-anchor=none`
 用于 undergraduate cover。不要用裸 offset 补偿全页错位。
 
+## Fixed-Height Paragraph Boxes
+
+legacy `\parbox` 常把字号设置放在盒子内部；`thuthesis3` element 模型要求
+字号属于 element `format`，内容 helper 只负责盒形和文字。这会改变 TeX 在
+固定高度盒子前插入的 interline glue，因为外层 `\baselineskip` 不同。
+
+`source/thuthesis3.dtx` (`\@@_box_linefix:nn`) 是这个差异的共享补偿点。它
+把当前外层字号会产生的 normal interline glue 换算为调用方给定的目标
+baseline glue，并只在当前场景本来走 normal `\baselineskip` 分支时生效。
+不要把它扩展成通用 TeX box primitive；它服务的是“固定高度盒子作为一行
+输出”的封面布局。
+
+目标 baseline 必须由调用点声明：
+
+- undergraduate title 使用 `0pt`，等价于旧 `\@@_u_cover_title:` 专用实现
+  里把 normal interline glue 压到 `\lineskip` 的效果。
+- postdoc report title 使用 `20bp`，复现 2e 标题 `\parbox` 外部的普通正文
+  行距；这不是标题四号字内部的行距。标题四号字内部行距仍由 element
+  `format` 设置。
+
+不要为 `\prevdepth=-1000pt` 加哨兵分支。当前调用点都不是页面顶端第一项；
+legacy 专用实现也没有处理这个 top-of-list 状态。加入哨兵值会让 helper
+看似通用，反而掩盖错误调用位置。
+
 ## Graduate Chinese Cover
 
 首个 parity target 是 doctor academic Chinese cover without secret：
@@ -89,6 +113,11 @@ box 开始，而不是 `\null` anchor。
 - type label: `\ziju{0.3}` and proposal/thesis dispatch by
   `\@@_u_cover_type:`
 - title: `\heiti` with `26bp/32.5bp`，不是 `\sffamily`
+- title fixed-height box keeps the legacy line-glue behavior through
+  `\@@_box_linefix:nn {0pt}`; changes to shared linefix helpers must be
+  checked against the previous `\@@_u_cover_title:` output, not only against
+  the current 2e full-page diff, because other undergraduate migration gaps
+  may still exist.
 - English-main title: Chinese title plus `title*` below it，只对英文标题局部
   应用 English punctuation
 - info: `bottom-skip = 0pt plus 1 fill` 复现 legacy `\vfill`
@@ -104,3 +133,20 @@ page。`cover-p-b` 仍是 placeholder；postdoc 顶部信息栏、UDC 字体/间
 
 postdoc parity 优先使用 `testfiles/01-title-page/01-title-page-postdoc-1.tex`
 和 `01-title-page-postdoc-2.tex`，流程见 `guides/cover-visual-parity.md`。
+
+`cover-p-a` 的 title parity 调查顺序：
+
+- 先看 bbox：顶部栏和“博士后研究工作报告”若 `dy=0`，而第一处不一致从标题
+  开始，问题通常在 title fixed-height box 前后的 line glue 或盒内 underline
+  metric。
+- 再看 shipped-box trace：对比 `\baselineskip`、fixed-height `vbox`、
+  `\prevdepth` 和 underline 造成的 line depth。不要用裸 vertical offset。
+- 复现 2e title underline 时，XeTeX 分支直接使用 `xeCJKfntef` 载入的
+  `\uline`，并设置 `\ULthickness=0.7pt`、`\ULdepth=1em`。不要用现有的
+  定宽 underline helper 替代；标题下划线宽度和断行行为属于 2e oracle。
+- `20bp` 是 title `\parbox` 外部的普通正文行距，来自 2e 页面状态；不是
+  `\sihao[3.46]` 的内部行距。
+
+当前已验证的 postdoc report cover 局部目标：`01-title-page-postdoc-1` 的
+前 20 个 text elements，包括顶部信息栏、UDC、报告字样、两行标题和作者，
+可达到 bbox match。完整 `cover-p-a` 仍需继续处理日期信息栏和页脚日期。
