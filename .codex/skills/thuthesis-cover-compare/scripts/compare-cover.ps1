@@ -84,6 +84,9 @@ if (-not (Test-Path -LiteralPath $fixture3)) {
 if ([string]::IsNullOrWhiteSpace($OutRoot)) {
   $OutRoot = Join-Path $Thuthesis3Root ".llmdoc-tmp\cover-compare\$fixtureName"
 }
+elseif (-not [System.IO.Path]::IsPathRooted($OutRoot)) {
+  $OutRoot = [System.IO.Path]::GetFullPath((Join-Path (Get-Location) $OutRoot))
+}
 
 $out2e = Join-Path $OutRoot "2e"
 $out3 = Join-Path $OutRoot "thuthesis3"

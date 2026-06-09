@@ -23,6 +23,10 @@ For a focused top-of-page check, compare only the first N text elements:
 powershell -ExecutionPolicy Bypass -File .codex\skills\thuthesis-cover-compare\scripts\compare-cover.ps1 -Fixture 01-title-page-postdoc-1 -FirstWords 10
 ```
 
+Use `-OutRoot <path>` to place outputs in a separate investigation directory.
+Relative `-OutRoot` values are resolved before compilation so overlay generation
+can safely run from the output directory.
+
 The script reads matching fixtures from:
 
 - `C:\Users\admin\Documents\Source\thuthesis2e\testfiles\01-title-page`
@@ -43,9 +47,11 @@ Exit code `0` means the compared `<word>` bbox lines match exactly. Exit code `2
 1. Read project `llmdoc/` first, especially `startup.md`, `must/testing-and-oracle-policy.md`, and `reference/latexpagediff-verification.md`.
 2. Pick one fixture that isolates the cover surface being debugged.
 3. Run `compare-cover.ps1 -Fixture <name-with-or-without-.tex>`.
-4. Inspect `comp.pdf` first for visual overlay differences.
-5. Inspect `bbox-diff.txt` when exact position, font, or spacing parity matters.
-6. If bbox differs, inspect the fixture logs or rerun the fixture with TeX box tracing before changing `source/thuthesis3.dtx`.
+4. For source edits, let the script run `l3build install`; use `-NoInstall`
+   only after confirming `build/local` already reflects `source/thuthesis3.dtx`.
+5. Inspect `comp.pdf` first for visual overlay differences.
+6. Inspect `bbox-diff.txt` when exact position, font, or spacing parity matters.
+7. If bbox differs, inspect the fixture logs or rerun the fixture with TeX box tracing before changing `source/thuthesis3.dtx`.
 
 ## Notes
 
@@ -55,4 +61,4 @@ Exit code `0` means the compared `<word>` bbox lines match exactly. Exit code `2
 - Use the full `thuthesis2e` fixture as the oracle; do not rewrite oracle fixtures unless the user explicitly asks for test maintenance.
 - Compile the cover fixtures with `xelatex`; compile the `pdfpagediff` overlay with `pdflatex`.
 - `pdfpagediff` strips directory components internally, so the script copies PDFs to `oracle.pdf` and `actual.pdf` beside `comp.tex` before layering.
-- Default comparison is all PDF text elements. Use `-FirstWords N` only for deliberately focused checks such as the postdoc top information bar.
+- Default comparison is all PDF text elements. Use `-FirstWords N` only for deliberately focused checks such as the postdoc top information bar or the `cover-p-b` title block.
