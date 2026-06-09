@@ -4708,13 +4708,15 @@ To produce the documentation run the original source files ending with
 %
 % \paragraph{博士后}
 %
+% \subparagraph{封面}
+%
 % \begin{macro}{p/cover-a/top}
 % 博士后封面实例。
 %    \begin{macrocode}
 %<*def-p>
 \@@_declare_element:nn { p / cover-a / top }
   {
-    content     = \@@_cover_top:nn { 3.1 em } { 3.7 cm },
+    content     = \@@_p_cover_top:nn { 3.1 em } { 3.7 cm },
     format      = \@@_zihao:nn { 2.6 } { 4 },
     bottom-skip = 3.15 cm
   }
@@ -4764,7 +4766,7 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \@@_declare_element:nn { p / cover-a / info }
   {
-    content     = \@@_cover_dates:n { 5.9 cm },
+    content     = \@@_p_cover_dates:n { 5.9 cm },
     format      = \@@_zihao:nn { 1.58 } { -4 },
     bottom-skip = .45 cm
   }
@@ -4823,53 +4825,53 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_top:nn}
+% \begin{macro}{\@@_p_cover_top:nn}
 % 封面顶部信息。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_top:nn #1#2
+\cs_new_protected:Npn \@@_p_cover_top:nn #1#2
   {
-    \@@_cover_top_aux:nnnn {#1} {#2} { clc      }  { secretlv }
-    \@@_cover_top_aux:nnnn {#1} {#2} { udc      }  { id       }
+    \@@_p_cover_top_aux:nnnn {#1} {#2} { clc      }  { secretlv }
+    \@@_p_cover_top_aux:nnnn {#1} {#2} { udc      }  { id       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_top_aux:nnnn}
+% \begin{macro}{\@@_p_cover_top_aux:nnnn}
 % 单条封面顶部信息。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_top_aux:nnnn #1#2#3#4
+\cs_new_protected:Npn \@@_p_cover_top_aux:nnnn #1#2#3#4
   {
-    \@@_cover_top_label:nn  {#1} {#3}
-    \@@_cover_top_ulined:nv {#2} { g_@@_info_ #3 _tl } \tex_hfill:D
+    \@@_p_cover_top_label:nn  {#1} {#3}
+    \@@_p_cover_top_ulined:nv {#2} { g_@@_info_ #3 _tl } \tex_hfill:D
     \tl_use:c { c_@@_name_ #4 _tl }
-    \@@_cover_top_ulined:nv {#2} { g_@@_info_ #4 _tl } \tex_par:D
+    \@@_p_cover_top_ulined:nv {#2} { g_@@_info_ #4 _tl } \tex_par:D
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_top_label:nn,\@@_cover_top_ulined:nn}
+% \begin{macro}{\@@_p_cover_top_label:nn,\@@_p_cover_top_ulined:nn}
 % 博士后封面顶部标签和下划线。
 %    \begin{macrocode}
-\cs_new:Npn \@@_cover_top_label:nn #1#2
+\cs_new:Npn \@@_p_cover_top_label:nn #1#2
   {
     \str_if_eq:nnTF {#2} { udc }
       { \@@_box_pad:nn {#1} { \@@_name:n {#2} } }
       { \@@_box_ss:nv {#1} { c_@@_name_ #2 _tl } }
   }
-\cs_new:Npn \@@_cover_top_ulined:nn #1#2
+\cs_new:Npn \@@_p_cover_top_ulined:nn #1#2
   {
     \skip_horizontal:n { 1 pt }
     \@@_box_ulined:nn {#1} {#2}
     \skip_horizontal:n { 3 pt }
   }
-\cs_generate_variant:Nn \@@_cover_top_ulined:nn { nv }
+\cs_generate_variant:Nn \@@_p_cover_top_ulined:nn { nv }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_cover_dates:n}
+% \begin{macro}{\@@_p_cover_dates:n}
 % 封面中部日期。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cover_dates:n #1
+\cs_new_protected:Npn \@@_p_cover_dates:n #1
   {
     \c_@@_name_dates_tl \@@_hskip:
     \@@_box_ulined:nn {#1}
@@ -4881,15 +4883,133 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_p_cover_info:NN}
-% 博士后封面信息栏。
-% \begin{arguments}
-%   \item 名称盒子宽度，|dim| 型变量
-%   \item 标签格式
-% \end{arguments}
+%
+% \subparagraph{题名页}
+%
+% \begin{macro}{p/cover-b/title-zh}
+% 博士后题名页中文标题实例。
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_p_cover_info:NN #1#2
+\@@_declare_element:nn { p / cover-b / title-zh }
   {
+    content     = \@@_p_cover_b_title:,
+    format      = \@@_zihao:nn { 1.95 } { 3 },
+    bottom-skip = 0.15 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-b/title-en}
+% 博士后题名页英文标题实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-b / title-en }
+  {
+    content     = \@@_p_cover_b_title_en:,
+    format      = \@@_zihao:nn { 1.36 } { 4 },
+    bottom-skip = 0.4 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-b/info}
+% 博士后题名页信息栏实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-b / info }
+  {
+    content     = \@@_p_cover_b_info:,
+    format      = \@@_zihao:nn { 2.6 } { -4 },
+    bottom-skip = 2.7 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-b/dates}
+% 博士后题名页日期信息实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-b / dates }
+  {
+    content     = \@@_p_cover_b_dates:,
+    format      = \@@_zihao:nn { 2.6 } { -4 },
+    bottom-skip = 2.1 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-b/thujwc}
+% 博士后题名页清华大学人事处实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-b / thujwc }
+  {
+    content     = \c_@@_name_thuhr_tl,
+    format      = \@@_zihao:nn { 2 } { -4 },
+    bottom-skip = 0.6 cm
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{p/cover-b/date}
+% 博士后题名页日期实例。
+%    \begin{macrocode}
+\@@_declare_element:nn { p / cover-b / date }
+  {
+    content     = \@@_datea:V \g_@@_info_date_tl,
+    format      = \@@_zihao:n { -5 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_p_cover_b_title:}
+% 博士后题名页中文标题。
+% 与封面标题不同，题名页标题不带下划线。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_p_cover_b_title:
+  {
+    \@@_box_linefix:nn { 20 bp }
+      {
+        \@@_box_paragraph_center_to_ht:nn { 3 cm }
+          { \g_@@_info_title_tl }
+      }
+  }
+\cs_new_protected:Npn \@@_p_cover_b_title_en:
+  {
+    \@@_box_paragraph_center_to_ht:nn { 3 cm }
+      { \g_@@_info_title_en_tl }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_p_cover_b_info:}
+% 博士后题名页信息栏。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_p_cover_b_info_row:nn #1#2
+  {
+    \hbox:n
+      {
+        \@@_box_left:nn { 11 em } {#1}
+        \@@_quad:
+        #2
+      }
+  }
+\cs_new_protected:Npn \@@_p_cover_b_info:
+  {
+    \@@_p_cover_b_info_row:nn
+      { \c_@@_name_author_tl } { \g_@@_info_author_tl }
+    \@@_p_cover_b_info_row:nn
+      { \c_@@_name_discipa_tl } { \g_@@_info_discipa_tl }
+    \@@_p_cover_b_info_row:nn
+      { \c_@@_name_discipb_tl } { \g_@@_info_discipb_tl }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_p_cover_b_dates:}
+% 博士后题名页日期信息。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_p_cover_b_dates:
+  {
+    \c_@@_name_startdate_tl \@@_quad:
+    \@@_datea:V \g_@@_info_startdate_tl \tex_par:D
+    \c_@@_name_enddate_tl   \@@_quad:
+    \@@_datea:V \g_@@_info_enddate_tl
   }
 %</def-p>
 %    \end{macrocode}
@@ -5090,14 +5210,14 @@ To produce the documentation run the original source files ending with
 % \end{macro}
 %
 % \begin{macro}{cover-p-b}
-% 博士后题名页实例。当前内容尚未迁移完成，先保留空实例作为测试和后续实现的占位。
+% 博士后题名页实例。
 %    \begin{macrocode}
 \@@_declare_page:nn { cover-p-b }
   {
-    element     = {  },
+    element     = { title-zh, title-en, info, dates, thujwc, date },
     prefix      = p / cover-b /,
-    format      = \bfseries,
-    top-skip    = 100 pt
+    top-anchor  = null,
+    top-skip    = 1.5 cm
   }
 %</def-p>
 %    \end{macrocode}
