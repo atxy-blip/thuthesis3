@@ -1125,7 +1125,7 @@ To produce the documentation run the original source files ending with
 % \begin{description}
 %   \item[本科生] 2023年1月1日
 %   \item[研究生] 二〇二三年一月、January, 2023
-%   \item[博士后] 2023年1月1日、2023年1月
+%   \item[博士后] 2023年1月、2023年1月1日
 % \end{description}
 %    \begin{macrocode}
 %</class>
@@ -1138,7 +1138,7 @@ To produce the documentation run the original source files ending with
 \cs_new:Npn \@@_dateb:n #1
   {
 %<def-g>    \@@_date_ym_en:www  #1 \q_stop
-%<def-p>    \@@_date_ym_zh:www  #1 \q_stop
+%<def-p>    \@@_date_ymd_zh:www #1 \q_stop
   }
 %    \end{macrocode}
 % 为了将 \typ{tokenlist} 型变量直接传入 \exp{www} 型参数，需要提前进行展开。
@@ -4929,7 +4929,7 @@ To produce the documentation run the original source files ending with
   {
     content     = \@@_p_cover_b_dates:,
     format      = \@@_zihao:nn { 2.6 } { -4 },
-    bottom-skip = 2.1 cm
+    bottom-skip = 2.35404 cm
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4952,7 +4952,7 @@ To produce the documentation run the original source files ending with
 \@@_declare_element:nn { p / cover-b / date }
   {
     content     = \@@_datea:V \g_@@_info_date_tl,
-    format      = \@@_zihao:n { -5 }
+    format      = \@@_zihao:n { 5 }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4981,22 +4981,30 @@ To produce the documentation run the original source files ending with
 % 博士后题名页信息栏。
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_p_cover_b_info_row:nn #1#2
-  {
-    \hbox:n
-      {
-        \@@_box_left:nn { 11 em } {#1}
-        \@@_quad:
-        #2
-      }
-  }
+  { \strut \@@_box_ss:nn { 11 em } {#1} & #2 \tex_cr:D }
+\cs_new_protected:Npn \@@_p_cover_b_info_value_fix:n #1
+  { \rlap { \skip_horizontal:n { .012 pt } #1 } \phantom {#1} }
 \cs_new_protected:Npn \@@_p_cover_b_info:
   {
-    \@@_p_cover_b_info_row:nn
-      { \c_@@_name_author_tl } { \g_@@_info_author_tl }
-    \@@_p_cover_b_info_row:nn
-      { \c_@@_name_discipa_tl } { \g_@@_info_discipa_tl }
-    \@@_p_cover_b_info_row:nn
-      { \c_@@_name_discipb_tl } { \g_@@_info_discipb_tl }
+    \@@_box_center:nn { \textwidth }
+      {
+        \@@_box_vcenter:n
+          {
+            \tex_halign:D
+              {
+                \skip_horizontal:n { \tabcolsep } ## \@@_quad:
+                & ## \tex_hfil:D \skip_horizontal:n { \tabcolsep } \tex_cr:D
+                \@@_p_cover_b_info_row:nn
+                  { \c_@@_name_author_tl } { \g_@@_info_author_tl }
+                \@@_p_cover_b_info_row:nn
+                  { \c_@@_name_discipa_tl }
+                  { \@@_p_cover_b_info_value_fix:n { \g_@@_info_discipa_tl } }
+                \@@_p_cover_b_info_row:nn
+                  { \c_@@_name_discipb_tl }
+                  { \@@_p_cover_b_info_value_fix:n { \g_@@_info_discipb_tl } }
+              }
+          }
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5007,9 +5015,10 @@ To produce the documentation run the original source files ending with
 \cs_new_protected:Npn \@@_p_cover_b_dates:
   {
     \c_@@_name_startdate_tl \@@_quad:
-    \@@_datea:V \g_@@_info_startdate_tl \tex_par:D
+    \@@_dateb:V \g_@@_info_startdate_tl \tex_par:D
+    \skip_vertical:n { .1 cm }
     \c_@@_name_enddate_tl   \@@_quad:
-    \@@_datea:V \g_@@_info_enddate_tl
+    \@@_dateb:V \g_@@_info_enddate_tl
   }
 %</def-p>
 %    \end{macrocode}

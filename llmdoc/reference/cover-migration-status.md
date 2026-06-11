@@ -16,6 +16,8 @@
   English-main title behavior。
 - undergraduate/graduate Chinese info system 已合并为 class-level 参数化
   绘制系统。
+- postdoc title page `cover-p-b` 已不再是空 placeholder；
+  `01-title-page-postdoc-2` 整页 text bbox 已达到 match。
 
 ## 未完成或需复验
 
@@ -26,10 +28,10 @@
 - undergraduate: optional co-supervisor label width behavior。
 - shared info system: `\@@_u_cover_info_table:` 仍应重命名为
   `\@@_cover_info_table:`。
-- postdoc: `cover-p-b` 仍是 placeholder；`cover-p-a` 和 postdoc 顶部栏
-  需要完整 parity 验证。`cover-p-a` 的顶部栏、报告字样、标题和作者在
-  `01-title-page-postdoc-1` 前 20 个 text elements 上已可 bbox match；
-  日期信息栏、页脚日期和 `01-title-page-postdoc-2` 仍需继续对齐。
+- postdoc: `cover-p-a` 仍需要完整 parity 验证。`cover-p-a` 的顶部栏、报告
+  字样、标题和作者在 `01-title-page-postdoc-1` 前 20 个 text elements 上已可
+  bbox match；剩余缺口是 `cover-p-a` 日期信息栏和页脚日期。`cover-p-b` 在
+  `01-title-page-postdoc-2` 上已可整页 text bbox match。
 - spine: `include-spine`、`spine-title`、`spine-author`、`spine-font` 有 key，
   但 LaTeX3 `\spine` page/command 仍未完成。
 - declaration pages: 需要决定是否保持 `\copyrightpage` 和 `\statement`
@@ -41,9 +43,8 @@
 
 1. 继续用 `guides/cover-visual-parity.md` 对齐 postdoc `cover-p-a` 的日期
    信息栏和页脚日期。
-2. 填充并验证 `cover-p-b`。
-3. 补 graduate Chinese 剩余 variants，再补 graduate English professional
+2. 补 graduate Chinese 剩余 variants，再补 graduate English professional
    variants。
-4. 导入 `01-title-page-en` fixture tree 后扩展 config。
-5. 最后处理 spine 与 declaration-page public API，因为它们影响页面流程而
+3. 导入 `01-title-page-en` fixture tree 后扩展 config。
+4. 最后处理 spine 与 declaration-page public API，因为它们影响页面流程而
    不只是单页几何。

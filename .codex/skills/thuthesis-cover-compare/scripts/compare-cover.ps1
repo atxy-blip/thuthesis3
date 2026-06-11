@@ -82,7 +82,7 @@ if (-not (Test-Path -LiteralPath $fixture3)) {
 }
 
 if ([string]::IsNullOrWhiteSpace($OutRoot)) {
-  $OutRoot = Join-Path $Thuthesis3Root ".llmdoc-tmp\cover-compare\$fixtureName"
+  $OutRoot = Join-Path $Thuthesis3Root "temp\cover-compare\$fixtureName"
 }
 elseif (-not [System.IO.Path]::IsPathRooted($OutRoot)) {
   $OutRoot = [System.IO.Path]::GetFullPath((Join-Path (Get-Location) $OutRoot))
@@ -91,6 +91,11 @@ elseif (-not [System.IO.Path]::IsPathRooted($OutRoot)) {
 $out2e = Join-Path $OutRoot "2e"
 $out3 = Join-Path $OutRoot "thuthesis3"
 New-Item -ItemType Directory -Force -Path $out2e, $out3 | Out-Null
+
+$localFixture2e = Join-Path $out2e $fixtureTex
+$localFixture3 = Join-Path $out3 $fixtureTex
+Copy-Item -LiteralPath $fixture2e -Destination $localFixture2e -Force
+Copy-Item -LiteralPath $fixture3 -Destination $localFixture3 -Force
 
 if (-not $NoInstall) {
   Push-Location $Thuthesis3Root
@@ -105,8 +110,8 @@ if (-not $NoInstall) {
 $texinputs2e = ".;$Thuthesis2eRoot;$Thuthesis2eRoot\testfiles\01-title-page;$Thuthesis2eRoot\testfiles\01-title-page\support;"
 $texinputs3 = ".;$Thuthesis3Root\build\local;$Thuthesis3Root\testfiles\01-title-page;$Thuthesis3Root\testfiles\01-title-page\support;"
 
-Invoke-XeLaTeX -TexFile $fixture2e -WorkDir $out2e -TexInputs $texinputs2e -Label "xelatex thuthesis2e fixture"
-Invoke-XeLaTeX -TexFile $fixture3 -WorkDir $out3 -TexInputs $texinputs3 -Label "xelatex thuthesis3 fixture"
+Invoke-XeLaTeX -TexFile $fixtureTex -WorkDir $out2e -TexInputs $texinputs2e -Label "xelatex thuthesis2e fixture"
+Invoke-XeLaTeX -TexFile $fixtureTex -WorkDir $out3 -TexInputs $texinputs3 -Label "xelatex thuthesis3 fixture"
 
 $pdf2e = Join-Path $out2e "$fixtureName.pdf"
 $pdf3 = Join-Path $out3 "$fixtureName.pdf"

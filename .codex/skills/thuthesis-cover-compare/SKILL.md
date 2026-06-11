@@ -32,10 +32,10 @@ The script reads matching fixtures from:
 - `C:\Users\admin\Documents\Source\thuthesis2e\testfiles\01-title-page`
 - `C:\Users\admin\Documents\Source\thuthesis3\testfiles\01-title-page`
 
-It writes outputs under `.llmdoc-tmp\cover-compare\<fixture>\`:
+It writes outputs under `temp\cover-compare\<fixture>\`:
 
-- `2e\<fixture>.pdf`: oracle PDF
-- `thuthesis3\<fixture>.pdf`: current PDF
+- `2e\<fixture>.tex` and `2e\<fixture>.pdf`: copied oracle fixture and compiled oracle PDF
+- `thuthesis3\<fixture>.tex` and `thuthesis3\<fixture>.pdf`: copied current fixture and compiled current PDF
 - `oracle.pdf`, `actual.pdf`, `comp.tex`, and `comp.pdf`: `pdfpagediff` overlay inputs/output, modeled after `temp/comp.tex` and compiled with `pdflatex`
 - `bbox-2e.html` and `bbox-thuthesis3.html`: `pdftotext -bbox` outputs
 - `bbox-diff.txt`: exact `<word>` line comparison
@@ -56,7 +56,7 @@ Exit code `0` means the compared `<word>` bbox lines match exactly. Exit code `2
 ## Notes
 
 - Edit `source/thuthesis3.dtx`, never generated `.cls` or `.def` files.
-- Keep temporary comparison artifacts in `.llmdoc-tmp/`, not `llmdoc/`.
+- Keep temporary comparison artifacts in `temp/cover-compare/`, not `llmdoc/`.
 - `l3build install` may print Windows access-denied noise while still producing usable files; trust the command exit code and generated `build/local` files.
 - Use the full `thuthesis2e` fixture as the oracle; do not rewrite oracle fixtures unless the user explicitly asks for test maintenance.
 - Compile the cover fixtures with `xelatex`; compile the `pdfpagediff` overlay with `pdflatex`.

@@ -127,9 +127,8 @@ optional co-supervisor label width behavior 仍需验证。
 ## Postdoc Cover
 
 postdoc 有两个页面槽位：`cover-p-a` 是 report cover，`cover-p-b` 是 title
-page。`cover-p-b` 仍是 placeholder；postdoc 顶部信息栏、UDC 字体/间距、
-中英文标题、discipline level、起止日期和页脚日期都应按 2e oracle 分项
-验证。
+page。postdoc 顶部信息栏、UDC 字体/间距、中英文标题、discipline level、
+起止日期和页脚日期都应按 2e oracle 分项验证。
 
 postdoc parity 优先使用 `testfiles/01-title-page/01-title-page-postdoc-1.tex`
 和 `01-title-page-postdoc-2.tex`，流程见 `guides/cover-visual-parity.md`。
@@ -150,3 +149,38 @@ postdoc parity 优先使用 `testfiles/01-title-page/01-title-page-postdoc-1.tex
 当前已验证的 postdoc report cover 局部目标：`01-title-page-postdoc-1` 的
 前 20 个 text elements，包括顶部信息栏、UDC、报告字样、两行标题和作者，
 可达到 bbox match。完整 `cover-p-a` 仍需继续处理日期信息栏和页脚日期。
+
+`cover-p-b` 的题名段已用 `01-title-page-postdoc-2 -FirstWords 17` 验证到
+bbox match；题名段加信息栏已用 `-FirstWords 28` 验证到 bbox match。
+稳定契约：
+
+- page start 复现 legacy `\vspace*{1.5cm}`，当前 page instance 使用
+  `top-anchor=null` 和 `top-skip=1.5cm`。
+- 中文题名是 `3cm` fixed-height centered paragraph box；由于字号由 element
+  `format` 拥有，进入盒子前要用 `\@@_box_linefix:nn {20bp}` 复现 2e 在普通
+  外部行距下输出固定高 `parbox` 的落点。
+- 英文题名也必须保留 `3cm` fixed-height centered paragraph box。只直接输出
+  title token 会让英文题名过早出现，即使每个 word 的横向 bbox 和字号正确。
+- 若中文题名偏低而英文题名偏高，这不是单一 page anchor 错位；先查两个
+  title element 的 fixed-height box 和 line glue。
+
+信息栏契约：
+
+- oracle 使用居中的 `tabular{l@{\quad}l}`，第一列是
+  `\thu@stretch{11em}{...}`。3 版应复现为自然宽度居中的私有 alignment，而不是
+  三个独立左对齐 hbox。
+- 第一列标签使用 `\@@_box_ss:nn {11em}`；`博士后姓名` 会被拆成单字 bbox，
+  这是 spread box 的预期行为。
+- 行首 `\strut` 保留 tabular 行高和深度；第二列需带 `\hfil`，否则短中文值会
+  被 alignment 的自然列宽拉散。
+- 不要直接使用公共 `tabular` 环境；当前源码对 `tabular` 有全局 begin hook，
+  会把字号改成五号，破坏 postdoc 题名页局部 `\xiaosi[2.6]` 契约。
+- 二、三行 value 需要不参与列宽计算的微小 ink 起点补偿；补偿应放在零宽盒中，
+  不能改变表格自然宽度和居中位置。
+
+`cover-p-b` 日期区使用 postdoc 的完整年月日 formatter。两行日期之间保留
+legacy `0.1cm` skip；日期区到人事处的 element skip 取 `2.35404cm`，复现
+2e 日期段结尾 paragraph 后接 `\vskip 2.1cm` 的实际 bbox 位置。页脚提交日期
+使用五号，不是小五号。
+
+`01-title-page-postdoc-2` 当前可达到整页 text bbox match。
