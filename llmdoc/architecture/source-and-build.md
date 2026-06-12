@@ -46,8 +46,9 @@ Important sections in `source/thuthesis3.dtx`:
 - `module = "thuthesis3"`;
 - `checkengines = {"xetex"}`;
 - `checkopts = "-interaction=batchmode"`;
-- `checkconfigs = {"build", "testfiles/config-title-page"}` with additional
-  title-page-related configs left commented for future expansion;
+- `checkconfigs = {"build", "testfiles/config-title-page",
+  "testfiles/config-biblatex"}` with additional title-page-related configs left
+  commented for future expansion;
 - `typesetexe = "xelatex"`;
 - `typesetfiles = {"thuthesis3.dtx"}`;
 - `unpackexe = "xetex"`;
@@ -75,3 +76,7 @@ under `testfiles/01-title-page/` and are selected by
 `testfiles/config-title-page.lua`. The imported title-page corpus is broader
 than the default smoke subset, so expanding `includetests` in that config should
 be a deliberate verification step rather than a drive-by change.
+
+Biblatex hook-loading tests live under `testfiles/biblatex/` and are selected
+by `testfiles/config-biblatex.lua`. This config copies same-directory `.bib`
+support files and runs Biber after the first LaTeX pass.

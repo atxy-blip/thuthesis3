@@ -74,20 +74,22 @@ adapting the final design here.
 Goal: replace ad hoc execution ordering with named phases.
 
 Status: cover begin/body/end phases implemented (2026-05-04), with
-`cover/back` added for declaration back matter (2026-05-06). Remaining
-hook-based phases are still planned.
+`cover/back` added for declaration back matter (2026-05-06). Biblatex
+package-hook loading is implemented (2026-06-12). Remaining hook-based phases
+are still planned.
 
 Candidate modules:
 
 - ~~cover begin/body/end/back phases~~ (implemented);
+- ~~delayed bibliography setup~~ (implemented for biblatex package loading);
 - frontmatter and mainmatter transitions;
-- delayed bibliography setup;
 - PDF metadata and resource resolution;
 - begin-document setup that must occur after package loading.
 
 Reference technology:
 
-- `../NJUThesis-njulug` has hook-based cover generation in recent source.
+- `../NJUThesis-njulug` has hook-based cover generation and package-hook
+  biblatex loading in recent source.
 
 ## Phase 5: Typography and Content Subsystems
 

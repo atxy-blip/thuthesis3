@@ -17,6 +17,12 @@ regenerating `.tlg` files.
   command compatibility needs separate tests.
 - `testfiles/config-title-page.lua`: focused title-page config. It currently
   includes a smoke subset rather than every imported title-page fixture.
+- `testfiles/biblatex/`: biblatex hook-loading fixtures. These use full
+  `.tex + .bib + biber + \printbibliography` coverage rather than only
+  internal state assertions.
+- `testfiles/config-biblatex.lua`: focused biblatex config. It copies `.bib`
+  support files from the same directory and runs Biber after the first LaTeX
+  pass.
 
 ## Test Conventions
 
@@ -30,7 +36,8 @@ regenerating `.tlg` files.
 `build.lua` currently checks with `xetex` and runs these configs:
 
 - `build`;
-- `testfiles/config-title-page`.
+- `testfiles/config-title-page`;
+- `testfiles/config-biblatex`.
 
 Several additional title-page-adjacent configs are present as comments in
 `build.lua`. Treat them as future expansion notes, not active test coverage.
@@ -40,6 +47,11 @@ Several additional title-page-adjacent configs are present as comments in
 For ordinary focused changes, use normal l3build commands for the relevant test
 or config. The repository also provides a custom `save-all` target that walks
 the configured test configs and saves the tests discovered in each one.
+
+For biblatex loading, style, option, or resource changes, run
+`l3build check -c testfiles/config-biblatex`. If the visible bibliography
+behavior intentionally changes, regenerate the matching `.tlg` with the same
+config after confirming the old implementation fails for the intended reason.
 
 During the current cover-layout migration phase, do not use `l3build check` as
 the main feedback loop for title-page work. The cover implementation, hook flow,

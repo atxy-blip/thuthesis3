@@ -49,6 +49,8 @@ The repository has a local `testfiles/` tree. Current focused coverage includes:
 - top-level setup-key compatibility tests (`info-keys-compat.tex` and
   `info-anonymous-compat.tex`, with anonymous mode currently excluded in
   `build.lua`);
+- biblatex hook-loading coverage under `testfiles/biblatex/`, selected by
+  `testfiles/config-biblatex.lua` and run with Biber;
 - imported title-page fixtures under `testfiles/01-title-page/`;
 - `testfiles/config-title-page.lua`, which currently includes a small title-page
   smoke subset for bachelor, doctor, and master covers.

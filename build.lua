@@ -12,11 +12,11 @@ lvtext        = ".tex"
 checkconfigs = {
   "build",
   "testfiles/config-title-page",
+  "testfiles/config-biblatex",
 --   "testfiles/config-title-page-en",
 --   "testfiles/config-crossref",
 --   "testfiles/config-nomencl",
 --   "testfiles/config-bibtex",
---   "testfiles/config-biblatex",
 }
 
 excludetests = {"info-anonymous-compat"}

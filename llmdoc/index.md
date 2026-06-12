@@ -18,6 +18,9 @@
 - `architecture/source-and-build.md`: 源码入口、l3build、生成文件与禁止
   直接编辑的文件。
 - `architecture/latex3-module-roadmap.md`: LaTeX3 模块地图与迁移顺序。
+- `architecture/biblatex-hook-loading.md`: biblatex 载入与补丁时序：
+  `package/biblatex/before|after`、`env/document/before`、`bib/style`、
+  `bib/option`、`bib/resource` 的边界和测试入口。
 - `architecture/cover-system.md`: 封面系统的 page/element 模型、实例分类、
   docstrip 分层、角色/命令边界和布局不变量。
 

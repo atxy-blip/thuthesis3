@@ -65,6 +65,13 @@ state while still preventing duplicate back-cover generation.
 This pattern remains a candidate for frontmatter transitions, bibliography
 setup, and other begin-document ordering.
 
+For biblatex, `thuthesis3` has adopted the NJUThesis package-hook mechanism:
+`package/biblatex/before` passes loading-time style options,
+`package/biblatex/after` executes ordinary options and imports resources, and
+`env/document/before` is only the fallback auto-load point. Keep
+`biblatex=false` as a complete opt-out. The detailed local contract lives in
+`llmdoc/architecture/biblatex-hook-loading.md`.
+
 ## Internal Naming
 
 For internal expl3 helper names, prefer a semantic stem over an abbreviation

@@ -1,0 +1,33 @@
+\input regression-test.tex
+\documentclass[
+  fontset = fandol,
+  math-font = none,
+]{thuthesis3}
+
+\thusetup[bib]{
+  style = author-year,
+  option = { doi = false },
+  resource = { biblatex-hook-loading.bib }
+}
+
+\usepackage{biblatex}
+
+\begin{document}
+\START
+
+\ExplSyntaxOn
+\typeout{THU-BLX-RESOURCE-COUNT:\int_eval:n { \clist_count:N \g__thu_blx_resource_clist }}
+\ExplSyntaxOff
+\makeatletter
+\typeout{THU-BLX-BBX:\blx@bbxfile}
+\makeatother
+
+\cite{Hohenadler.M.2005}
+\cite{Hohenadler.M.2007}
+\nocite{*}
+
+\printbibliography
+
+\clearpage
+\OMIT
+\end{document}

@@ -27,6 +27,8 @@ requests before it implements the original class's full feature set.
   `\thusetname`, and `\thusettext`;
 - defines module keys under `thu / ...`;
 - uses `xtemplate` page and element instances for layout-sensitive pages;
+- loads and patches `biblatex` through LaTeX package hooks so template
+  `\thusetup[bib]` data still applies when users manually load `biblatex`;
 - generates covers through LaTeX3 hook phases (`cover/begin`, `cover/body`,
   `cover/end`, `cover/back`) with rule-ordered labels (`main`, `decl-a`,
   `decl-b`). The back-cover hook is scheduled from `\maketitle` through
